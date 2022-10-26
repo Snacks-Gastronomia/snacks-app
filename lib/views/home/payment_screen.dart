@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/utils/modal.dart';
+import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/success/success_screen.dart';
 
 class PaymentScreen extends StatelessWidget {
   const PaymentScreen({Key? key}) : super(key: key);
 
-  void action(context) {
+  void action(context, method) {
+    BlocProvider.of<CartCubit>(context).makeOrder(method);
     AppModal().showIOSModalBottomSheet(
         context: context,
         drag: false,
-        content: const SuccessScreen(
+        content: SuccessScreen(
           title: "Pedido realizado!",
           backButton: true,
-          description:
-              'Em breve o garçom será direcionado até sua mesa para finalizar o pagamento. :-)',
+          description: method == "Cartão snacks"
+              ? "Seu está sendo preparado e logo será entregue em sua mesa. :-)"
+              : 'Em breve o garçom será direcionado até sua mesa para finalizar o pagamento. :-)',
         ));
   }
 
@@ -88,7 +92,7 @@ class PaymentScreen extends StatelessWidget {
                   // height: 41,
                 ),
                 GestureDetector(
-                  onTap: () => action(context),
+                  onTap: () => action(context, "Cartão de crédito"),
                   child: Container(
                     decoration: BoxDecoration(
                         color: const Color(0xffF7F8F9),
@@ -115,7 +119,7 @@ class PaymentScreen extends StatelessWidget {
                   height: 15,
                 ),
                 GestureDetector(
-                  onTap: () => action(context),
+                  onTap: () => action(context, "Pix"),
                   child: Container(
                     decoration: BoxDecoration(
                         color: const Color(0xffF7F8F9),
@@ -142,7 +146,11 @@ class PaymentScreen extends StatelessWidget {
                   height: 15,
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, AppRoutes.scanCard),
+                  onTap: () async {
+                    final result =
+                        Navigator.pushNamed(context, AppRoutes.scanCard);
+                    action(context, "Cartão Snacks");
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.black,

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,8 @@ import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.text.dart';
 
 class ProfileModal extends StatelessWidget {
-  const ProfileModal({Key? key}) : super(key: key);
-
+  ProfileModal({Key? key}) : super(key: key);
+  final auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -43,11 +44,11 @@ class ProfileModal extends StatelessWidget {
             height: 20,
           ),
           Text(
-            'Jackson Aguiar',
+            auth.currentUser!.displayName ?? "",
             style: AppTextStyles.bold(32, color: Colors.white),
           ),
           Text(
-            '(84) 99446-3807',
+            auth.currentUser!.phoneNumber ?? "",
             style: AppTextStyles.regular(16, color: Colors.white),
           ),
           const SizedBox(

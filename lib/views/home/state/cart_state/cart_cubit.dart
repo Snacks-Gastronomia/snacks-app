@@ -1,11 +1,18 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meta/meta.dart';
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/views/home/repository/orders_repository.dart';
 
 part 'cart_state.dart';
 
 class CartCubit extends Cubit<CartState> {
+  final repository = OrdersRepository();
+  final auth = FirebaseAuth.instance;
   CartCubit() : super(CartState.initial());
 
   void addToCart(Order newOrder) {
@@ -99,5 +106,26 @@ class CartCubit extends Cubit<CartState> {
     }
     print(total);
     emit(state.copyWith(total: total));
+  }
+
+  void makeOrder(String method) async {
+    Map<String, dynamic> data = {
+      "orders":
+          FieldValue.arrayUnion(state.cart.map((e) => e.toMap()).toList()),
+      "user_uid": auth.currentUser!.uid,
+      "table": state.table_code.toString(),
+      "payment_method": method,
+      "value": state.total.toString(),
+    };
+    await repository.createOrder(data);
+    clearCart();
+  }
+
+  Future<dynamic> fetchOrders() async {
+    return await repository.fetchOrdersByUserId(auth.currentUser!.uid);
+  }
+
+  void clearCart() {
+    emit(state.copyWith(cart: []));
   }
 }
