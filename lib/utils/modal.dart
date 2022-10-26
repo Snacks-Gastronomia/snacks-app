@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class AppModal {
-  showModalBottomSheet({required context, required Widget content}) =>
+  showModalBottomSheet({
+    required context,
+    required Widget content,
+    bool withPadding = true,
+  }) =>
       showMaterialModalBottomSheet(
         bounce: true,
         context: context,
@@ -11,7 +15,8 @@ class AppModal {
         ),
         builder: (context) => SingleChildScrollView(
           controller: ModalScrollController.of(context),
-          child: ModalWidget(content: content, paddingBottom: 20),
+          child: ModalWidget(
+              content: content, paddingBottom: withPadding ? 20 : 0),
         ),
       );
   showIOSModalBottomSheet(

@@ -24,6 +24,7 @@ import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 import 'package:snacks_app/views/home/widgets/card_item.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_ok.dart';
 import 'package:snacks_app/views/home/widgets/modals/modal_content_obs.dart';
+import 'package:snacks_app/views/home/widgets/profile_modal.dart';
 import 'package:snacks_app/views/home/widgets/skeletons.dart';
 // import 'package:snacks_app/views/home/state/cart_state/cart_state.dart';
 // import 'package:snacks_app/views/restaurant_menu/new_item_screen.dart';
@@ -151,6 +152,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
     super.dispose();
   }
 
+  final modal = AppModal();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,7 +174,11 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                 width: 140,
               ),
               IconButton(
-                  onPressed: () {},
+                  onPressed: () => modal.showModalBottomSheet(
+                        withPadding: false,
+                        context: context,
+                        content: const ProfileModal(),
+                      ),
                   icon: const Icon(Icons.account_circle_rounded))
             ],
           ),
@@ -231,7 +237,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
               const SizedBox(
                 height: 10,
               ),
-              const AllItemsWidget(),
+              AllItemsWidget(),
               const SizedBox(
                 height: 30,
               )
@@ -244,7 +250,9 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
 }
 
 class AllItemsWidget extends StatelessWidget {
-  const AllItemsWidget({Key? key}) : super(key: key);
+  AllItemsWidget({Key? key}) : super(key: key);
+
+  final modal = AppModal();
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +275,7 @@ class AllItemsWidget extends StatelessWidget {
             } else {
               var item = snapshot.items[index];
               return GestureDetector(
-                  onTap: () => AppModal().showIOSModalBottomSheet(
+                  onTap: () => modal.showIOSModalBottomSheet(
                       context: context,
                       content: ItemScreen(
                           order: Order(item: item, observations: ""))),
