@@ -8,77 +8,64 @@ class OrdersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-            appBar: PreferredSize(
-              preferredSize: const Size.fromHeight(60.0),
-              child: Container(
-                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-                child: Row(
-                  children: [
-                    Text(
-                      'Meus pedidos',
-                      style: AppTextStyles.medium(20),
-                    ),
-                  ],
+    return Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(60.0),
+          child: Container(
+            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+            child: Row(
+              children: [
+                Text(
+                  'Meus pedidos',
+                  style: AppTextStyles.medium(20),
                 ),
-              ),
+              ],
             ),
-            backgroundColor: Colors.white,
-            body: Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: Column(
-                children: [
-                  TabarBar(
-                    page1: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            // physics: NeverScrollableScrollPhysics(),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: 4,
-                            shrinkWrap: true,
-                            itemBuilder: (_, index) => const Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: CardOrderWidget(
-                                  leading: 42,
-                                  additional: "",
-                                  status: "Aguardando pagamento",
-                                  total: 200,
-                                  method: "Cartão de crédito",
-                                  items: []),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    page2: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            // physics: NeverScrollableScrollPhysics(),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: 3,
-                            shrinkWrap: true,
-                            itemBuilder: (_, index) => const Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: CardOrderWidget(
-                                  leading: 42,
-                                  additional: "",
-                                  status: "Aguardando pagamento",
-                                  total: 200,
-                                  method: "Cartão de crédito",
-                                  items: []),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    onChange: (p0) {},
-                  )
-                ],
-              ),
-            )));
+          ),
+        ),
+        backgroundColor: Colors.white,
+        body: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+          child: Column(
+            children: [
+              TabarBar(
+                page1: ListView.builder(
+                  // physics: NeverScrollableScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: 5,
+                  shrinkWrap: true,
+                  itemBuilder: (_, index) => const Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: CardOrderWidget(
+                        leading: 42,
+                        additional: "",
+                        status: "Aguardando pagamento",
+                        total: 200,
+                        method: "Cartão de crédito",
+                        items: []),
+                  ),
+                ),
+                page2: ListView.builder(
+                  // physics: NeverScrollableScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: 3,
+                  shrinkWrap: true,
+                  itemBuilder: (_, index) => const Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: CardOrderWidget(
+                        leading: 42,
+                        additional: "",
+                        status: "Aguardando pagamento",
+                        total: 200,
+                        method: "Cartão de crédito",
+                        items: []),
+                  ),
+                ),
+                onChange: (p0) {},
+              )
+            ],
+          ),
+        ));
   }
 }
 

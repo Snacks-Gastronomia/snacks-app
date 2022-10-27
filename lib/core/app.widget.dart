@@ -62,7 +62,7 @@ class AppWidget extends StatelessWidget {
           AppRoutes.payment: (context) => const PaymentScreen(),
           AppRoutes.cart: (context) => const MyCartScreen(),
           AppRoutes.orders: (context) => const OrdersScreen(),
-          AppRoutes.home: (context) => const HomeScreen(),
+          AppRoutes.home: (context) => HomeScreen(),
           // AppRoutes.restaurantAuth: (context) =>
           //     const RestaurantAuthenticationScreen(),
         },

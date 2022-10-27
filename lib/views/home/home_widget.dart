@@ -25,7 +25,7 @@ class HomeScreenWidget extends StatefulWidget {
 }
 
 class _HomeScreenWidgetState extends State<HomeScreenWidget> {
-  late ScrollController controller;
+  // late ScrollController controller;
   // final key = GlobalKey();
   final auth = FirebaseAuth.instance;
 
@@ -39,17 +39,17 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
-    controller = InheritedDataProvider.of(context).scrollController;
-    controller.addListener(
-      () {
-        if (controller.position.maxScrollExtent == controller.offset &&
-            !BlocProvider.of<HomeCubit>(context).state.listIsLastPage) {
-          context.read<HomeCubit>().fetchMoreItems();
-          // Get.find<ItemController>()
-          //     .addItem(Get.find<ItemController>().itemList.length);
-        }
-      },
-    );
+    // controller = InheritedDataProvider.of(context).scrollController;
+    // controller.addListener(
+    //   () {
+    //     if (controller.position.maxScrollExtent == controller.offset &&
+    //         !BlocProvider.of<HomeCubit>(context).state.listIsLastPage) {
+    //       context.read<HomeCubit>().fetchMoreItems();
+    //       // Get.find<ItemController>()
+    //       //     .addItem(Get.find<ItemController>().itemList.length);
+    //     }
+    //   },
+    // );
     _navigator = Navigator.of(context);
     super.didChangeDependencies();
   }
@@ -84,15 +84,18 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                 AppImages.snacks,
                 width: 140,
               ),
-              auth.currentUser!.isAnonymous
-                  ? const SizedBox(width: 20)
-                  : IconButton(
-                      onPressed: () => modal.showModalBottomSheet(
-                            withPadding: false,
-                            context: context,
-                            content: ProfileModal(),
-                          ),
-                      icon: const Icon(Icons.account_circle_rounded))
+              const SizedBox(
+                width: 20,
+              ),
+              // auth.currentUser!.isAnonymous
+              //     ? const SizedBox(width: 20)
+              //     : IconButton(
+              //         onPressed: () => modal.showModalBottomSheet(
+              //               withPadding: false,
+              //               context: context,
+              //               content: ProfileModal(),
+              //             ),
+              //         icon: const Icon(Icons.account_circle_rounded))
             ],
           ),
         ),
@@ -100,7 +103,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
       body: Padding(
         padding: const EdgeInsets.only(left: 25, top: 25, right: 25),
         child: SingleChildScrollView(
-          controller: controller,
+          // controller: controller,
           physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
