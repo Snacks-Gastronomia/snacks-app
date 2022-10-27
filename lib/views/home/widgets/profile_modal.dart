@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:snacks_app/core/app.images.dart';
+import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 
 class ProfileModal extends StatelessWidget {
@@ -76,7 +77,7 @@ class ProfileModal extends StatelessWidget {
                 ),
                 Center(
                   child: IconButton(
-                      onPressed: () => null,
+                      onPressed: () async => await auth.signOut(),
                       icon: const Icon(
                         Icons.edit,
                         color: Colors.white,
@@ -94,7 +95,10 @@ class ProfileModal extends StatelessWidget {
           ),
           Center(
             child: TextButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                await auth.signOut().then((value) =>
+                    Navigator.pushReplacementNamed(context, AppRoutes.start));
+              },
               icon: const Icon(
                 Icons.power_settings_new_rounded,
                 color: Colors.white,

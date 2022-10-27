@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meta/meta.dart';
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/enums.dart';
@@ -109,14 +110,27 @@ class CartCubit extends Cubit<CartState> {
   }
 
   void makeOrder(String method) async {
+// Create storage
+    final storage = FlutterSecureStorage();
+
+// Read value
+    String? table = await storage.read(key: "table");
+    String? address = await storage.read(key: "address");
+    bool isDelivery = !auth.currentUser!.isAnonymous;
     Map<String, dynamic> data = {
       "orders":
           FieldValue.arrayUnion(state.cart.map((e) => e.toMap()).toList()),
       "user_uid": auth.currentUser!.uid,
-      "table": state.table_code.toString(),
       "payment_method": method,
       "value": state.total.toString(),
+      "isDelivery": isDelivery,
+      "status": method == "Cartão snacks"
+          ? "Pedido em andamento"
+          : "Aguardando pagamento",
+      "created_at": DateTime.now(),
     };
+    data.addAll(isDelivery ? {"address": address} : {"table": table});
+
     await repository.createOrder(data);
     clearCart();
   }
