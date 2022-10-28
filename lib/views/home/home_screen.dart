@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/home_widget.dart';
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final auth = FirebaseAuth.instance;
+
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
 
@@ -55,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               duration: const Duration(milliseconds: 400),
               tabBackgroundColor: Colors.grey[100]!,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               color: Colors.black,
               tabs: [
                 const GButton(
@@ -78,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
               ],
               selectedIndex: _selectedIndex,
-              onTabChange: (index) {
+              onTabChange: (index) async {
                 setState(() {
                   if (index < _widgetOptions.length) _selectedIndex = index;
                 });

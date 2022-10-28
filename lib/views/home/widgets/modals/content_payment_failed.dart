@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+
 import 'package:snacks_app/core/app.text.dart';
 
 class PaymentFailedContent extends StatelessWidget {
-  const PaymentFailedContent({Key? key}) : super(key: key);
-
+  const PaymentFailedContent({
+    Key? key,
+    required this.value,
+    this.readError = false,
+  }) : super(key: key);
+  final String value;
+  final bool readError;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -16,27 +22,30 @@ class PaymentFailedContent extends StatelessWidget {
             height: 10,
           ),
           Text(
-              'Seu cartão snacks não tem saldo suficiente! '
-              'Realize uma recarga ou escolha outra opção de pagamento. : -)',
+              readError
+                  ? 'Não foi possível identificar o cartão snacks!'
+                  : 'Seu cartão snacks não tem saldo suficiente! '
+                      'Realize uma recarga ou escolha outra opção de pagamento. : -)',
               style: AppTextStyles.light(14, color: const Color(0xffBE0101))),
           const SizedBox(
             height: 30,
           ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey.shade200),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Saldo',
-                    style: AppTextStyles.regular(16, color: Colors.black)),
-                Text(r'R$ 25,00',
-                    style: AppTextStyles.regular(16, color: Colors.black)),
-              ],
+          if (!readError)
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey.shade200),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Saldo',
+                      style: AppTextStyles.regular(16, color: Colors.black)),
+                  Text(value,
+                      style: AppTextStyles.regular(16, color: Colors.black)),
+                ],
+              ),
             ),
-          ),
           const SizedBox(
             height: 20,
           ),

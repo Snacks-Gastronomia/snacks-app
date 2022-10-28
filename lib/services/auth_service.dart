@@ -126,10 +126,10 @@ class AuthApiServices {
     }
   }
 
-  Future<bool> userAlreadyRegistred(String uid) async {
+  Future<Map<String, dynamic>?> userAlreadyRegistred(String uid) async {
     final doc =
         await db.readDocumentToCollectionByUid(collection: "users", uid: uid);
-
-    return doc.docs.isNotEmpty;
+    var docs = doc.docs;
+    return docs.isEmpty ? null : docs[0].data();
   }
 }

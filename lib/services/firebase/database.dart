@@ -21,12 +21,34 @@ class FirebaseDataBase {
         .catchError((error) => print("Failed to add user: $error"));
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>> readDocumentsToCollectionByUid(
-      {required String collection, required String uid}) async {
+  Future<DocumentSnapshot<Map<String, dynamic>>?> readDocumentToCollectionById(
+      {required String collection, required String id}) async {
+    try {
+      return await FirebaseFirestore.instance
+          .collection(collection)
+          .doc(id)
+          .get()
+          .catchError((error) => print("Failed to add user: $error"));
+    } catch (e) {}
+  }
+
+  Future<void> updateDocumentToCollectionById(
+      {required String collection,
+      required String id,
+      required Map<String, Object?> data}) async {
     return await FirebaseFirestore.instance
         .collection(collection)
-        .where("uid", isEqualTo: uid)
-        .get()
+        .doc(id)
+        .update(data)
         .catchError((error) => print("Failed to add user: $error"));
   }
+
+  // Future<QuerySnapshot<Map<String, dynamic>>> readDocumentsToCollectionByUid(
+  //     {required String collection, required String uid}) async {
+  //   return await FirebaseFirestore.instance
+  //       .collection(collection)
+  //       .where("uid", isEqualTo: uid)
+  //       .get()
+  //       .catchError((error) => print("Failed to add user: $error"));
+  // }
 }

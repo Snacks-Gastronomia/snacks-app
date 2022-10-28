@@ -2,14 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
+import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 
 class ProfileModal extends StatelessWidget {
   ProfileModal({Key? key}) : super(key: key);
   final auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -63,18 +66,17 @@ class ProfileModal extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Column(
-                //   children: [
-
-                //   ],
-                // ),
-                SizedBox(
-                  width: 200,
-                  child: Text(
-                    'Rua xxx xxx xxxx, 80, Centro, São Paulo',
-                    style: AppTextStyles.light(17, color: Colors.white),
-                  ),
-                ),
+                FutureBuilder<String?>(
+                    future: BlocProvider.of<HomeCubit>(context).getAddress(),
+                    builder: (context, snapshot) {
+                      return SizedBox(
+                        width: 200,
+                        child: Text(
+                          snapshot.data ?? "",
+                          style: AppTextStyles.light(17, color: Colors.white),
+                        ),
+                      );
+                    }),
                 Center(
                   child: IconButton(
                       onPressed: () async => await auth.signOut(),

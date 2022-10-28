@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:snacks_app/services/orders_service.dart';
 
 class OrdersRepository {
@@ -11,7 +12,7 @@ class OrdersRepository {
     return await services.getOrdersByRestaurantId(id);
   }
 
-  Future fetchOrdersByUserId(String id) async {
-    return await services.getOrdersByUserId(id);
+  Stream<QuerySnapshot> fetchOrdersByUserId(String id) {
+    return services.getOrdersByUserId(id);
   }
 }

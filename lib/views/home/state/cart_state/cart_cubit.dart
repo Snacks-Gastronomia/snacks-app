@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/enums.dart';
@@ -14,6 +15,8 @@ part 'cart_state.dart';
 class CartCubit extends Cubit<CartState> {
   final repository = OrdersRepository();
   final auth = FirebaseAuth.instance;
+  final storage = const FlutterSecureStorage();
+
   CartCubit() : super(CartState.initial());
 
   void addToCart(Order newOrder) {
@@ -110,36 +113,47 @@ class CartCubit extends Cubit<CartState> {
   }
 
   void makeOrder(String method) async {
-// Create storage
-    final storage = FlutterSecureStorage();
-
-// Read value
-    String? table = await storage.read(key: "table");
-    String? address = await storage.read(key: "address");
+    final dataStorage = await storage.readAll(
+        aOptions: const AndroidOptions(
+          encryptedSharedPreferences: true,
+        ),
+        iOptions: const IOSOptions(
+          accessibility: KeychainAccessibility.first_unlock,
+        ));
     bool isDelivery = !auth.currentUser!.isAnonymous;
+    var status = method == "Cartão Snacks" || isDelivery
+        ? OrderStatus.order_in_progress.name
+        : OrderStatus.waiting_payment.name;
+
+    final now = DateTime.now();
+    DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
     Map<String, dynamic> data = {
       "orders":
           FieldValue.arrayUnion(state.cart.map((e) => e.toMap()).toList()),
       "user_uid": auth.currentUser!.uid,
       "payment_method": method,
-      "value": state.total.toString(),
+      "value": state.total,
       "isDelivery": isDelivery,
-      "status": method == "Cartão snacks"
-          ? "Pedido em andamento"
-          : "Aguardando pagamento",
+      "status": status,
       "created_at": DateTime.now(),
     };
-    data.addAll(isDelivery ? {"address": address} : {"table": table});
+    data.addAll(isDelivery
+        ? {"address": dataStorage["address"]}
+        : {"table": dataStorage["table"]});
 
     await repository.createOrder(data);
     clearCart();
   }
 
-  Future<dynamic> fetchOrders() async {
-    return await repository.fetchOrdersByUserId(auth.currentUser!.uid);
+  Stream<QuerySnapshot> fetchOrders() {
+    return repository.fetchOrdersByUserId(auth.currentUser!.uid);
   }
 
   void clearCart() {
     emit(state.copyWith(cart: []));
+  }
+
+  void changeStatus(AppStatus status) {
+    emit(state.copyWith(status: status));
   }
 }

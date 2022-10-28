@@ -68,8 +68,8 @@ class AuthCubit extends Cubit<AuthState> {
 
       print('${position.latitude}  ${position.longitude}');
 
-      var data =
-          await repository.getAddress(position.latitude, position.longitude);
+      var data = await repository.getLocationAddress(
+          position.latitude, position.longitude);
 
       address = formatAddress(data["address"], data["address_type"]);
     } catch (e) {
@@ -107,15 +107,21 @@ class AuthCubit extends Cubit<AuthState> {
     changeStatus(AppStatus.loading);
     await repository.createUser(
         uid: auth.currentUser!.uid, address: state.address.complete);
+    await auth.currentUser!.updateDisplayName(state.name);
     changeStatus(AppStatus.loaded);
-    // return response;
   }
 
   checkUser() async {
     changeStatus(AppStatus.loading);
-    var response = await repository.checkUser(phone: auth.currentUser!.uid);
+    Map<String, dynamic>? response =
+        await repository.checkUser(uid: auth.currentUser!.uid);
+
     changeStatus(AppStatus.loaded);
-    return response;
+    if (response != null) {
+      repository.storageAddress(response["address"]);
+      return true;
+    }
+    return false;
   }
 
   get validateNumber => state.phone!.length == 15;

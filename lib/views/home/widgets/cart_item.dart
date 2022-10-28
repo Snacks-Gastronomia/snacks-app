@@ -51,20 +51,31 @@ class CartItemWidget extends StatelessWidget {
                             fit: BoxFit.cover),
                   ),
                   const SizedBox(
-                    width: 25,
+                    width: 20,
                   ),
                   Column(
                     // mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        order.item.title,
-                        style: AppTextStyles.regular(18),
+                      SizedBox(
+                        width: 150,
+                        child: Text(
+                          order.item.title,
+                          style: AppTextStyles.regular(16),
+                          maxLines: 2,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      Text(
-                        order.observations,
-                        style:
-                            AppTextStyles.regular(14, color: Color(0xff979797)),
+                      SizedBox(
+                        width: 150,
+                        child: Text(
+                          order.observations,
+                          softWrap: true,
+                          // maxLines: 3,
+                          style: AppTextStyles.regular(12,
+                              color: const Color(0xff979797)),
+                        ),
                       ),
                     ],
                   )

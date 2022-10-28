@@ -12,9 +12,7 @@ import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/item_screen.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
-import 'package:snacks_app/views/home/widgets/bottom_bar_state.dart';
 import 'package:snacks_app/views/home/widgets/card_item.dart';
-import 'package:snacks_app/views/home/widgets/profile_modal.dart';
 import 'package:snacks_app/views/home/widgets/skeletons.dart';
 
 class HomeScreenWidget extends StatefulWidget {
@@ -87,6 +85,10 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
               const SizedBox(
                 width: 20,
               ),
+              IconButton(
+                  onPressed: () => auth.signOut().then((value) =>
+                      Navigator.pushReplacementNamed(context, AppRoutes.start)),
+                  icon: Icon(Icons.power_off))
               // auth.currentUser!.isAnonymous
               //     ? const SizedBox(width: 20)
               //     : IconButton(

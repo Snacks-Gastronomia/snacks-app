@@ -1,23 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:pinput/pinput.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:snacks_app/services/firebase/database.dart';
 
 class FirebasePhoneAuthentication {
   final auth = FirebaseAuth.instance;
+  final db = FirebaseDataBase();
 
   Future<User?> verifyCode(String verificationCode, String code) async {
-    // PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode)
     User? user;
-
     try {
       final credential = PhoneAuthProvider.credential(
           verificationId: verificationCode, smsCode: code);
-      await auth.signInWithCredential(credential).then((value) {
-        // if (value.user != null) {
-
+      await auth.signInWithCredential(credential).then((value) async {
         user = value.user;
-        // }
       });
+      if (user != null) {}
     } catch (e) {
       debugPrint(e.toString());
     }

@@ -5,8 +5,12 @@ class FirebaseCustomTokenAuth {
   final auth = FirebaseAuth.instance;
   final storage = const FlutterSecureStorage(
       aOptions: AndroidOptions(
-    encryptedSharedPreferences: true,
-  ));
+        encryptedSharedPreferences: true,
+      ),
+      iOptions: IOSOptions(
+        accessibility: KeychainAccessibility.first_unlock,
+      ));
+
   Future<UserCredential?> signIn({required String table}) async {
     print("try to generate token");
 
@@ -15,6 +19,7 @@ class FirebaseCustomTokenAuth {
       // userCredential.user.
       // Write value
       await storage.write(key: "table", value: table);
+
       print("Sign-in successful.");
       return userCredential;
     } on FirebaseAuthException catch (e) {
@@ -28,6 +33,8 @@ class FirebaseCustomTokenAuth {
         default:
           print("Unkown error.");
       }
+    } catch (e) {
+      print(e);
     }
   }
 

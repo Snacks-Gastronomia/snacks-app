@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/success/success_screen.dart';
 
 class PaymentSuccessContent extends StatelessWidget {
-  const PaymentSuccessContent({Key? key}) : super(key: key);
+  const PaymentSuccessContent({
+    Key? key,
+    required this.order_value,
+    required this.rest_value,
+    required this.action,
+  }) : super(key: key);
+
+  final String order_value;
+  final String rest_value;
+  final VoidCallback action;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +56,7 @@ class PaymentSuccessContent extends StatelessWidget {
                       Text('Valor do pedido',
                           style:
                               AppTextStyles.medium(16, color: Colors.black38)),
-                      Text(r'R$ 75,00',
+                      Text(order_value,
                           style:
                               AppTextStyles.medium(20, color: Colors.black87)),
                     ],
@@ -56,7 +66,9 @@ class PaymentSuccessContent extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              const MiniSnacksCard()
+              MiniSnacksCard(
+                value: rest_value,
+              )
             ],
           ),
           const SizedBox(
@@ -65,15 +77,7 @@ class PaymentSuccessContent extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              AppModal().showIOSModalBottomSheet(
-                  context: context,
-                  drag: false,
-                  content: const SuccessScreen(
-                    title: "Pedido realizado!",
-                    backButton: true,
-                    description:
-                        'Aguarde que você receberá uma notificação de quando estiver pronto! :-)',
-                  ));
+              action();
             },
             style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -92,7 +96,12 @@ class PaymentSuccessContent extends StatelessWidget {
 }
 
 class MiniSnacksCard extends StatelessWidget {
-  const MiniSnacksCard({Key? key}) : super(key: key);
+  const MiniSnacksCard({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
+
+  final String value;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +126,7 @@ class MiniSnacksCard extends StatelessWidget {
             ),
             const SizedBox(height: 3),
             Text(
-              r'R$ 25,00',
+              value,
               style: AppTextStyles.medium(20, color: Colors.white70),
             ),
           ],

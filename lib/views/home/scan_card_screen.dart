@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -7,7 +5,6 @@ import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/utils/corner_border.dart';
 import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_failed.dart';
-import 'package:snacks_app/views/home/widgets/modals/content_payment_ok.dart';
 
 class ScanCardScreen extends StatefulWidget {
   const ScanCardScreen({Key? key}) : super(key: key);
@@ -17,20 +14,10 @@ class ScanCardScreen extends StatefulWidget {
 }
 
 class _ScanCardScreenState extends State<ScanCardScreen> {
-  // Barcode? result;
-
   late MobileScannerController controller;
-
+  final modal = AppModal();
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  // @override
-  // void reassemble() {
-  //   super.reassemble();
-  //   if (Platform.isAndroid) {
-  //     controller!.pauseCamera();
-  //   }
-  //   controller!.resumeCamera();
-  // }
   @override
   void initState() {
     // TODO: implement initState
@@ -121,31 +108,6 @@ class _ScanCardScreenState extends State<ScanCardScreen> {
     );
   }
 
-  // Widget buildQrView(BuildContext context) {
-  //   return SizedBox(
-  //     width: 250,
-  //     height: 250,
-  //     child: QRView(
-  //         key: qrKey,
-  //         onQRViewCreated: (QRViewController qrViewController) {
-  //           setState(() => controller = qrViewController);
-
-  //           qrViewController.scannedDataStream.listen((barcode) async {
-  //             Navigator.pop(context);
-  //             AppModal().showModalBottomSheet(
-  //                 context: context, content: const PaymentSuccessContent());
-  //           });
-  //         },
-  //         overlay: QrScannerOverlayShape(
-  //             overlayColor: Colors.black,
-  //             borderRadius: 10,
-  //             borderColor: Colors.white,
-  //             borderLength: 25,
-  //             borderWidth: 10,
-  //             cutOutSize: MediaQuery.of(context).size.height * 0.30)),
-  //   );
-  // }
-
   Widget buildQrView(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
@@ -160,15 +122,18 @@ class _ScanCardScreenState extends State<ScanCardScreen> {
                 child: MobileScanner(
                     allowDuplicates: false,
                     controller: controller,
-                    onDetect: (barcode, args) {
+                    onDetect: (barcode, args) async {
                       if (barcode.rawValue == null) {
                         debugPrint('Failed to scan Barcode');
-                      } else {
-                        final String code = barcode.rawValue!;
-                        Navigator.pop(context);
-                        AppModal().showModalBottomSheet(
+                        modal.showModalBottomSheet(
                             context: context,
-                            content: const PaymentFailedContent());
+                            content: const PaymentFailedContent(
+                              readError: true,
+                              value: "",
+                            ));
+                      } else {
+                        final String card_code = barcode.rawValue!;
+                        Navigator.pop(context, card_code);
                       }
                     })),
           ),

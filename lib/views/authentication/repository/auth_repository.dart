@@ -1,18 +1,30 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:snacks_app/services/auth_service.dart';
 
 class AuthenticateRepository {
   final AuthApiServices services;
+  final storage = const FlutterSecureStorage(
+      aOptions: AndroidOptions(
+        encryptedSharedPreferences: true,
+      ),
+      iOptions: IOSOptions(
+        accessibility: KeychainAccessibility.first_unlock,
+      ));
 
   AuthenticateRepository({
     required this.services,
   });
 
-  Future<dynamic> getAddress(double lat, double long) async {
+  Future<dynamic> getLocationAddress(double lat, double long) async {
     try {
       return await services.getAddressFromCoordinates(lat, long);
     } catch (e) {
       throw e.toString();
     }
+  }
+
+  void storageAddress(String address) async {
+    await storage.write(key: "address", value: address);
   }
 
   Future<dynamic> otpVerification(String verificationID, String pin) async {
@@ -41,9 +53,9 @@ class AuthenticateRepository {
     }
   }
 
-  Future<dynamic> checkUser({required String phone}) async {
+  Future<Map<String, dynamic>?> checkUser({required String uid}) async {
     try {
-      return await services.userAlreadyRegistred(phone);
+      return await services.userAlreadyRegistred(uid);
     } catch (e) {
       throw e.toString();
     }

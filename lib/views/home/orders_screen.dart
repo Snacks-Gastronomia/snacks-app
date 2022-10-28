@@ -1,7 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
+import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.text.dart';
+import 'package:snacks_app/models/order_model.dart';
+import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({Key? key}) : super(key: key);
@@ -26,66 +34,70 @@ class OrdersScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         body: Padding(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-          child: Column(
-            children: [
-              TabarBar(
-                page1: ListView.builder(
-                  // physics: NeverScrollableScrollPhysics(),
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: 5,
-                  shrinkWrap: true,
-                  itemBuilder: (_, index) => const Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: CardOrderWidget(
-                        leading: 42,
-                        additional: "",
-                        status: "Aguardando pagamento",
-                        total: 200,
-                        method: "Cartão de crédito",
-                        items: []),
-                  ),
-                ),
-                page2: ListView.builder(
-                  // physics: NeverScrollableScrollPhysics(),
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: 3,
-                  shrinkWrap: true,
-                  itemBuilder: (_, index) => const Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: CardOrderWidget(
-                        leading: 42,
-                        additional: "",
-                        status: "Aguardando pagamento",
-                        total: 200,
-                        method: "Cartão de crédito",
-                        items: []),
-                  ),
-                ),
-                onChange: (p0) {},
-              )
-            ],
-          ),
+          child: StreamBuilder<QuerySnapshot>(
+              stream: BlocProvider.of<CartCubit>(context).fetchOrders(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<dynamic> orders = List.from(snapshot.data!.docs);
+
+                  return ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: orders.length,
+                      shrinkWrap: true,
+                      itemBuilder: (_, index) {
+                        var item = orders[index];
+                        Timestamp date = item["created_at"];
+                        // time.toDate();
+                        String time = DateFormat("HH:mm").format(date.toDate());
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: CardOrderWidget(
+                              leading:
+                                  item["isDelivery"] ? null : item["table"],
+                              address:
+                                  item["isDelivery"] ? item["address"] : "",
+                              status: item["status"],
+                              isDelivery: item["isDelivery"],
+                              time: time,
+                              total: item["value"],
+                              method: item["payment_method"],
+                              items: item["orders"]),
+                        );
+                      });
+                }
+                return const Center(
+                  child: SizedBox(
+                      height: 60,
+                      width: 60,
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                        backgroundColor: Colors.black12,
+                      )),
+                );
+              }),
         ));
   }
 }
 
 class CardOrderWidget extends StatelessWidget {
-  final bool isTable;
-  final int leading;
-  final String additional;
+  final bool isDelivery;
+  final String? leading;
   final String status;
-  final int total;
+  final String address;
+  final double total;
   final String method;
+  final String time;
   final List items;
 
   const CardOrderWidget({
     Key? key,
-    this.isTable = false,
+    this.isDelivery = false,
     required this.leading,
-    required this.additional,
+    required this.address,
     required this.status,
     required this.total,
     required this.method,
+    required this.time,
     required this.items,
   }) : super(key: key);
 
@@ -106,36 +118,65 @@ class CardOrderWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 20, top: 15, right: 20),
                   child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      Row(children: [
+                        leading == null
+                            ? SvgPicture.asset(
+                                AppImages.snacks_logo,
+                                width: 50,
+                                color: const Color(0xff263238).withOpacity(0.7),
+                              )
+                            : Text(
+                                '#$leading',
+                                style: AppTextStyles.bold(52,
+                                    color: const Color(0xff263238)),
+                              ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              method,
+                              style: AppTextStyles.regular(16,
+                                  color: const Color(0xff979797)),
+                            ),
+                            Text(
+                              NumberFormat.currency(
+                                      locale: "pt", symbol: r"R$ ")
+                                  .format(total),
+                              style: AppTextStyles.semiBold(16,
+                                  color: const Color(0xff979797)),
+                            ),
+                          ],
+                        )
+                      ]),
                       Text(
-                        '#$leading',
-                        style: AppTextStyles.bold(52,
-                            color: const Color(0xff263238)),
+                        time,
+                        style: AppTextStyles.light(14,
+                            color: const Color(0xff979797)),
                       ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            method,
-                            style: AppTextStyles.regular(16,
-                                color: const Color(0xff979797)),
-                          ),
-                          Text(
-                            'R\$ $total',
-                            style: AppTextStyles.semiBold(16,
-                                color: const Color(0xff979797)),
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),
+                if (isDelivery)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 10),
+                    child: Container(
+                      height: 70,
+                      padding: const EdgeInsets.all(15),
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.grey.shade200),
+                      child: Text(address),
+                    ),
+                  ),
                 ScrollOnExpand(
                   scrollOnExpand: true,
                   scrollOnCollapse: false,
@@ -148,6 +189,9 @@ class CardOrderWidget extends StatelessWidget {
                     ),
                     header: Column(
                       children: [
+                        const SizedBox(
+                          height: 7,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -172,56 +216,71 @@ class CardOrderWidget extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
+                          ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 5),
+                            itemCount: items.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var item = Order.fromMap(items[index]);
+
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                      width: 18,
-                                      height: 23,
-                                      // padding: EdgeInsets.symmetric(
-                                      //     horizontal: 7, vertical: 2),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          color: Colors.black),
-                                      child: Center(
-                                        child: Text(
-                                          '1',
-                                          style: AppTextStyles.regular(14,
-                                              color: Colors.white),
-                                        ),
-                                      )),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  Row(
                                     children: [
-                                      Text(
-                                        'Bugger chedar',
-                                        style: AppTextStyles.regular(14),
+                                      Container(
+                                          width: 18,
+                                          height: 23,
+                                          // padding: EdgeInsets.symmetric(
+                                          //     horizontal: 7, vertical: 2),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: Colors.black),
+                                          child: Center(
+                                            child: Text(
+                                              item.amount.toString(),
+                                              style: AppTextStyles.regular(14,
+                                                  color: Colors.white),
+                                            ),
+                                          )),
+                                      const SizedBox(
+                                        width: 15,
                                       ),
-                                      SizedBox(
-                                        width: 200,
-                                        child: Text(
-                                          "loremIpsum",
-                                          style: AppTextStyles.regular(12,
-                                              color: Colors.grey),
-                                        ),
-                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.item.title,
+                                            style: AppTextStyles.regular(14),
+                                          ),
+                                          if (item.observations.isNotEmpty)
+                                            SizedBox(
+                                              width: 200,
+                                              child: Text(
+                                                item.observations,
+                                                style: AppTextStyles.regular(12,
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                        ],
+                                      )
                                     ],
-                                  )
+                                  ),
+                                  Text(
+                                    NumberFormat.currency(
+                                            locale: "pt", symbol: r"R$ ")
+                                        .format(item.item.value),
+                                    style: AppTextStyles.regular(14,
+                                        color: Colors.grey),
+                                  ),
                                 ],
-                              ),
-                              Text(
-                                'R\$ 20,00',
-                                style: AppTextStyles.regular(14),
-                              ),
-                            ],
-                          )
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -244,11 +303,11 @@ class CardOrderWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  color: Colors.black,
+                  color: OrderStatus.values.byName(status).getColor,
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Center(
                     child: Text(
-                      status,
+                      OrderStatus.values.byName(status).displayEnum,
                       style: AppTextStyles.regular(14, color: Colors.white54),
                     ),
                   ),
@@ -265,76 +324,5 @@ class CardOrderWidget extends StatelessWidget {
                 style: AppTextStyles.regular(16, color: Colors.white),
               ))
         ]));
-  }
-}
-
-class TabarBar extends StatelessWidget {
-  TabarBar({
-    Key? key,
-    required this.page1,
-    required this.page2,
-    required this.onChange,
-  }) : super(key: key);
-
-  final Widget page1;
-  final Widget page2;
-  final Function(int) onChange;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            Container(
-              height: 40,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.all(3.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(
-                  10.0,
-                ),
-              ),
-              child: TabBar(
-                onTap: onChange,
-
-                // give the indicator a decoration (color and border radius)
-                indicator: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(
-                    8.0,
-                  ),
-                ),
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.black,
-                tabs: const [
-                  Tab(
-                    text: 'Local',
-                  ),
-                  Tab(
-                    text: 'Entrega',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  // first tab bar view widget
-                  page1,
-                  page2
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:snacks_app/services/firebase/database.dart';
 
 class OrdersApiServices {
   final db = FirebaseDataBase();
+  final auth = FirebaseAuth.instance;
   List<dynamic> days = [
     {"date": "2022-05-22 08:35:39", "count": 23, "amount": 2.300},
     {"date": "2022-05-24 08:35:39", "count": 23, "amount": 2.300},
@@ -84,12 +86,11 @@ class OrdersApiServices {
         collection: "orders", data: data);
   }
 
-  Future<dynamic> getOrdersByUserId(String id) async {
-    return await FirebaseFirestore.instance
+  Stream<QuerySnapshot<Map<String, dynamic>>> getOrdersByUserId(String id) {
+    return FirebaseFirestore.instance
         .collection("orders")
-        .where("user_uid", isEqualTo: id)
-        .get()
-        .catchError((error) => print("Failed to add user: $error"));
+        .where("user_uid", isEqualTo: auth.currentUser!.uid)
+        .snapshots();
   }
 
   Future<dynamic> getOrdersByRestaurantId(String id) async {}

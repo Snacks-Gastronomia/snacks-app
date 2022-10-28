@@ -85,7 +85,7 @@ class PhoneNumberScreen extends StatelessWidget {
           child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
             return CustomSubmitButton(
                 onPressedAction: () async => await sendPhoneCodeOtp(),
-                label: "Enviar",
+                label: "Enviar código",
                 loading_label: "Enviando",
                 loading: state.status == AppStatus.loading);
           }),
