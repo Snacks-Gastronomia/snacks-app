@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/views/authentication/add_address_screen.dart';
 import 'package:snacks_app/views/authentication/add_name_screen.dart';
-import 'package:snacks_app/views/authentication/restaurant_auth_screen.dart';
 import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
 import 'package:snacks_app/views/home/orders_screen.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
@@ -19,6 +18,9 @@ import 'package:snacks_app/views/authentication/scan_qrcode_screen.dart';
 import 'package:snacks_app/views/authentication/otp_screen.dart';
 import 'package:snacks_app/views/authentication/phone_number_screen.dart';
 import 'package:snacks_app/views/authentication/start_screen.dart';
+// import 'package:snacks_app/views/review/main.dart';
+import 'package:snacks_app/views/review/review_screen.dart';
+import 'package:snacks_app/views/review/state/cubit/review_cubit.dart';
 
 class AppWidget extends StatelessWidget {
   AppWidget({Key? key}) : super(key: key);
@@ -38,6 +40,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider<CartCubit>(
           create: (context) => CartCubit(),
+        ),
+        BlocProvider<ReviewCubit>(
+          create: (context) => ReviewCubit(),
         ),
       ],
       key: UniqueKey(),
@@ -63,6 +68,7 @@ class AppWidget extends StatelessWidget {
           AppRoutes.cart: (context) => const MyCartScreen(),
           AppRoutes.orders: (context) => const OrdersScreen(),
           AppRoutes.home: (context) => HomeScreen(),
+          AppRoutes.feedback: (context) => ReviewScreen()
           // AppRoutes.restaurantAuth: (context) =>
           //     const RestaurantAuthenticationScreen(),
         },

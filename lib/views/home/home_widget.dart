@@ -88,7 +88,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
               IconButton(
                   onPressed: () => auth.signOut().then((value) =>
                       Navigator.pushReplacementNamed(context, AppRoutes.start)),
-                  icon: Icon(Icons.power_off))
+                  icon: const Icon(Icons.power_off))
               // auth.currentUser!.isAnonymous
               //     ? const SizedBox(width: 20)
               //     : IconButton(

@@ -19,6 +19,7 @@ class AppRoutes {
   static String get finance => '/finance';
   static String get newEmployee => '/new-employee';
   static String get addBankAccount => '/add-bank-account';
+  static String get feedback => '/feedback';
 
   // '/': (context) => const StartScreen(),
   // '/': (context) => const SelectRestaurantScreen(),

@@ -38,10 +38,11 @@ class PaymentScreen extends StatelessWidget {
     }
 
     BlocProvider.of<CartCubit>(context).makeOrder(method);
-    AppModal().showIOSModalBottomSheet(
+    modal.showIOSModalBottomSheet(
         context: context,
         drag: false,
         content: SuccessScreen(
+            feedback: true,
             title: "Pedido realizado!",
             backButton: true,
             description: description));
