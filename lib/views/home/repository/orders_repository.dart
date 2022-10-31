@@ -5,7 +5,12 @@ class OrdersRepository {
   final services = OrdersApiServices();
 
   Future<dynamic> createOrder(Map<String, dynamic> data) async {
-    await services.createOrder(data);
+    return await services.createOrder(data);
+  }
+
+  Future<dynamic> createItemstoOrder(
+      List<Map<String, dynamic>> data, String doc_id) async {
+    return await services.createItemstoOrder(data, doc_id);
   }
 
   Future fetchOrdersByRestaurantId(String id) async {

@@ -1,30 +1,42 @@
 import 'dart:convert';
 
 import 'package:snacks_app/models/item_model.dart';
+import 'package:snacks_app/utils/enums.dart';
 
 class Order {
   final Item item;
   int amount;
+  String status;
   String observations;
-  // final String restaurant_id;
+
   Order({
     required this.item,
     this.amount = 1,
+    this.status = "",
     required this.observations,
-    // required this.restaurant_id,
-  });
+  }) {
+    status = OrderStatus.waiting_payment.name;
+  }
+  // final String restaurant_id;
+  // Order({
+  //   required this.item,
+  //   this.amount = 1,
+  //   this.status,
+  //   required this.observations,
+  //   // required this.restaurant_id,
+  // });
 
   Order copyWith({
     Item? item,
     int? amount,
     String? observations,
-    // String? restaurant_id,
+    String? status,
   }) {
     return Order(
       item: item ?? this.item,
       amount: amount ?? this.amount,
       observations: observations ?? this.observations,
-      // restaurant_id: restaurant_id ?? this.restaurant_id,
+      status: status ?? this.status,
     );
   }
 
@@ -33,7 +45,7 @@ class Order {
       'item': item.toMap(),
       'amount': amount,
       'observations': observations,
-      // 'restaurant_id': restaurant_id,
+      'status': status,
     };
   }
 
@@ -42,7 +54,7 @@ class Order {
       item: Item.fromMap(map['item']),
       amount: map['amount']?.toInt() ?? 0,
       observations: map['observations'] ?? '',
-      // restaurant_id: map['restaurant_id'] ?? '',
+      status: map['status'] ?? '',
     );
   }
 

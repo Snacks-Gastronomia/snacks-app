@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
@@ -112,14 +113,16 @@ class CartCubit extends Cubit<CartState> {
     emit(state.copyWith(total: total));
   }
 
+  get getStorage async => storage.readAll(
+      aOptions: const AndroidOptions(
+        encryptedSharedPreferences: true,
+      ),
+      iOptions: const IOSOptions(
+        accessibility: KeychainAccessibility.first_unlock,
+      ));
   void makeOrder(String method) async {
-    final dataStorage = await storage.readAll(
-        aOptions: const AndroidOptions(
-          encryptedSharedPreferences: true,
-        ),
-        iOptions: const IOSOptions(
-          accessibility: KeychainAccessibility.first_unlock,
-        ));
+    final dataStorage = await getStorage;
+
     bool isDelivery = !auth.currentUser!.isAnonymous;
     var status = method == "Cartão Snacks" || isDelivery
         ? OrderStatus.order_in_progress.name
@@ -128,8 +131,8 @@ class CartCubit extends Cubit<CartState> {
     final now = DateTime.now();
     DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
     Map<String, dynamic> data = {
-      "orders":
-          FieldValue.arrayUnion(state.cart.map((e) => e.toMap()).toList()),
+      // "orders":
+      //     FieldValue.arrayUnion(state.cart.map((e) => e.toMap()).toList()),
       "user_uid": auth.currentUser!.uid,
       "payment_method": method,
       "value": state.total,
@@ -141,7 +144,10 @@ class CartCubit extends Cubit<CartState> {
         ? {"address": dataStorage["address"]}
         : {"table": dataStorage["table"]});
 
-    await repository.createOrder(data);
+    var response = await repository.createOrder(data);
+
+    var items = state.cart.map((e) => e.toMap()).toList();
+    await repository.createItemstoOrder(items, response);
     clearCart();
   }
 

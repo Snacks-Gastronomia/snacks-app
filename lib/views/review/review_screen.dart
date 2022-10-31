@@ -103,7 +103,7 @@ class ObservationWidget extends StatelessWidget {
               // Navigator.pop(context);
               controller.nextPage(
                   duration: Duration(milliseconds: 500),
-                  curve: Curves.bounceInOut);
+                  curve: Curves.easeInOut);
             },
             label: "Feito",
             loading_label: "",
