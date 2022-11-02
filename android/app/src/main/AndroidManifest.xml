@@ -2,7 +2,7 @@
     package="com.snacks.snacks_app">
    <application
       android:requestLegacyExternalStorage="true"
-        android:label="snacks_app"
+        android:label="Snacks"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

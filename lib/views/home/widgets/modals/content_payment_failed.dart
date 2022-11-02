@@ -15,6 +15,7 @@ class PaymentFailedContent extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text('Não foi possível realizar o pagamento!',
               style: AppTextStyles.semiBold(26, color: Colors.black)),
