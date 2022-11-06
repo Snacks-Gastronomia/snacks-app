@@ -16,25 +16,15 @@ class ScanQrCodeScreen extends StatefulWidget {
 }
 
 class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
-  // Barcode? result;
-
   late MobileScannerController controller;
 
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  // @override
-  // void reassemble() {
-  //   super.reassemble();
-  //   if (Platform.isAndroid) {}
-  //   // controller!.stop();
-  //   // controller!.d();
-  // }
-
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     controller = MobileScannerController();
+    super.initState();
   }
 
   @override
@@ -59,7 +49,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
-                      primary: Colors.white,
+                      backgroundColor: Colors.white,
                       padding: EdgeInsets.zero,
                       minimumSize: const Size(41, 41)),
                   child: const Icon(
@@ -70,19 +60,6 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
             ],
           ),
         ),
-        // AppBar(
-        //   elevation: 0,
-        //   leading: ElevatedButton(
-        //       onPressed: () {},
-        //       style: ElevatedButton.styleFrom(
-        //           padding: EdgeInsets.zero,
-        //           primary: Colors.white,
-        //           fixedSize: const Size(41, 41)),
-        //       child: const Icon(
-        //         Icons.arrow_back_ios_rounded,
-        //         color: Colors.black,
-        //       )),
-        // ),
         backgroundColor: Colors.black,
         body: Padding(
           padding:
@@ -106,14 +83,18 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                   ),
                 ],
               ),
-              // Container(
-              //   width: 300,
-              //   height: 300,
-              //   margin: const EdgeInsets.only(bottom: 50),
-              //   // color: Colors.white24,
-              //   child:
-              // ),
-              buildQrView(context),
+              QRCodeBuilder(
+                  controller: controller,
+                  onDetect: (barcode, args) async {
+                    if (barcode.rawValue == null) {
+                      debugPrint('Failed to scan Barcode');
+                    } else {
+                      final String code = barcode.rawValue!;
+
+                      debugPrint('Barcode found! $code');
+                      Navigator.pop(context, code);
+                    }
+                  }),
               const SizedBox(height: 35),
               SizedBox(
                 height: 60,
@@ -128,9 +109,21 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
       ),
     );
   }
+}
 
-  Widget buildQrView(BuildContext context) {
+class QRCodeBuilder extends StatelessWidget {
+  const QRCodeBuilder({
+    Key? key,
+    required this.controller,
+    required this.onDetect,
+  }) : super(key: key);
+  final MobileScannerController controller;
+  // final modal = AppModal();
+  final dynamic Function(Barcode, MobileScannerArguments?) onDetect;
+  @override
+  Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.center,
       children: [
         SizedBox(
           height: 350,
@@ -142,16 +135,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                 child: MobileScanner(
                     allowDuplicates: false,
                     controller: controller,
-                    onDetect: (barcode, args) async {
-                      if (barcode.rawValue == null) {
-                        debugPrint('Failed to scan Barcode');
-                      } else {
-                        final String code = barcode.rawValue!;
-
-                        debugPrint('Barcode found! $code');
-                        Navigator.pop(context, code);
-                      }
-                    })),
+                    onDetect: onDetect)),
           ),
         ),
         SizedBox(
@@ -166,25 +150,4 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
       ],
     );
   }
-
-//**
-
-// */
-  //   QRView(
-  //       key: qrKey,
-  //       onQRViewCreated: (QRViewController qrViewController) {
-  //         setState(() => controller = qrViewController);
-
-  //         qrViewController.scannedDataStream.listen((barcode) async {});
-  //       },
-  //       // overlayMargin: const EdgeInsets.all(10),
-
-  //       overlay: QrScannerOverlayShape(
-  //           overlayColor: Colors.black,
-  //           borderRadius: 10,
-  //           borderColor: Colors.white,
-  //           borderLength: 30,
-  //           borderWidth: 15,
-  //           cutOutSize: MediaQuery.of(context).size.width * 0.85));
-  // }
 }

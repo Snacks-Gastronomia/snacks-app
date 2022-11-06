@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meta/meta.dart';
 import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/home/repository/items_repository.dart';
 import 'package:snacks_app/services/items_service.dart';
 
@@ -13,7 +14,7 @@ class HomeCubit extends Cubit<HomeState> {
   final ItemsRepository itemsRepository =
       ItemsRepository(services: ItemsApiServices());
   final storage = const FlutterSecureStorage();
-
+  final appStorage = AppStorage.initStorage;
   HomeCubit() : super(HomeState.initial()) {
     fetchItems();
   }
@@ -46,6 +47,12 @@ class HomeCubit extends Cubit<HomeState> {
       debugPrint("error");
       emit(state.copyWith(status: AppStatus.error));
     }
+  }
+
+  Future<String?> readStorage(String item) async {
+    var storage = await appStorage.readAll();
+
+    return storage[item];
   }
 
   Future<void> fetchItems() async {

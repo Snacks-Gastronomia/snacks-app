@@ -71,13 +71,9 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
         preferredSize: const Size.fromHeight(70.0),
         child: Container(
           padding: const EdgeInsets.only(top: 15, left: 20, right: 20),
-          // color: Colors.black.withOpacity(.8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(
-                width: 20,
-              ),
               SvgPicture.asset(
                 AppImages.snacks,
                 width: 140,
@@ -85,10 +81,45 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
               const SizedBox(
                 width: 20,
               ),
-              IconButton(
+
+              TextButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade100,
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.fromLTRB(15, 0, 10, 0)),
                   onPressed: () => auth.signOut().then((value) =>
                       Navigator.pushReplacementNamed(context, AppRoutes.start)),
-                  icon: const Icon(Icons.power_off))
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FutureBuilder<String?>(
+                          future:
+                              context.read<HomeCubit>().readStorage("table"),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Text(
+                                'Mesa ${snapshot.data.toString()}',
+                                style: AppTextStyles.regular(14,
+                                    color: Colors.black54),
+                              );
+                            }
+                            return SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                color: AppColors.highlight,
+                              ),
+                            );
+                          }),
+                      const SizedBox(width: 7),
+                      Icon(Icons.cached_rounded,
+                          size: 18, color: AppColors.highlight)
+                    ],
+                  ))
+              // IconButton(
+              //     onPressed: () =>
+              //     icon: const Icon(Icons.power_off))
               // auth.currentUser!.isAnonymous
               //     ? const SizedBox(width: 20)
               //     : IconButton(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:snacks_app/core/app.routes.dart';
 
 import 'package:snacks_app/core/app.text.dart';
@@ -39,16 +40,33 @@ class StartScreen extends StatelessWidget {
                       icon: Icons.qr_code_scanner_rounded,
                       action: () async {
                         var cubit = context.read<AuthCubit>();
-                        final code = await Navigator.pushNamed(
-                            context, AppRoutes.scanQrCode);
-                        cubit.changeStatus(AppStatus.loading);
-                        print(code);
-                        auth.signIn(table: code.toString()).then((value) async {
-                          cubit.changeStatus(AppStatus.loaded);
-                          await Navigator.of(context).pushNamedAndRemoveUntil(
-                              AppRoutes.home,
-                              ModalRoute.withName(AppRoutes.start));
-                        });
+                        var permission = await Permission.camera.request();
+                        if (permission.isGranted) {
+                          // ignore: use_build_context_synchronously
+                          final code = await Navigator.pushNamed(
+                              context, AppRoutes.scanQrCode);
+                          cubit.changeStatus(AppStatus.loading);
+                          print(code);
+                          try {
+                            int? table = int.tryParse(code.toString());
+                            print(table);
+                            if (table != null && (table >= 1 && table <= 100)) {
+                              auth
+                                  .signIn(table: code.toString())
+                                  .then((value) async {
+                                assert(value != null);
+                                cubit.changeStatus(AppStatus.loaded);
+                                await Navigator.of(context)
+                                    .pushNamedAndRemoveUntil(AppRoutes.home,
+                                        ModalRoute.withName(AppRoutes.start));
+                              });
+                            } else {
+                              cubit.changeStatus(AppStatus.loaded);
+                            }
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
                       },
                       dark: true,
                       title: "Está no snacks?",
