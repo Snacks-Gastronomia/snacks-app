@@ -38,10 +38,11 @@ class PaymentScreen extends StatelessWidget {
     }
 
     BlocProvider.of<CartCubit>(context).makeOrder(method);
-    AppModal().showIOSModalBottomSheet(
+    modal.showIOSModalBottomSheet(
         context: context,
         drag: false,
         content: SuccessScreen(
+            feedback: true,
             title: "Pedido realizado!",
             backButton: true,
             description: description));
@@ -162,6 +163,7 @@ class PaymentScreen extends StatelessWidget {
                             onTap: () async {
                               var cubit = context.read<CartCubit>();
                               double orderValue = cubit.state.total;
+                              dynamic dataStorage = cubit.getStorage;
                               final card_code = await Navigator.pushNamed(
                                   context, AppRoutes.scanCard);
 
@@ -189,6 +191,7 @@ class PaymentScreen extends StatelessWidget {
                                   modal.showModalBottomSheet(
                                       context: context,
                                       content: PaymentSuccessContent(
+                                          customer: card.get("name"),
                                           order_value: NumberFormat.currency(
                                                   locale: "pt", symbol: r"R$ ")
                                               .format(orderValue),

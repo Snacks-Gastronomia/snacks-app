@@ -11,11 +11,13 @@ class PaymentSuccessContent extends StatelessWidget {
     Key? key,
     required this.order_value,
     required this.rest_value,
+    required this.customer,
     required this.action,
   }) : super(key: key);
 
   final String order_value;
   final String rest_value;
+  final String customer;
   final VoidCallback action;
 
   @override
@@ -39,11 +41,11 @@ class PaymentSuccessContent extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Número do pedido',
+                          'Cliente',
                           style:
                               AppTextStyles.medium(16, color: Colors.black38),
                         ),
-                        Text('#0002',
+                        Text(customer,
                             style: AppTextStyles.medium(20,
                                 color: Colors.black87)),
                       ]),
