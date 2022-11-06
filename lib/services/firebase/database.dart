@@ -40,6 +40,16 @@ class FirebaseDataBase {
         .catchError((error) => print("Failed to add user: $error"));
   }
 
+  Future<QuerySnapshot<Map<String, dynamic>>> searchQuery(
+      {required String collection, required String query}) async {
+    return await FirebaseFirestore.instance
+        .collection(collection)
+        .where('menu', isGreaterThanOrEqualTo: query)
+        .where('menu', isLessThanOrEqualTo: '$query\uf8ff')
+        .get()
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
   Future<DocumentSnapshot<Map<String, dynamic>>?> readDocumentToCollectionById(
       {required String collection, required String id}) async {
     try {
