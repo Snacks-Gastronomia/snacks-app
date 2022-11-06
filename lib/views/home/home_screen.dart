@@ -33,9 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         extendBody: true,
         bottomNavigationBar: Container(
-          margin: const EdgeInsets.fromLTRB(20, 0, 15, 15),
+          // margin: const EdgeInsets.fromLTRB(20, 0, 15, 15),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
             color: Colors.white,
             boxShadow: [
               BoxShadow(

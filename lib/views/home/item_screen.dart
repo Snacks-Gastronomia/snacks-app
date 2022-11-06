@@ -35,30 +35,7 @@ class _ItemScreenState extends State<ItemScreen> {
     } else {
       context.read<ItemScreenCubit>().insertItem(widget.order, true);
     }
-    // if (item != null) {
-    //   setState(() {
-    //     updateItem = true;
-    //     widget.order = item;
-    //   });
-    // }
-    // amount = widget.order.amount;
   }
-
-  // void increment() {
-  //   setState(() {
-  //     amount++;
-  //     widget.order.amount = amount;
-  //   });
-  // }
-
-  // void decrement() {
-  //   setState(() {
-  //     if (amount > 1) {
-  //       amount--;
-  //       widget.order.amount = amount;
-  //     }
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +161,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                         shape: const CircleBorder(
                                             side: BorderSide(
                                                 color: Colors.white, width: 2)),
-                                        primary: Color(0xffF6F6F6),
+                                        backgroundColor: Color(0xffF6F6F6),
                                         shadowColor: Colors.grey.shade200,
                                         fixedSize: const Size(45, 45),
                                         // elevation: 0
@@ -212,7 +189,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                                 side: BorderSide(
                                                     color: Colors.white,
                                                     width: 2)),
-                                            primary: Color(0xffF6F6F6),
+                                            backgroundColor: Color(0xffF6F6F6),
                                             // elevation: 0,
                                             shadowColor: Colors.grey.shade200,
                                             fixedSize: const Size(45, 45)),
