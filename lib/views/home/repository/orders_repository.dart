@@ -4,7 +4,7 @@ import 'package:snacks_app/services/orders_service.dart';
 class OrdersRepository {
   final services = OrdersApiServices();
 
-  Future<dynamic> createOrder(Map<String, dynamic> data) async {
+  Future<dynamic> createOrder(List<Map<String, dynamic>> data) async {
     return await services.createOrder(data);
   }
 

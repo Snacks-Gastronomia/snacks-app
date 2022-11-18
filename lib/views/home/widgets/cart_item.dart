@@ -38,7 +38,8 @@ class CartItemWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(8)),
-                    child: order.item.image_url == null
+                    child: order.item.image_url == null ||
+                            order.item.image_url!.isEmpty
                         ? Center(
                             child: SvgPicture.asset(
                               AppImages.snacks,

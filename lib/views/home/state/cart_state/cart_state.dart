@@ -1,5 +1,25 @@
 part of 'cart_cubit.dart';
 
+// class RestaurantOrder {
+//   final List<Order> items;
+//   final String restaurant_id;
+//   final String status;
+
+//   RestaurantOrder(this.items, this.restaurant_id, this.status);
+
+//   RestaurantOrder copyWith({
+//     List<Order>? items,
+//     String? restaurant_id,
+//     String? status,
+//   }) {
+//     return RestaurantOrder(
+//       items ?? this.items,
+//       restaurant_id ?? this.restaurant_id,
+//       status ?? this.status,
+//     );
+//   }
+// }
+
 class CartState {
   final List<Order> cart;
   final String payment_method;

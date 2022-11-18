@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class FirebaseDataBase {
   final database = FirebaseFirestore.instance;
@@ -59,6 +60,51 @@ class FirebaseDataBase {
           .get()
           .catchError((error) => print("Failed to add user: $error"));
     } catch (e) {}
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>?> readSnacksCard(
+      {required String code}) async {
+    try {
+      var now = DateTime.now();
+
+      var month_id = "${DateFormat.MMMM().format(now)}-${now.year}";
+      var day_id = "day-${now.day}";
+
+      var data = await FirebaseFirestore.instance
+          .collection("snacks_cards")
+          .doc(month_id)
+          .collection("days")
+          .doc(day_id)
+          .collection("recharges")
+          .where("active", isEqualTo: true)
+          .where("card", isEqualTo: code)
+          .get();
+
+      return data.docs.isNotEmpty ? data.docs[0] : null;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> updateSnacksCard(
+      {required String doc_id, required Map<String, dynamic> data}) async {
+    try {
+      var now = DateTime.now();
+
+      var month_id = "${DateFormat.MMMM().format(now)}-${now.year}";
+      var day_id = "day-${now.day}";
+
+      return await FirebaseFirestore.instance
+          .collection("snacks_cards")
+          .doc(month_id)
+          .collection("days")
+          .doc(day_id)
+          .collection("recharges")
+          .doc(doc_id)
+          .update(data);
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> updateDocumentToCollectionById(

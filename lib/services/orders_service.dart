@@ -6,10 +6,20 @@ import 'package:snacks_app/services/firebase/database.dart';
 class OrdersApiServices {
   final db = FirebaseDataBase();
   final auth = FirebaseAuth.instance;
+  final firebase = FirebaseFirestore.instance;
 
-  Future<dynamic> createOrder(Map<String, dynamic> data) async {
-    return await db.createDocumentToCollection(
-        collection: "orders", data: data);
+  Future<dynamic> createOrder(List<Map<String, dynamic>> data) async {
+    // return await db.createDocumentToCollection(
+    //     collection: "orders", data: data);
+    var ref = firebase.collection("orders");
+
+    var batch = firebase.batch();
+    for (var element in data) {
+      var docRef = ref.doc(); //automatically generate unique id
+      batch.set(docRef, element);
+    } // await FirebaseFirestore.instance
+
+    await batch.commit();
   }
 
   Future<dynamic> createItemstoOrder(

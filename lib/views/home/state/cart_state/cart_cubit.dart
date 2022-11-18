@@ -7,11 +7,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
+
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/views/home/repository/orders_repository.dart';
 
 part 'cart_state.dart';
+
+class DataOrder {
+  List<String> done;
+  List<Map<String, dynamic>> orders;
+  DataOrder({
+    required this.done,
+    required this.orders,
+  });
+}
 
 class CartCubit extends Cubit<CartState> {
   final repository = OrdersRepository();
@@ -120,34 +130,91 @@ class CartCubit extends Cubit<CartState> {
       iOptions: const IOSOptions(
         accessibility: KeychainAccessibility.first_unlock,
       ));
+
   void makeOrder(String method) async {
     final dataStorage = await getStorage;
 
     bool isDelivery = !auth.currentUser!.isAnonymous;
     var status = method == "Cartão Snacks" || isDelivery
-        ? OrderStatus.order_in_progress.name
+        ? OrderStatus.ready_to_start.name
         : OrderStatus.waiting_payment.name;
 
     final now = DateTime.now();
     DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
+    List<String> restaurants = [];
+    state.cart.map((e) {
+      if (!restaurants.contains(e.item.restaurant_id)) {
+        restaurants.add(e.item.restaurant_id);
+      }
+    });
+
     Map<String, dynamic> data = {
-      // "orders":
-      //     FieldValue.arrayUnion(state.cart.map((e) => e.toMap()).toList()),
+      // "items": FieldValue.arrayUnion(state.cart.map((e) => e.toMap()).toList()),
       "user_uid": auth.currentUser!.uid,
       "payment_method": method,
       "value": state.total,
+      // "restaurants": restaurants,
       "isDelivery": isDelivery,
       "status": status,
       "created_at": DateTime.now(),
     };
+
     data.addAll(isDelivery
         ? {"address": dataStorage["address"]}
         : {"table": dataStorage["table"]});
 
-    var response = await repository.createOrder(data);
+    DataOrder dataTotal = DataOrder(done: [], orders: []);
+    // ignore: iterable_contains_unrelated_type
+    for (var e in state.cart) {
+      if (dataTotal.done.contains(e.item.restaurant_id)) {
+        dataTotal.orders.map((el) {
+          if (el["restaurant"] == e.item.restaurant_id) {
+            el["items"] = [...el["items"], e.toMap()];
+            el["value"] += e.item.value;
+            return el;
+          }
+          return el;
+        }).toList();
+      } else {
+        dataTotal.done = [...dataTotal.done, e.item.restaurant_id];
+        dataTotal.orders.add({
+          "items": [e.toMap()],
+          "user_uid": auth.currentUser!.uid,
+          "payment_method": method,
+          "value": e.item.value,
+          "restaurant": e.item.restaurant_id,
+          "isDelivery": isDelivery,
+          "status": status,
+          "created_at": DateTime.now(),
+          if (isDelivery)
+            "address": dataStorage["address"]
+          else
+            "table": dataStorage["table"]
+        });
+      }
+    }
+    // List<dynamic> listRestaurantOrders = [];
+    // List<dynamic> added = [];
+    await repository.createOrder(dataTotal.orders);
+    // state.cart.map((e) {
+    //   e.item.restaurant_id;
 
-    var items = state.cart.map((e) => e.toMap()).toList();
-    await repository.createItemstoOrder(items, response);
+    //   if (added.contains(e.item.restaurant_id)) {
+    //     var data = listRestaurantOrders.singleWhere(
+    //         (element) => element.restaurant_id == e.item.restaurant_id);
+    //     data.items = [...data.items, e.item];
+
+    //   } else {
+    //   var data =
+
+    //     added.add(e.item.restaurant_id);
+
+    //   }
+    //   // listRestaurantOrders.singleWhere((element) => element.restaurant_id == e.item.restaurant_id);
+    // });
+
+    // var items = state.cart.map((e) => e.toMap()).toList();
+    // await repository.createItemstoOrder(items, response);
     clearCart();
   }
 

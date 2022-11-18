@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 
 enum AppStatus { initial, loading, loaded, editing, error }
 
-enum OrderStatus { waiting_payment, order_in_progress, done, invalid }
+enum OrderStatus {
+  waiting_payment,
+  ready_to_start,
+  order_in_progress,
+  done,
+  invalid
+}
 
 extension ParseToString on OrderStatus {
   // OrderStatus isEqual(dynamic value) {

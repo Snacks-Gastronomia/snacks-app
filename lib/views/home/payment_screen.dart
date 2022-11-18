@@ -168,21 +168,17 @@ class PaymentScreen extends StatelessWidget {
                                   context, AppRoutes.scanCard);
 
                               cubit.changeStatus(AppStatus.loading);
-                              final card =
-                                  await fb.readDocumentToCollectionById(
-                                      collection: "snacks_card",
-                                      id: card_code.toString());
+                              final card = await fb.readSnacksCard(
+                                  code: card_code.toString());
 
                               if (card != null && card.exists) {
-                                double cardBudget =
-                                    double.parse(card.get("value"));
+                                double cardBudget = card.get("value");
 
                                 if (orderValue <= cardBudget - 5) {
                                   var result = cardBudget - orderValue;
                                   try {
-                                    await fb.updateDocumentToCollectionById(
-                                        collection: "snacks_card",
-                                        id: card_code.toString(),
+                                    await fb.updateSnacksCard(
+                                        doc_id: card.id,
                                         data: {"value": result.toString()});
                                   } catch (e) {
                                     print(e);

@@ -61,7 +61,7 @@ class OrdersScreen extends StatelessWidget {
                               time: time,
                               total: item["value"],
                               method: item["payment_method"],
-                              items: item["orders"]),
+                              items: item["items"]),
                         );
                       });
                 }

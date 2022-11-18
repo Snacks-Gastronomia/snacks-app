@@ -6,9 +6,8 @@ import 'package:snacks_app/utils/enums.dart';
 class Order {
   final Item item;
   int amount;
-  String status;
   String observations;
-
+  String status;
   Order({
     required this.item,
     this.amount = 1,
@@ -36,7 +35,7 @@ class Order {
       item: item ?? this.item,
       amount: amount ?? this.amount,
       observations: observations ?? this.observations,
-      status: status ?? this.status,
+      // status: status ?? this.status,
     );
   }
 
@@ -45,7 +44,7 @@ class Order {
       'item': item.toMap(),
       'amount': amount,
       'observations': observations,
-      'status': status,
+      // 'status': status,
     };
   }
 
@@ -54,7 +53,7 @@ class Order {
       item: Item.fromMap(map['item']),
       amount: map['amount']?.toInt() ?? 0,
       observations: map['observations'] ?? '',
-      status: map['status'] ?? '',
+      // status: map['status'] ?? '',
     );
   }
 

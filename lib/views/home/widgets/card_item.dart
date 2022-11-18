@@ -40,7 +40,8 @@ class CardItemWidget extends StatelessWidget {
               children: [
                 SizedBox(
                   height: 100,
-                  child: item.image_url == null
+                  width: double.maxFinite,
+                  child: item.image_url == null || item.image_url!.isEmpty
                       ? Center(
                           child: SvgPicture.asset(
                             AppImages.snacks,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:snacks_app/models/ingredient_model.dart';
 
 class Item {
@@ -12,6 +13,7 @@ class Item {
   final String? category;
   final String? measure;
   final String? image_url;
+  final bool active;
   // final Map<dynamic, String>? ingredients;
   final List<Ingredient> ingredients;
 
@@ -25,6 +27,7 @@ class Item {
     this.category,
     this.measure,
     this.image_url,
+    required this.active,
     this.ingredients = const [],
   });
 
@@ -38,6 +41,7 @@ class Item {
     String? category,
     String? measure,
     String? image_url,
+    bool? active,
     List<Ingredient>? ingredients,
   }) {
     return Item(
@@ -51,6 +55,7 @@ class Item {
       image_url: image_url ?? this.image_url,
       ingredients: ingredients ?? this.ingredients,
       time: time ?? this.time,
+      active: active ?? this.active,
     );
   }
 
@@ -63,6 +68,7 @@ class Item {
       'restaurant_id': restaurant_id,
       'category': category,
       'measure': measure,
+      'active': active,
       'time': time,
       'image_url': image_url,
       'ingredients': ingredients,
@@ -72,6 +78,7 @@ class Item {
   factory Item.fromMap(Map<String, dynamic> map) {
     return Item(
       id: map['id'],
+      active: map['active'],
       title: map['title'] ?? '',
       time: map['time'] ?? 0,
       description: map['description'] ?? '',
@@ -99,10 +106,30 @@ class Item {
         title.hashCode ^
         description.hashCode ^
         value.hashCode ^
+        time.hashCode ^
         restaurant_id.hashCode ^
         category.hashCode ^
         measure.hashCode ^
         image_url.hashCode ^
+        active.hashCode ^
         ingredients.hashCode;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Item &&
+        other.id == id &&
+        other.title == title &&
+        other.description == description &&
+        other.value == value &&
+        other.time == time &&
+        other.restaurant_id == restaurant_id &&
+        other.category == category &&
+        other.measure == measure &&
+        other.image_url == image_url &&
+        other.active == active &&
+        listEquals(other.ingredients, ingredients);
   }
 }
