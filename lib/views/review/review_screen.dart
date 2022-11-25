@@ -34,6 +34,7 @@ class ReviewScreen extends StatelessWidget {
                     title: question.title,
                     values: question.values,
                     onSubmit: (value) {
+                      print(value);
                       context
                           .read<ReviewCubit>()
                           .changeQuestionValue(question.id, value);
