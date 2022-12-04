@@ -49,6 +49,7 @@ class HomeState {
 
     return other is HomeState &&
         listEquals(other.items, items) &&
+        category == other.category &&
         status == other.status &&
         listEquals(other.menu, menu) &&
         lastDocument == other.lastDocument &&
@@ -81,7 +82,7 @@ class HomeState {
       status: status ?? this.status,
       search: search ?? this.search,
       menu: menu ?? this.menu,
-      category: category ?? this.category,
+      category: category,
       error: error ?? this.error,
     );
   }

@@ -16,6 +16,23 @@ class ItemsRepository {
     }
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchItemsByRestaurant(
+      String id, last) {
+    try {
+      return services.getMenuByRestaurant(id, last);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchRestaurants() {
+    try {
+      return services.getRestaurants();
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
   Stream<QuerySnapshot<Map<String, dynamic>>> searchQuery(
       String query, String? category) {
     try {

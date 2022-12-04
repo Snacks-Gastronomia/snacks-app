@@ -40,9 +40,18 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   void didChangeDependencies() {
     controller.addListener(
       () {
+        var state = context.read<HomeCubit>().state;
         if (controller.position.maxScrollExtent == controller.offset &&
-            context.read<HomeCubit>().state.status == AppStatus.loaded) {
-          context.read<HomeCubit>().fetchItems();
+            state.status == AppStatus.loaded) {
+          if (state.category != null) {
+            // print("object 1");
+            context
+                .read<HomeCubit>()
+                .fetchItemsByRestaurants(state.category ?? "", false);
+          } else {
+            print("object 2");
+            context.read<HomeCubit>().fetchItems();
+          }
         }
       },
     );
@@ -170,9 +179,82 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
               //   'Itens populares',
               //   style: AppTextStyles.medium(18),
               // ),
-              // const SizedBox(
-              //   height: 15,
-              // ),
+              SizedBox(
+                height: 50,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 7),
+                  child: FutureBuilder(
+                      future: context.read<HomeCubit>().fetchRestaurants(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return BlocBuilder<HomeCubit, HomeState>(
+                            builder: (context, state) {
+                              return ListView.separated(
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
+                                  width: 10,
+                                ),
+                                itemCount: snapshot.data?.docs.length ?? 0,
+                                physics: const BouncingScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  var item = snapshot.data?.docs[index];
+                                  return GestureDetector(
+                                    onTap: () => context
+                                        .read<HomeCubit>()
+                                        .fetchItemsByRestaurants(
+                                            item?.id ?? "", true),
+                                    child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 10),
+                                        decoration: BoxDecoration(
+                                            boxShadow: state.category ==
+                                                    item?.id
+                                                ? [
+                                                    BoxShadow(
+                                                        blurRadius: 15,
+                                                        spreadRadius: 0.5,
+                                                        // offset: O,
+                                                        color: AppColors
+                                                            .highlight
+                                                            .withOpacity(0.4))
+                                                  ]
+                                                : null,
+                                            color: state.category == item?.id
+                                                ? AppColors.highlight
+                                                : Colors.white,
+                                            border: state.category == item?.id
+                                                ? null
+                                                : Border.fromBorderSide(
+                                                    BorderSide(
+                                                        color: Colors
+                                                            .grey.shade300)),
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        child: Center(
+                                          child: Text(
+                                            item?.get("name"),
+                                            style: AppTextStyles.medium(
+                                              16,
+                                              color: state.category == item?.id
+                                                  ? Colors.white
+                                                  : Colors.grey.shade500,
+                                            ),
+                                          ),
+                                        )),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+                        return const SizedBox();
+                      }),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
               // PopularItemsWidget(ns: _navigator),
               // const SizedBox(
               //   height: 25,

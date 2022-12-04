@@ -19,6 +19,30 @@ class ItemsApiServices {
         .snapshots();
   }
 
+  Stream<QuerySnapshot<Map<String, dynamic>>> getMenuByRestaurant(
+      String id, document) {
+    try {
+      var ref = firebase
+          .collection("menu")
+          .where("restaurant_id", isEqualTo: id)
+          .where("active", isEqualTo: true)
+          .limit(8);
+      if (document != null) {
+        return ref.startAfterDocument(document).snapshots();
+      }
+      return ref.snapshots();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getRestaurants() {
+    return firebase
+        .collection("restaurants")
+        .where('category', isNotEqualTo: "snacks")
+        .get();
+  }
+
   Stream<QuerySnapshot<Map<String, dynamic>>> getItems(
       DocumentSnapshot? document,
       {int limit = 8}) {

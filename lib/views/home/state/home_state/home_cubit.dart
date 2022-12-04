@@ -53,14 +53,15 @@ class HomeCubit extends Cubit<HomeState> {
   void fetchItems() async {
     if (!state.listIsLastPage) {
       emit(state.copyWith(status: AppStatus.loading));
-      itemsRepository.fetchItems(state.lastDocument).distinct().listen((event) {
+      var last = state.menu.isEmpty ? null : state.lastDocument;
+      itemsRepository.fetchItems(last).distinct().listen((event) {
         if (event.docs.isNotEmpty) {
-          // print("fetch...");
           var data = event.docs.map<Map<String, dynamic>>((e) {
             var el = e.data();
             el.addAll({"id": e.id});
             return el;
           }).toList();
+          // print(data);
           emit(state.copyWith(
               lastDocument: event.docs.last, menu: [...state.menu, ...data]));
         } else {
@@ -69,6 +70,61 @@ class HomeCubit extends Cubit<HomeState> {
       });
       emit(state.copyWith(status: AppStatus.loaded));
       // print(state.status);
+    }
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchRestaurants() async {
+    return await itemsRepository.fetchRestaurants();
+  }
+
+  // onSelectRestaurant(String restaurant) async {
+  //   if (state.category == restaurant) {
+  //     emit(state.copyWith(category: ""));
+  //   } else {
+  //     emit(state.copyWith(category: restaurant));
+  //     fetchItemsByRestaurants(restaurant);
+  //   }
+  // }
+
+  void fetchItemsByRestaurants(String restaurant, bool onSelect) {
+    if (!state.listIsLastPage) {
+      if (state.category == restaurant) {
+        emit(state.copyWith(
+          category: null,
+          status: AppStatus.loading,
+          menu: [],
+        ));
+        fetchItems();
+      } else {
+        if (onSelect) {
+          emit(state.copyWith(
+            status: AppStatus.loading,
+            menu: [],
+            lastDocument: null,
+          ));
+        }
+        itemsRepository
+            .fetchItemsByRestaurant(restaurant, state.lastDocument)
+            .distinct()
+            .listen((event) {
+          if (event.docs.isNotEmpty || onSelect) {
+            var data = event.docs.map<Map<String, dynamic>>((e) {
+              var el = e.data();
+              el.addAll({"id": e.id});
+              return el;
+            }).toList();
+            emit(state.copyWith(
+                lastDocument: event.docs.isNotEmpty ? event.docs.last : null,
+                menu: data,
+                category: restaurant,
+                listIsLastPage: false));
+          } else {
+            emit(state.copyWith(listIsLastPage: true));
+          }
+        });
+        emit(state.copyWith(status: AppStatus.loaded));
+        // print(state.status);
+      }
     }
   }
 
