@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:group_button/group_button.dart';
 
 import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.text.dart';
@@ -14,44 +15,247 @@ class ReviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screens = [
+      FeedbackForm(
+        onSubmit: () {
+          controller.nextPage(
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeInOut);
+        },
+      ),
       ObservationWidget(controller: controller),
       const FinishedForm()
     ];
     return SafeArea(
       child: Scaffold(body: BlocBuilder<ReviewCubit, ReviewState>(
         builder: (context, state) {
+          // return FeedbackForm();
           return Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: PageView.builder(
-              controller: controller,
-              itemCount: state.questions.length + 2,
-              scrollDirection: Axis.vertical,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                if (index <= state.questions.length - 1) {
-                  var question = state.questions[index];
-                  return ReviewWidget(
-                    title: question.title,
-                    values: question.values,
-                    onSubmit: (value) {
-                      print(value);
-                      context
-                          .read<ReviewCubit>()
-                          .changeQuestionValue(question.id, value);
-                      controller.nextPage(
-                          duration: const Duration(milliseconds: 600),
-                          curve: Curves.easeInOut);
-                    },
-                  );
-                } else {
-                  return screens[index - 3];
-                }
-              },
-            ),
-          );
+              padding: const EdgeInsets.all(20.0),
+              child: PageView(
+                  controller: controller,
+                  // itemCount: state.questions.length + 2,
+                  scrollDirection: Axis.vertical,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    FeedbackForm(
+                      onSubmit: () {
+                        controller.nextPage(
+                            duration: const Duration(milliseconds: 600),
+                            curve: Curves.easeInOut);
+                      },
+                    ),
+                    ObservationWidget(controller: controller),
+                    const FinishedForm()
+                  ])
+              //   itemBuilder: (context, index) {
+              //     if (index <= state.questions.length - 1) {
+              //       var question = state.questions[index];
+              //       return ReviewWidget(
+              //         title: question.title,
+              //         values: question.values,
+              //         onSubmit: (value) {
+              //           print(value);
+              //           context
+              //               .read<ReviewCubit>()
+              //               .changeQuestionValue(question.id, value);
+              //           controller.nextPage(
+              //               duration: const Duration(milliseconds: 600),
+              //               curve: Curves.easeInOut);
+              //         },
+              //       );
+              //     } else {
+              //       return screens[index - 3];
+              //     }
+              //   },
+              // ),
+              );
         },
       )),
     );
+  }
+}
+
+class FeedbackForm extends StatelessWidget {
+  const FeedbackForm({
+    Key? key,
+    required this.onSubmit,
+  }) : super(key: key);
+  final VoidCallback onSubmit;
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ReviewCubit, ReviewState>(
+      builder: (context, state) {
+        return Column(
+          children: [
+            // Text('Nos ajude a melhorar!'),
+            const SizedBox(
+              height: 30,
+            ),
+            Center(
+              child: Text(
+                state.questions[0].title,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.semiBold(20),
+                // style: Theme.of(context).textTheme.headline,
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            CustomRadioButton(
+              onChange: (value) {
+                context
+                    .read<ReviewCubit>()
+                    .changeQuestionValue(state.questions[0].id, value);
+              },
+              size: Size(25, 25),
+              circle: true,
+              buttons: state.questions[0].values,
+            ),
+            const Spacer(),
+            Center(
+              child: Text(
+                state.questions[1].title,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.semiBold(20),
+                // style: Theme.of(context).textTheme.headline,
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            CustomRadioButton(
+              circle: true,
+              onChange: (value) {
+                context
+                    .read<ReviewCubit>()
+                    .changeQuestionValue(state.questions[1].id, value);
+              },
+              size: Size(30, 30),
+              buttons: state.questions[1].values,
+            ),
+            const Spacer(),
+            Center(
+              child: Text(
+                state.questions[2].title,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.semiBold(20),
+                // style: Theme.of(context).textTheme.headline,
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            CustomRadioButton(
+              circle: false,
+              onChange: (value) {
+                context
+                    .read<ReviewCubit>()
+                    .changeQuestionValue(state.questions[2].id, value);
+              },
+              size: Size(100, 25),
+              buttons: state.questions[2].values,
+            ),
+            const Spacer(),
+            CustomSubmitButton(
+                onPressedAction: context.read<ReviewCubit>().isFeedbackEmpty
+                    ? () {}
+                    : onSubmit,
+                label: "Enviar avaliação",
+                loading_label: "",
+                loading: false)
+          ],
+        );
+      },
+    );
+  }
+}
+
+class CustomRadioButton extends StatefulWidget {
+  CustomRadioButton({
+    Key? key,
+    required this.onChange,
+    required this.buttons,
+    required this.size,
+    required this.circle,
+  }) : super(key: key);
+  final Function(String) onChange;
+  final List<String> buttons;
+  final Size size;
+  final bool circle;
+
+  @override
+  State<CustomRadioButton> createState() => _CustomRadioButtonState();
+}
+
+class _CustomRadioButtonState extends State<CustomRadioButton> {
+  final controller = GroupButtonController(
+
+      // onDisablePressed: (i) => print('Button #$i is disabled'),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return GroupButton(
+      controller: controller,
+      isRadio: true,
+      options: const GroupButtonOptions(spacing: 7),
+      buttonBuilder: (selected, value, context) {
+        return Container(
+          width: widget.size.width,
+          height: widget.size.height,
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(widget.circle ? 50 : 5),
+            // shape: circle ? BoxShape.circle : BoxShape.rectangle,
+
+            border: Border.fromBorderSide(BorderSide(
+                color: selected ? getColor(value, widget.circle) : Colors.black
+                // color: selected ? Colors.black
+                )),
+          ),
+          child: Container(
+            margin: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: selected ? getColor(value, widget.circle) : Colors.white,
+              // shape: BoxShape.circle
+              borderRadius: BorderRadius.circular(widget.circle ? 50 : 3),
+            ),
+            child: Center(
+              child: Text(
+                value.toString(),
+                style: AppTextStyles.medium(11),
+              ),
+            ),
+          ),
+        );
+      },
+      buttons: widget.buttons,
+      maxSelected: 1,
+      // onSelected: (val, i, selected) => onChange(val),
+      onSelected: (val, i, selected) {
+        setState(() {
+          controller.selectIndex(i);
+        });
+        widget.onChange(val);
+      },
+    );
+  }
+
+  Color getColor(String el, bool number) {
+    if (number) {
+      int value = int.parse(el);
+      if (value <= 6) {
+        return Colors.red;
+      } else if (value <= 8) {
+        return Colors.orange;
+      } else {
+        return Colors.green;
+      }
+    } else {
+      return Colors.blue.shade400;
+    }
   }
 }
 
@@ -103,7 +307,7 @@ class ObservationWidget extends StatelessWidget {
               await context.read<ReviewCubit>().submit();
               // Navigator.pop(context);
               controller.nextPage(
-                  duration: Duration(milliseconds: 500),
+                  duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut);
             },
             label: "Feito",
