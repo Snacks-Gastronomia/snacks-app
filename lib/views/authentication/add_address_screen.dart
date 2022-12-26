@@ -93,8 +93,8 @@ class AddAddressScreen extends StatelessWidget {
                 height: 20,
               ),
               Text(
-                'Enter your address!',
-                style: AppTextStyles.semiBold(30),
+                'Adicione seu endereço',
+                style: AppTextStyles.semiBold(25),
               ),
               const SizedBox(
                 height: 20,

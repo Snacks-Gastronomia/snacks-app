@@ -69,7 +69,7 @@ class AddNameScreen extends StatelessWidget {
                 ),
                 Text(
                   'Digite seu nome',
-                  style: AppTextStyles.semiBold(30),
+                  style: AppTextStyles.semiBold(25),
                 ),
                 const SizedBox(
                   height: 20,

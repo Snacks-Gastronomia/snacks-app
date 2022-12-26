@@ -45,10 +45,11 @@ class PhoneNumberScreen extends StatelessWidget {
             verificationFailed: (FirebaseAuthException e) {
               print("Não foi possível enviar o código! Tente novamente.");
 
-              // AppToast().showToast(
-              //     context: context,
-              //     type: ToastType.error,
-              //     content: "Não foi possível enviar o código! Tente novamente.");
+              toast.showToast(
+                  context: context,
+                  type: ToastType.error,
+                  content:
+                      "Não foi possível enviar o código! Tente novamente.");
             },
             codeSent: (String verificationID, int? resendToken) async {
               print("code sent");
@@ -144,8 +145,8 @@ class PhoneNumberScreen extends StatelessWidget {
                 height: 20,
               ),
               Text(
-                'Enter your phone number!',
-                style: AppTextStyles.semiBold(30),
+                'Adicione seu número de telefone',
+                style: AppTextStyles.semiBold(25),
               ),
               const SizedBox(
                 height: 20,

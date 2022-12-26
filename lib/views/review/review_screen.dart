@@ -46,29 +46,7 @@ class ReviewScreen extends StatelessWidget {
                     ),
                     ObservationWidget(controller: controller),
                     const FinishedForm()
-                  ])
-              //   itemBuilder: (context, index) {
-              //     if (index <= state.questions.length - 1) {
-              //       var question = state.questions[index];
-              //       return ReviewWidget(
-              //         title: question.title,
-              //         values: question.values,
-              //         onSubmit: (value) {
-              //           print(value);
-              //           context
-              //               .read<ReviewCubit>()
-              //               .changeQuestionValue(question.id, value);
-              //           controller.nextPage(
-              //               duration: const Duration(milliseconds: 600),
-              //               curve: Curves.easeInOut);
-              //         },
-              //       );
-              //     } else {
-              //       return screens[index - 3];
-              //     }
-              //   },
-              // ),
-              );
+                  ]));
         },
       )),
     );
@@ -94,8 +72,8 @@ class FeedbackForm extends StatelessWidget {
             Center(
               child: Text(
                 state.questions[0].title,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.semiBold(20),
+                textAlign: TextAlign.left,
+                style: AppTextStyles.semiBold(16),
                 // style: Theme.of(context).textTheme.headline,
               ),
             ),
@@ -108,7 +86,7 @@ class FeedbackForm extends StatelessWidget {
                     .read<ReviewCubit>()
                     .changeQuestionValue(state.questions[0].id, value);
               },
-              size: Size(25, 25),
+              size: const Size(25, 25),
               circle: true,
               buttons: state.questions[0].values,
             ),
@@ -116,8 +94,8 @@ class FeedbackForm extends StatelessWidget {
             Center(
               child: Text(
                 state.questions[1].title,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.semiBold(20),
+                textAlign: TextAlign.left,
+                style: AppTextStyles.semiBold(16),
                 // style: Theme.of(context).textTheme.headline,
               ),
             ),
@@ -131,15 +109,15 @@ class FeedbackForm extends StatelessWidget {
                     .read<ReviewCubit>()
                     .changeQuestionValue(state.questions[1].id, value);
               },
-              size: Size(30, 30),
+              size: const Size(30, 30),
               buttons: state.questions[1].values,
             ),
             const Spacer(),
             Center(
               child: Text(
                 state.questions[2].title,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.semiBold(20),
+                textAlign: TextAlign.left,
+                style: AppTextStyles.semiBold(16),
                 // style: Theme.of(context).textTheme.headline,
               ),
             ),
@@ -153,7 +131,7 @@ class FeedbackForm extends StatelessWidget {
                     .read<ReviewCubit>()
                     .changeQuestionValue(state.questions[2].id, value);
               },
-              size: Size(100, 25),
+              size: const Size(100, 25),
               buttons: state.questions[2].values,
             ),
             const Spacer(),

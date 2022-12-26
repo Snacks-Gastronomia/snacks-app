@@ -88,7 +88,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                   Text(
                     'Verificação OTP',
-                    style: AppTextStyles.semiBold(30,
+                    style: AppTextStyles.semiBold(25,
                         color: const Color(0xff1E232C)),
                   ),
                   const SizedBox(
