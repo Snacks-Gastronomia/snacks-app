@@ -4,6 +4,7 @@ class HomeState {
   final List<Item> items;
   final int numberOfPostsPerRequest;
   final bool listIsLastPage;
+  final bool showButton;
   final DocumentSnapshot? lastDocument;
 
   final int listPageNumber;
@@ -15,15 +16,16 @@ class HomeState {
   final String? error;
   HomeState({
     required this.items,
-    required this.lastDocument,
     required this.numberOfPostsPerRequest,
     required this.listIsLastPage,
+    required this.showButton,
+    required this.lastDocument,
     required this.listPageNumber,
     required this.popular,
     required this.status,
     required this.search,
-    required this.menu,
     required this.category,
+    required this.menu,
     required this.error,
   });
 
@@ -32,6 +34,7 @@ class HomeState {
       category: null,
       items: [],
       popular: [],
+      showButton: false,
       lastDocument: null,
       menu: [],
       status: AppStatus.initial,
@@ -53,6 +56,7 @@ class HomeState {
         status == other.status &&
         listEquals(other.menu, menu) &&
         lastDocument == other.lastDocument &&
+        showButton == other.showButton &&
         listEquals(other.popular, popular);
   }
 
@@ -67,12 +71,14 @@ class HomeState {
       List<Item>? popular,
       AppStatus? status,
       bool? search,
+      bool? showButton,
       List<Map<String, dynamic>>? menu,
       String? category,
       String? error,
       DocumentSnapshot? lastDocument}) {
     return HomeState(
       items: items ?? this.items,
+      showButton: showButton ?? this.showButton,
       lastDocument: lastDocument ?? this.lastDocument,
       numberOfPostsPerRequest:
           numberOfPostsPerRequest ?? this.numberOfPostsPerRequest,

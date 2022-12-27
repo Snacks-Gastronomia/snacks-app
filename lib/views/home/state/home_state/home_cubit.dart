@@ -20,6 +20,10 @@ class HomeCubit extends Cubit<HomeState> {
     fetchItems();
   }
 
+  void changeButtonDone(bool value) {
+    emit(state.copyWith(showButton: value));
+  }
+
   Future<String?> getAddress() async {
     final dataStorage = await storage.getDataStorage("address");
 

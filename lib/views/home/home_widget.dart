@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.colors.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
@@ -41,10 +42,16 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
     controller.addListener(
       () {
         var state = context.read<HomeCubit>().state;
+        var cart = context.read<CartCubit>().state;
+
+        if (controller.offset > 60 && cart.cart.isNotEmpty) {
+          context.read<HomeCubit>().changeButtonDone(true);
+        } else {
+          context.read<HomeCubit>().changeButtonDone(false);
+        }
         if (controller.position.maxScrollExtent == controller.offset &&
             state.status == AppStatus.loaded) {
           if (state.category != null) {
-            // print("object 1");
             context
                 .read<HomeCubit>()
                 .fetchItemsByRestaurants(state.category ?? "", false);
@@ -139,6 +146,27 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
           ),
         ),
       ),
+      floatingActionButton: BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          return AnimatedOpacity(
+            opacity: state.showButton ? 1 : 0,
+            duration: const Duration(milliseconds: 300),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 70, left: 20, right: 20),
+              child: CustomSubmitButton(
+                  onPressedAction: () =>
+                      Navigator.pushNamed(context, AppRoutes.cart),
+                  label: "Continuar",
+                  loading_label: "",
+                  loading: false),
+            ),
+          );
+          // }
+          // return const SizedBox();
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
       body: Padding(
         padding: const EdgeInsets.only(left: 25, top: 25, right: 25),
         child: SingleChildScrollView(
