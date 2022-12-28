@@ -39,7 +39,7 @@ class _ScanCardScreenState extends State<ScanCardScreen> {
           preferredSize: const Size.fromHeight(60.0),
           child: Container(
             padding: const EdgeInsets.only(top: 15),
-            color: Colors.black.withOpacity(.8),
+            color: Colors.black.withOpacity(.9),
             child: Row(
               children: [
                 const SizedBox(
@@ -50,7 +50,7 @@ class _ScanCardScreenState extends State<ScanCardScreen> {
                     style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
-                        primary: Colors.white,
+                        backgroundColor: Colors.white,
                         padding: EdgeInsets.zero,
                         minimumSize: const Size(41, 41)),
                     child: const Icon(
@@ -64,7 +64,8 @@ class _ScanCardScreenState extends State<ScanCardScreen> {
         ),
         backgroundColor: Colors.white,
         body: Container(
-          color: Colors.black.withOpacity(.8),
+          width: double.maxFinite,
+          color: Colors.black.withOpacity(.9),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(

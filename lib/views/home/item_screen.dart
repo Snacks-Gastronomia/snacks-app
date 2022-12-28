@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 import 'package:snacks_app/core/app.colors.dart';
+import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/order_model.dart';
@@ -83,7 +85,7 @@ class _ItemScreenState extends State<ItemScreen> {
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
-                  primary: Colors.black,
+                  backgroundColor: Colors.black,
                   fixedSize: const Size(200, 52)),
               child: Text(
                 context.read<ItemScreenCubit>().state.isNew
@@ -96,6 +98,7 @@ class _ItemScreenState extends State<ItemScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             Stack(
@@ -107,13 +110,28 @@ class _ItemScreenState extends State<ItemScreen> {
                   borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(55),
                       bottomRight: Radius.circular(55)),
-                  child: Image.network(
-                    "https://www.dicasdemulher.com.br/wp-content/uploads/2021/04/drinks-de-morango-00.png",
-                    fit: BoxFit.cover,
-                    height: MediaQuery.of(context).size.height * 0.5,
+                  child: widget.order.item.image_url == null ||
+                          widget.order.item.image_url!.isEmpty
+                      ? Container(
+                          color: Colors.grey.shade200,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          child: Center(
+                            child: SvgPicture.asset(
+                              AppImages.snacks,
+                              color: Colors.grey.shade400,
+                              // fit: BoxFit,
+                              width: 150,
+                            ),
+                          ),
+                        )
+                      : Image.network(
+                          widget.order.item.image_url!,
+                          fit: BoxFit.cover,
+                          width: double.maxFinite,
+                          height: MediaQuery.of(context).size.height * 0.5,
 
-                    // height: 200,
-                  ),
+                          // height: 200,
+                        ),
                 ),
                 Positioned(
                   top: MediaQuery.of(context).size.height * 0.465,
@@ -127,7 +145,7 @@ class _ItemScreenState extends State<ItemScreen> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
                           // color: Colors.black,
-                          color: Color(0xffF6F6F6),
+                          color: const Color(0xffF6F6F6),
                           // boxShadow: [
                           //   BoxShadow(
                           //     color: Colors.grey.shade300,
@@ -161,7 +179,8 @@ class _ItemScreenState extends State<ItemScreen> {
                                         shape: const CircleBorder(
                                             side: BorderSide(
                                                 color: Colors.white, width: 2)),
-                                        backgroundColor: Color(0xffF6F6F6),
+                                        backgroundColor:
+                                            const Color(0xffF6F6F6),
                                         shadowColor: Colors.grey.shade200,
                                         fixedSize: const Size(45, 45),
                                         // elevation: 0
@@ -189,7 +208,8 @@ class _ItemScreenState extends State<ItemScreen> {
                                                 side: BorderSide(
                                                     color: Colors.white,
                                                     width: 2)),
-                                            backgroundColor: Color(0xffF6F6F6),
+                                            backgroundColor:
+                                                const Color(0xffF6F6F6),
                                             // elevation: 0,
                                             shadowColor: Colors.grey.shade200,
                                             fixedSize: const Size(45, 45)),
@@ -216,7 +236,7 @@ class _ItemScreenState extends State<ItemScreen> {
                           style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),
-                              primary: Color(0xffF6F6F6),
+                              backgroundColor: const Color(0xffF6F6F6),
                               padding: EdgeInsets.zero,
                               minimumSize: const Size(41, 41)),
                           child: const Icon(
@@ -224,7 +244,7 @@ class _ItemScreenState extends State<ItemScreen> {
                             color: Colors.black,
                             size: 19,
                           )),
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
                       Text(
@@ -291,8 +311,78 @@ class _ItemScreenState extends State<ItemScreen> {
                   ),
                   Text(
                     widget.order.item.description!,
-                    style: AppTextStyles.regular(15, color: Color(0xff979797)),
+                    style: AppTextStyles.regular(15,
+                        color: const Color(0xff979797)),
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  if (widget.order.item.extras.isNotEmpty)
+                    Column(
+                      children: [
+                        Text(
+                          "Extra",
+                          style: AppTextStyles.medium(16),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ListView.separated(
+                            itemCount: widget.order.item.extras.length,
+                            physics: const BouncingScrollPhysics(),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var list = widget.order.item.extras;
+                              return GestureDetector(
+                                onTap: () {
+                                  print(list[index]["id"]);
+                                },
+                                child: Container(
+                                  // height: 50,
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                      // color: Colors.black,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: const Border.fromBorderSide(
+                                          BorderSide(width: 2))),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.plus_one_rounded),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Text(
+                                            list[index]["title"],
+                                            style: AppTextStyles.medium(16),
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        "+${NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(list[index]['value'])}",
+                                        style: AppTextStyles.medium(16,
+                                            color: AppColors.highlight),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            })
+                      ],
+                    ),
+
+                  const SizedBox(
+                    height: 50,
+                  )
                 ],
               ),
             )

@@ -10,6 +10,7 @@ import 'package:meta/meta.dart';
 
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/views/home/repository/card_repository.dart';
 import 'package:snacks_app/views/home/repository/orders_repository.dart';
 
 part 'cart_state.dart';
@@ -25,6 +26,7 @@ class DataOrder {
 
 class CartCubit extends Cubit<CartState> {
   final repository = OrdersRepository();
+  final cardRepository = CardRepository();
   final auth = FirebaseAuth.instance;
   final storage = const FlutterSecureStorage();
 
@@ -131,10 +133,20 @@ class CartCubit extends Cubit<CartState> {
         accessibility: KeychainAccessibility.first_unlock,
       ));
 
-  void makeOrder(String method) async {
-    final dataStorage = await getStorage;
+  void makeOrder(String method, {String rfid = ""}) async {
+    if (method == "Cartão Snacks") {
+      await cardRepository.doPayment(rfid, state.total);
+    }
+    var data = generateDataObject(method);
+    await repository.createOrder(data);
 
+    clearCart();
+  }
+
+  generateDataObject(method) async {
+    final dataStorage = await getStorage;
     bool isDelivery = !auth.currentUser!.isAnonymous;
+
     var status = method == "Cartão Snacks" || isDelivery
         ? OrderStatus.ready_to_start.name
         : OrderStatus.waiting_payment.name;
@@ -142,27 +154,12 @@ class CartCubit extends Cubit<CartState> {
     final now = DateTime.now();
     DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
     List<String> restaurants = [];
+
     state.cart.map((e) {
       if (!restaurants.contains(e.item.restaurant_id)) {
         restaurants.add(e.item.restaurant_id);
       }
     });
-
-    Map<String, dynamic> data = {
-      // "items": FieldValue.arrayUnion(state.cart.map((e) => e.toMap()).toList()),
-      "user_uid": auth.currentUser!.uid,
-      "payment_method": method,
-      "value": state.total,
-      // "restaurants": restaurants,
-      "isDelivery": isDelivery,
-      "status": status,
-      "created_at": DateTime.now(),
-    };
-
-    data.addAll(isDelivery
-        ? {"address": dataStorage["address"]}
-        : {"table": dataStorage["table"]});
-
     DataOrder dataTotal = DataOrder(done: [], orders: []);
     // ignore: iterable_contains_unrelated_type
     for (var e in state.cart) {
@@ -193,29 +190,6 @@ class CartCubit extends Cubit<CartState> {
         });
       }
     }
-    // List<dynamic> listRestaurantOrders = [];
-    // List<dynamic> added = [];
-    await repository.createOrder(dataTotal.orders);
-    // state.cart.map((e) {
-    //   e.item.restaurant_id;
-
-    //   if (added.contains(e.item.restaurant_id)) {
-    //     var data = listRestaurantOrders.singleWhere(
-    //         (element) => element.restaurant_id == e.item.restaurant_id);
-    //     data.items = [...data.items, e.item];
-
-    //   } else {
-    //   var data =
-
-    //     added.add(e.item.restaurant_id);
-
-    //   }
-    //   // listRestaurantOrders.singleWhere((element) => element.restaurant_id == e.item.restaurant_id);
-    // });
-
-    // var items = state.cart.map((e) => e.toMap()).toList();
-    // await repository.createItemstoOrder(items, response);
-    clearCart();
   }
 
   Stream<QuerySnapshot> fetchOrders() {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+
 import 'package:snacks_app/models/ingredient_model.dart';
 
 class Item {
@@ -15,6 +16,7 @@ class Item {
   final String? image_url;
   final bool active;
   // final Map<dynamic, String>? ingredients;
+  final List<dynamic> extras;
   final List<Ingredient> ingredients;
 
   Item({
@@ -28,6 +30,7 @@ class Item {
     this.measure,
     this.image_url,
     required this.active,
+    this.extras = const [],
     this.ingredients = const [],
   });
 
@@ -43,6 +46,7 @@ class Item {
     String? image_url,
     bool? active,
     List<Ingredient>? ingredients,
+    List<dynamic>? extras,
   }) {
     return Item(
       id: id ?? this.id,
@@ -53,6 +57,7 @@ class Item {
       category: category ?? this.category,
       measure: measure ?? this.measure,
       image_url: image_url ?? this.image_url,
+      extras: extras ?? this.extras,
       ingredients: ingredients ?? this.ingredients,
       time: time ?? this.time,
       active: active ?? this.active,
@@ -88,6 +93,7 @@ class Item {
       measure: map['measure'],
       image_url: map['image_url'],
       ingredients: List<Ingredient>.from(map['ingredients']),
+      extras: List<Ingredient>.from(map['extra'] ?? []),
     );
   }
 
@@ -130,6 +136,7 @@ class Item {
         other.measure == measure &&
         other.image_url == image_url &&
         other.active == active &&
-        listEquals(other.ingredients, ingredients);
+        listEquals(other.ingredients, ingredients) &&
+        listEquals(other.extras, extras);
   }
 }

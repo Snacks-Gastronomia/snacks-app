@@ -7,6 +7,7 @@ import 'package:snacks_app/views/authentication/add_address_screen.dart';
 import 'package:snacks_app/views/authentication/add_name_screen.dart';
 import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
 import 'package:snacks_app/views/home/orders_screen.dart';
+import 'package:snacks_app/views/home/state/card_state/card_cubit.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
@@ -43,6 +44,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider<ReviewCubit>(
           create: (context) => ReviewCubit(),
+        ),
+        BlocProvider<CardCubit>(
+          create: (context) => CardCubit(),
         ),
       ],
       key: UniqueKey(),

@@ -5,6 +5,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/home_widget.dart';
 import 'package:snacks_app/views/home/orders_screen.dart';
+import 'package:snacks_app/views/home/widgets/modals/card_modal.dart';
 import 'package:snacks_app/views/home/widgets/profile_modal.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -67,6 +68,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 const GButton(
                   icon: Icons.receipt_rounded,
                   text: 'Pedidos',
+                ),
+                GButton(
+                  icon: Icons.credit_card_rounded,
+                  text: 'Cartão',
+                  onPressed: () => AppModal().showModalBottomSheet(
+                    withPadding: false,
+                    context: context,
+                    dimisible: false,
+                    content: const CardDetailsModal(),
+                  ),
                 ),
                 if (!auth.currentUser!.isAnonymous)
                   GButton(
