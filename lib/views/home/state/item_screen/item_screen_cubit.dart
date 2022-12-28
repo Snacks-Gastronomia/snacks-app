@@ -14,6 +14,18 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     print(state.order!.amount);
   }
 
+  void selecteExtras(String extra) {
+    List<String> extras = List.from(state.order!.extras);
+    if (extras.contains(extra)) {
+      extras.remove(extra);
+      emit(state.copyWith(order: state.order!.copyWith(extras: extras)));
+    } else {
+      emit(state.copyWith(
+          order: state.order!.copyWith(extras: [...extras, extra])));
+    }
+    print(state.order!.amount);
+  }
+
   void decrementAmount() {
     var amount = state.order!.amount;
     if (amount != 1) {

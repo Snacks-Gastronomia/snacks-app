@@ -7,34 +7,29 @@ class Order {
   final Item item;
   int amount;
   String observations;
+  List<String> extras;
   String status;
-  Order({
-    required this.item,
-    this.amount = 1,
-    this.status = "",
-    required this.observations,
-  }) {
+  Order(
+      {required this.item,
+      this.amount = 1,
+      this.status = "",
+      required this.observations,
+      this.extras = const []}) {
     status = OrderStatus.waiting_payment.name;
   }
-  // final String restaurant_id;
-  // Order({
-  //   required this.item,
-  //   this.amount = 1,
-  //   this.status,
-  //   required this.observations,
-  //   // required this.restaurant_id,
-  // });
 
   Order copyWith({
     Item? item,
     int? amount,
     String? observations,
     String? status,
+    List<String>? extras,
   }) {
     return Order(
       item: item ?? this.item,
       amount: amount ?? this.amount,
       observations: observations ?? this.observations,
+      extras: extras ?? this.extras,
       // status: status ?? this.status,
     );
   }
@@ -44,7 +39,7 @@ class Order {
       'item': item.toMap(),
       'amount': amount,
       'observations': observations,
-      // 'status': status,
+      'extras': extras,
     };
   }
 
@@ -53,7 +48,7 @@ class Order {
       item: Item.fromMap(map['item']),
       amount: map['amount']?.toInt() ?? 0,
       observations: map['observations'] ?? '',
-      // status: map['status'] ?? '',
+      extras: map['extras'] ?? '',
     );
   }
 

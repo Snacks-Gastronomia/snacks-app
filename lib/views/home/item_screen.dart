@@ -321,7 +321,7 @@ class _ItemScreenState extends State<ItemScreen> {
                     Column(
                       children: [
                         Text(
-                          "Extra",
+                          "Extras",
                           style: AppTextStyles.medium(16),
                         ),
                         const SizedBox(
@@ -336,46 +336,68 @@ class _ItemScreenState extends State<ItemScreen> {
                                 ),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              var list = widget.order.item.extras;
-                              return GestureDetector(
-                                onTap: () {
-                                  print(list[index]["id"]);
-                                },
-                                child: Container(
-                                  // height: 50,
-                                  padding: const EdgeInsets.all(15),
-                                  decoration: BoxDecoration(
-                                      // color: Colors.black,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: const Border.fromBorderSide(
-                                          BorderSide(width: 2))),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.plus_one_rounded),
-                                          const SizedBox(
-                                            width: 15,
-                                          ),
-                                          Text(
-                                            list[index]["title"],
-                                            style: AppTextStyles.medium(16),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        "+${NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(list[index]['value'])}",
-                                        style: AppTextStyles.medium(16,
-                                            color: AppColors.highlight),
-                                      ),
-                                    ],
+                              var list = List.from(widget.order.item.extras);
+                              double? value = double.tryParse(
+                                  list[index]['value'].toString());
+                              print(value);
+                              return BlocBuilder<ItemScreenCubit,
+                                      ItemScreenState>(
+                                  // stream: null,
+                                  builder: (context, state) {
+                                bool selected = state.order!.extras
+                                    .contains(list[index]["title"]);
+                                return GestureDetector(
+                                  onTap: () => context
+                                      .read<ItemScreenCubit>()
+                                      .selecteExtras(list[index]["title"]),
+                                  child: Container(
+                                    // height: 50,
+                                    padding: const EdgeInsets.all(15),
+                                    decoration: BoxDecoration(
+                                        color: selected
+                                            ? Colors.black
+                                            : Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: const Border.fromBorderSide(
+                                            BorderSide(width: 2))),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.plus_one_rounded,
+                                              color: selected
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                            const SizedBox(
+                                              width: 15,
+                                            ),
+                                            Text(
+                                              list[index]["title"],
+                                              style: AppTextStyles.medium(
+                                                16,
+                                                color: selected
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Text(
+                                          "+${NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(value)}",
+                                          style: AppTextStyles.medium(16,
+                                              color: AppColors.highlight),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              });
                             })
                       ],
                     ),
