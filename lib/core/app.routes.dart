@@ -20,23 +20,6 @@ class AppRoutes {
   static String get newEmployee => '/new-employee';
   static String get addBankAccount => '/add-bank-account';
   static String get feedback => '/feedback';
+  static String get closedRestaurant => '/closed';
 
-  // '/': (context) => const StartScreen(),
-  // '/': (context) => const SelectRestaurantScreen(),
-  // '/': (context) => const PhoneAuthenticationScreen(),
-  // '/': (context) => const OtpScreen(),
-  // '/': (context) => AddAddressScreen(),
-  // '/': (context) => const PhoneNumberScreen(),
-  // '/': (context) => const SuccessScreen(),
-  // '/': (context) => const ScanCardScreen(),
-  // '/': (context) => const RechargeCardScreen(),
-  // '/': (context) => const HomeScreen(),
-  // '/': (context) => const ItemScreen(),
-  // '/': (context) => const MyCartScreen(),
-  // '/': (context) => const PaymentScreen(),
-  // '/': (context) => const NewItemScreen(),
-  // '/': (context) => const OrdersScreen(),
-  // '/': (context) => const HomeScreen(),
-  // '/': (context) => const HomeScreen(),
-  // '/': (context) => const RestaurantAuthenticationScreen(),
 }
