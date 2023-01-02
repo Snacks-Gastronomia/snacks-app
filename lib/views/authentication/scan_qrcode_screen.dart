@@ -85,12 +85,11 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
               ),
               QRCodeBuilder(
                   controller: controller,
-                  onDetect: (barcode, args) async {
-                    if (barcode.rawValue == null) {
+                  onDetect: (barcode) async {
+                    if (barcode.barcodes.isEmpty) {
                       debugPrint('Failed to scan Barcode');
                     } else {
-                      final String code = barcode.rawValue!;
-
+                      final String code = barcode.barcodes[0].rawValue ?? "";
                       debugPrint('Barcode found! $code');
                       Navigator.pop(context, code);
                     }
@@ -119,7 +118,7 @@ class QRCodeBuilder extends StatelessWidget {
   }) : super(key: key);
   final MobileScannerController controller;
   // final modal = AppModal();
-  final dynamic Function(Barcode, MobileScannerArguments?) onDetect;
+  final dynamic Function(dynamic) onDetect;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -132,10 +131,8 @@ class QRCodeBuilder extends StatelessWidget {
             child: SizedBox(
                 height: 300,
                 width: 300,
-                child: MobileScanner(
-                    allowDuplicates: false,
-                    controller: controller,
-                    onDetect: onDetect)),
+                child:
+                    MobileScanner(controller: controller, onDetect: onDetect)),
           ),
         ),
         SizedBox(

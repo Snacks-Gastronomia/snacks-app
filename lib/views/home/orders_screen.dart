@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.text.dart';
-import 'package:snacks_app/models/order_model.dart';
+import 'package:snacks_app/models/order_model.dart' as ordermodel;
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 
@@ -222,7 +222,7 @@ class CardOrderWidget extends StatelessWidget {
                             itemCount: items.length,
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              var item = Order.fromMap(items[index]);
+                              var item = ordermodel.Order.fromMap(items[index]);
 
                               return Row(
                                 mainAxisAlignment:

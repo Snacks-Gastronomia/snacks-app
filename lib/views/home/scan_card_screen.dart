@@ -121,10 +121,9 @@ class _ScanCardScreenState extends State<ScanCardScreen> {
                 height: 250,
                 width: 250,
                 child: MobileScanner(
-                    allowDuplicates: false,
                     controller: controller,
-                    onDetect: (barcode, args) async {
-                      if (barcode.rawValue == null) {
+                    onDetect: (barcode) async {
+                      if (barcode.barcodes.isEmpty) {
                         debugPrint('Failed to scan Barcode');
                         modal.showModalBottomSheet(
                             context: context,
@@ -133,7 +132,8 @@ class _ScanCardScreenState extends State<ScanCardScreen> {
                               value: "",
                             ));
                       } else {
-                        final String card_code = barcode.rawValue!;
+                        final String card_code =
+                            barcode.barcodes[0].rawValue ?? "";
                         Navigator.pop(context, card_code);
                       }
                     })),
