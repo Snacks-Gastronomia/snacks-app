@@ -1,27 +1,7 @@
 part of 'cart_cubit.dart';
 
-// class RestaurantOrder {
-//   final List<Order> items;
-//   final String restaurant_id;
-//   final String status;
-
-//   RestaurantOrder(this.items, this.restaurant_id, this.status);
-
-//   RestaurantOrder copyWith({
-//     List<Order>? items,
-//     String? restaurant_id,
-//     String? status,
-//   }) {
-//     return RestaurantOrder(
-//       items ?? this.items,
-//       restaurant_id ?? this.restaurant_id,
-//       status ?? this.status,
-//     );
-//   }
-// }
-
 class CartState {
-  final List<Order.Order> cart;
+  final List<OrderModel> cart;
   final String payment_method;
   final int table_code;
 
@@ -74,7 +54,7 @@ class CartState {
   // }
 
   CartState copyWith({
-    List<Order.Order>? cart,
+    List<OrderModel>? cart,
     String? payment_method,
     int? table_code,
     double? total,

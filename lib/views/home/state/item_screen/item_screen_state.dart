@@ -1,7 +1,7 @@
 part of 'item_screen_cubit.dart';
 
 class ItemScreenState {
-  final Order? order;
+  final OrderModel? order;
   final bool isNew;
   ItemScreenState({
     required this.order,
@@ -11,7 +11,7 @@ class ItemScreenState {
       ItemScreenState(order: null, isNew: false);
 
   ItemScreenState copyWith({
-    Order? order,
+    OrderModel? order,
     bool? isNew,
   }) {
     return ItemScreenState(

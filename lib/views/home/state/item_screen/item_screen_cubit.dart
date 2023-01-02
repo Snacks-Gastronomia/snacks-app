@@ -39,7 +39,7 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     print(state);
   }
 
-  void insertItem(Order order, bool isNew) {
+  void insertItem(OrderModel order, bool isNew) {
     emit(state.copyWith(order: order, isNew: isNew));
     print(state);
   }

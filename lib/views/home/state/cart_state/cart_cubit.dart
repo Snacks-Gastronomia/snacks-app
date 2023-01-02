@@ -8,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
-import 'package:snacks_app/models/order_model.dart' as Order;
+import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/views/home/repository/card_repository.dart';
 import 'package:snacks_app/views/home/repository/orders_repository.dart';
@@ -32,7 +32,7 @@ class CartCubit extends Cubit<CartState> {
 
   CartCubit() : super(CartState.initial());
 
-  void addToCart(Order.Order newOrder) {
+  void addToCart(OrderModel newOrder) {
     // print(newOrder);
 
     // newOrder.observations = state.temp_observation;
@@ -53,7 +53,7 @@ class CartCubit extends Cubit<CartState> {
     print(state);
   }
 
-  updateItemFromCart(Order.Order order) {
+  updateItemFromCart(OrderModel order) {
     final newCart = state.cart.map((item) {
       if (item.item.id == order.item.id) {
         return item.copyWith(
@@ -73,7 +73,7 @@ class CartCubit extends Cubit<CartState> {
     return item.isNotEmpty;
   }
 
-  Order.Order? getOrderByItemId(String id) {
+  OrderModel? getOrderByItemId(String id) {
     return hasItem(id)
         ? state.cart.singleWhere((el) => el.item.id == id)
         : null;
@@ -106,7 +106,7 @@ class CartCubit extends Cubit<CartState> {
     print(state.total);
   }
 
-  void removeToCart(Order.Order order) {
+  void removeToCart(OrderModel order) {
     final newCart = state.cart;
     newCart.removeWhere((element) => element.item.id == order.item.id);
 

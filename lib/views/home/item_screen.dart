@@ -16,7 +16,7 @@ import 'package:snacks_app/views/home/widgets/modals/modal_content_obs.dart';
 class ItemScreen extends StatefulWidget {
   ItemScreen({Key? key, required this.order}) : super(key: key);
 
-  Order order;
+  OrderModel order;
 
   @override
   State<ItemScreen> createState() => _ItemScreenState();

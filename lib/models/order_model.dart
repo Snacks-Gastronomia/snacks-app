@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/utils/enums.dart';
 
-class Order {
+class OrderModel {
   final Item item;
   int amount;
   String observations;
   List<String> extras;
   String status;
-  Order(
+  OrderModel(
       {required this.item,
       this.amount = 1,
       this.status = "",
@@ -18,14 +18,14 @@ class Order {
     status = OrderStatus.waiting_payment.name;
   }
 
-  Order copyWith({
+  OrderModel copyWith({
     Item? item,
     int? amount,
     String? observations,
     String? status,
     List<String>? extras,
   }) {
-    return Order(
+    return OrderModel(
       item: item ?? this.item,
       amount: amount ?? this.amount,
       observations: observations ?? this.observations,
@@ -43,8 +43,8 @@ class Order {
     };
   }
 
-  factory Order.fromMap(Map<String, dynamic> map) {
-    return Order(
+  factory OrderModel.fromMap(Map<String, dynamic> map) {
+    return OrderModel(
       item: Item.fromMap(map['item']),
       amount: map['amount']?.toInt() ?? 0,
       observations: map['observations'] ?? '',
@@ -54,5 +54,6 @@ class Order {
 
   String toJson() => json.encode(toMap());
 
-  factory Order.fromJson(String source) => Order.fromMap(json.decode(source));
+  factory OrderModel.fromJson(String source) =>
+      OrderModel.fromMap(json.decode(source));
 }

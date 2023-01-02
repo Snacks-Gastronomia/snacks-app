@@ -348,7 +348,7 @@ class AllItemsWidget extends StatelessWidget {
                       onTap: () => modal.showIOSModalBottomSheet(
                           context: context,
                           content: ItemScreen(
-                              order: Order(item: item, observations: ""))),
+                              order: OrderModel(item: item, observations: ""))),
                       child: CardItemWidget(
                         // ns: ns,
                         item: item,
@@ -398,7 +398,7 @@ class PopularItemsWidget extends StatelessWidget {
                         context: context,
                         expand: true,
                         content: ItemScreen(
-                            order: Order(item: item, observations: ""))),
+                            order: OrderModel(item: item, observations: ""))),
                     child: CardItemWidget(
                       // ns: ns,
                       item: item,

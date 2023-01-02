@@ -1,7 +1,7 @@
 import 'package:snacks_app/models/order_model.dart';
 
 class FinalOrder {
-  final List<Order> orders;
+  final List<OrderModel> orders;
   final double total;
   final String payment_method;
   final int table_code;
@@ -13,7 +13,7 @@ class FinalOrder {
   });
 
   FinalOrder copyWith({
-    List<Order>? orders,
+    List<OrderModel>? orders,
     double? total,
     String? payment_method,
     int? table_code,
