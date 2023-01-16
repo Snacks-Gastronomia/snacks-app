@@ -34,8 +34,17 @@ class AppWidget extends StatelessWidget {
   final fire = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
+    int compareTo(TimeOfDay now, TimeOfDay other) {
+      return now.hour * 60 + now.minute == other.hour * 60 + other.minute
+          ? 0
+          : now.hour * 60 + now.minute >= other.hour * 60 + other.minute
+              ? 1
+              : -1;
+    }
+
     Future<bool> verifyRestaurantStatus() async {
       var time = DateTime.now();
+      var now = TimeOfDay.now();
       await initializeDateFormatting("pt_BR");
       var doc = await fire
           .collection("snacks_config")
@@ -44,9 +53,12 @@ class AppWidget extends StatelessWidget {
           .doc((time.weekday - 1).toString())
           .get();
       DateTime start = DateFormat("HH:mm").parse(doc.data()?["start"]);
-      DateTime end = DateFormat("HH:mm").parse(doc.data()?["end"]);
 
-      return time.compareTo(start) >= 0 && time.compareTo(end) <= 0
+      DateTime end = DateFormat("HH:mm").parse(doc.data()?["end"]);
+      var startTime = TimeOfDay(hour: start.hour, minute: start.minute);
+      var endTime = TimeOfDay(hour: end.hour, minute: end.minute);
+      //0 equal //-1 lesser // 1 greater
+      return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <=  0
           ? true
           : false;
     }
