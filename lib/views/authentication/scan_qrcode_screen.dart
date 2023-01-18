@@ -39,25 +39,42 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50.0),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 10,
-              ),
-              ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      backgroundColor: Colors.white,
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(41, 41)),
-                  child: const Icon(
-                    Icons.arrow_back_ios_rounded,
-                    color: Colors.black,
-                    size: 19,
-                  )),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        backgroundColor: Colors.white,
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(41, 41)),
+                    child: const Icon(
+                      Icons.arrow_back_ios_rounded,
+                      color: Colors.black,
+                      size: 19,
+                    )),
+                IconButton(
+                  color: Colors.white30,
+                  icon: ValueListenableBuilder(
+                    valueListenable: controller.cameraFacingState,
+                    builder: (context, state, child) {
+                      switch (state) {
+                        case CameraFacing.front:
+                          return const Icon(Icons.camera_front);
+                        case CameraFacing.back:
+                          return const Icon(Icons.camera_rear);
+                      }
+                    },
+                  ),
+                  iconSize: 32.0,
+                  onPressed: () => controller.switchCamera(),
+                ),
+              ],
+            ),
           ),
         ),
         backgroundColor: Colors.black,

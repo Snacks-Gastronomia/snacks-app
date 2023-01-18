@@ -94,11 +94,11 @@ class ReviewState {
                   "O quanto você está satisfeito, em termos gerais, com a nossa empresa? ",
               rate: "",
               values: const [
-                "Extremamente",
-                "Muito",
-                "Moderadamente",
+                "Nada",
                 "Pouco",
-                "Nada"
+                "Moderadamente",
+                "Muito",
+                "Extremamente",
               ]),
         ],
         observations: "",

@@ -58,9 +58,9 @@ class UnavailableScreen extends StatelessWidget {
                       if (snapshot.hasData) {
                         print(snapshot.data.id);
                         var day = int.parse(snapshot.data.id.toString());
-                        var day_string = day == DateTime.now().weekday + 1
+                        var day_string = day == DateTime.now().weekday
                             ? "hoje"
-                            : day == DateTime.now().weekday + 2
+                            : day == DateTime.now().weekday + 1
                                 ? "amanhã"
                                 : DateFormat(null, "pt_BR")
                                     .dateSymbols

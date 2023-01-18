@@ -58,7 +58,7 @@ class AppWidget extends StatelessWidget {
       var startTime = TimeOfDay(hour: start.hour, minute: start.minute);
       var endTime = TimeOfDay(hour: end.hour, minute: end.minute);
       //0 equal //-1 lesser // 1 greater
-      return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <=  0
+      return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <= 0
           ? true
           : false;
     }
