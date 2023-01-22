@@ -1,3 +1,5 @@
+import 'package:expandable/expandable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -17,11 +19,11 @@ import 'package:snacks_app/views/home/widgets/custom_switch.dart';
 import 'package:snacks_app/views/home/widgets/cart_item.dart';
 
 class MyCartScreen extends StatelessWidget {
-  const MyCartScreen({Key? key}) : super(key: key);
+  MyCartScreen({Key? key}) : super(key: key);
+  final auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
-    bool extraSpace = false;
     return SafeArea(
       child: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
@@ -32,7 +34,8 @@ class MyCartScreen extends StatelessWidget {
                     padding:
                         const EdgeInsets.only(left: 25, right: 25, bottom: 30),
                     child: SizedBox(
-                      height: extraSpace ? 180 : 150,
+                      height:
+                          !(auth.currentUser?.isAnonymous ?? false) ? 180 : 150,
                       child: BlocBuilder<CartCubit, CartState>(
                           builder: (context, snapshot) {
                         return Container(
@@ -72,7 +75,7 @@ class MyCartScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      extraSpace
+                                      !(auth.currentUser?.isAnonymous ?? false)
                                           ? Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -200,60 +203,76 @@ class MyCartScreen extends StatelessWidget {
                     child: BlocBuilder<CartCubit, CartState>(
                         builder: (context, snapshot) {
                       return ListView.separated(
-                        separatorBuilder: (context, index) => Container(
-                          height: 0.3,
-                          color: Colors.grey,
-                        ),
+                        separatorBuilder: (context, index) => const Divider(
+                            // height: 0.3,
+
+                            ),
                         itemCount: context.read<CartCubit>().state.cart.length,
                         physics: const BouncingScrollPhysics(),
                         itemBuilder: (context, index) {
                           var order =
                               context.read<CartCubit>().state.cart[index];
-                          return Slidable(
-                              // Specify a key if the Slidable is dismissible.
-                              key: const ValueKey(0),
-                              groupTag: "",
-                              endActionPane: ActionPane(
-                                motion: const ScrollMotion(),
-                                extentRatio: 0.4,
-                                children: [
-                                  CustomSlidableAction(
-                                    onPressed: null,
-                                    autoClose: false,
-                                    flex: 2,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        CustomSwitch(
-                                            decrementAction: () {
-                                              context
-                                                  .read<CartCubit>()
-                                                  .decrementItem(
-                                                      order.item.id!);
-                                            },
-                                            incrementAction: () => context
-                                                .read<CartCubit>()
-                                                .incrementItem(order.item.id!),
-                                            value: order.amount),
-                                        TextButton(
-                                          onPressed: () => context
-                                              .read<CartCubit>()
-                                              .removeToCart(order),
-                                          child: Text(
-                                            "Remover",
-                                            style: AppTextStyles.light(14,
-                                                color: Colors.red.shade600),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                          return ExpandableNotifier(
+                            initialExpanded: false,
+                            child: ExpandablePanel(
+                              theme: ExpandableThemeData(
+                                tapHeaderToExpand: order.extras.isNotEmpty &&
+                                    order.observations.isNotEmpty,
+                                headerAlignment:
+                                    ExpandablePanelHeaderAlignment.center,
+                                tapBodyToCollapse: true,
+                                tapBodyToExpand: false,
+                                hasIcon: false,
                               ),
-                              child: CartItemWidget(order: order));
+                              expanded: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 15),
+                                  child: Column(
+                                    children: [
+                                      ListView.builder(
+                                        itemCount: order.extras.length,
+                                        shrinkWrap: true,
+                                        itemBuilder: (context, index) => Text(
+                                          order.extras[index],
+                                          style: AppTextStyles.semiBold(12),
+                                        ),
+                                      ),
+                                      const Divider(),
+                                      Text(
+                                        '\"${order.observations}\"',
+                                        style: AppTextStyles.light(12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              collapsed: order.extras.isNotEmpty &&
+                                      order.observations.isNotEmpty
+                                  ? Center(
+                                      child: Text(
+                                          'Clique no item para ver detalhes',
+                                          style: AppTextStyles.medium(12,
+                                              color: Colors.grey)),
+                                    )
+                                  : const SizedBox(),
+                              header: CartItemWidget(
+                                order: order,
+                                onDecrement: () => context
+                                    .read<CartCubit>()
+                                    .decrementItem(order.item.id!),
+                                onIncrement: () => context
+                                    .read<CartCubit>()
+                                    .incrementItem(order.item.id!),
+                                onDelete: () => context
+                                    .read<CartCubit>()
+                                    .removeToCart(order),
+                              ),
+                            ),
+                          );
                         },
                       );
                     })),

@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
+import 'package:snacks_app/models/item_model.dart';
 
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/enums.dart';
