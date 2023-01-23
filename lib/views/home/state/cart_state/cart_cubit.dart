@@ -10,6 +10,7 @@ import 'package:meta/meta.dart';
 import 'package:snacks_app/models/item_model.dart';
 
 import 'package:snacks_app/models/order_model.dart';
+import 'package:snacks_app/services/firebase/notifications.dart';
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/views/home/repository/card_repository.dart';
 import 'package:snacks_app/views/home/repository/orders_repository.dart';
@@ -135,16 +136,19 @@ class CartCubit extends Cubit<CartState> {
       ));
 
   void makeOrder(String method, {String rfid = ""}) async {
+    final notification = AppNotification();
     if (method == "Cartão Snacks") {
       await cardRepository.doPayment(rfid, state.total);
+    } else {
+      var stor = await getStorage;
+      notification.sendNotificationToWaiters(table: stor["table"].toString());
     }
-    var data = generateDataObject(method);
+    var data = await generateDataObject(method);
     await repository.createOrder(data);
-
     clearCart();
   }
 
-  generateDataObject(method) async {
+  Future<List<Map<String, dynamic>>> generateDataObject(method) async {
     final dataStorage = await getStorage;
     bool isDelivery = !auth.currentUser!.isAnonymous;
 
@@ -191,6 +195,7 @@ class CartCubit extends Cubit<CartState> {
         });
       }
     }
+    return dataTotal.orders;
   }
 
   Stream<QuerySnapshot> fetchOrders() {

@@ -199,7 +199,7 @@ class MyCartScreen extends StatelessWidget {
                     ],
                   )
                 : Padding(
-                    padding: const EdgeInsets.all(25.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: BlocBuilder<CartCubit, CartState>(
                         builder: (context, snapshot) {
                       return ListView.separated(

@@ -8,7 +8,7 @@ class OrdersApiServices {
   final auth = FirebaseAuth.instance;
   final firebase = FirebaseFirestore.instance;
 
-  Future<dynamic> createOrder(List<Map<String, dynamic>> data) async {
+  Future<void> createOrder(List<Map<String, dynamic>> data) async {
     // return await db.createDocumentToCollection(
     //     collection: "orders", data: data);
     var ref = firebase.collection("orders");

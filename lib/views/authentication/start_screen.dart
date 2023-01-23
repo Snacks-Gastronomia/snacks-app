@@ -39,27 +39,25 @@ class StartScreen extends StatelessWidget {
                   CustomButton(
                       icon: Icons.qr_code_scanner_rounded,
                       action: () async {
+                        var navigator = Navigator.of(context);
                         var cubit = context.read<AuthCubit>();
                         var permission = await Permission.camera.request();
                         if (permission.isGranted) {
-                          // ignore: use_build_context_synchronously
-                          final code = await Navigator.pushNamed(
-                              context, AppRoutes.scanQrCode);
+                          final code =
+                              await navigator.pushNamed(AppRoutes.scanQrCode);
                           cubit.changeStatus(AppStatus.loading);
-                          print(code);
                           try {
                             int? table = int.tryParse(code.toString());
-                            print(table);
                             if (table != null && (table >= 1 && table <= 100)) {
-                              auth
-                                  .signIn(table: code.toString())
-                                  .then((value) async {
-                                assert(value != null);
+                              var user =
+                                  await auth.signIn(table: code.toString());
+
+                              if (user != null) {
                                 cubit.changeStatus(AppStatus.loaded);
-                                await Navigator.of(context)
-                                    .pushNamedAndRemoveUntil(AppRoutes.home,
-                                        ModalRoute.withName(AppRoutes.start));
-                              });
+                                navigator.pushNamedAndRemoveUntil(
+                                    AppRoutes.home,
+                                    ModalRoute.withName(AppRoutes.start));
+                              }
                             } else {
                               cubit.changeStatus(AppStatus.loaded);
                             }
@@ -115,7 +113,7 @@ class CustomButton extends StatelessWidget {
       child: Ink(
         width: double.maxFinite,
         height: 109,
-        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         decoration: BoxDecoration(
             border: dark
                 ? null
@@ -130,7 +128,7 @@ class CustomButton extends StatelessWidget {
               color: dark ? Colors.white : Colors.black,
             ),
             const SizedBox(
-              width: 25,
+              width: 20,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

@@ -73,22 +73,12 @@ class HomeCubit extends Cubit<HomeState> {
         }
       });
       emit(state.copyWith(status: AppStatus.loaded));
-      // print(state.status);
     }
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> fetchRestaurants() async {
     return await itemsRepository.fetchRestaurants();
   }
-
-  // onSelectRestaurant(String restaurant) async {
-  //   if (state.category == restaurant) {
-  //     emit(state.copyWith(category: ""));
-  //   } else {
-  //     emit(state.copyWith(category: restaurant));
-  //     fetchItemsByRestaurants(restaurant);
-  //   }
-  // }
 
   void fetchItemsByRestaurants(String restaurant, bool onSelect) {
     if (!state.listIsLastPage) {

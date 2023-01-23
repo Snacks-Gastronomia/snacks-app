@@ -63,14 +63,14 @@ class CartItemWidget extends StatelessWidget {
                             fit: BoxFit.cover),
                   ),
                   const SizedBox(
-                    width: 20,
+                    width: 10,
                   ),
                   Column(
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: 150,
+                        width: 130,
                         child: Text(
                           order.item.title,
                           style: AppTextStyles.regular(16),
