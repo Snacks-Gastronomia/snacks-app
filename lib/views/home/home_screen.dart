@@ -79,7 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     content: const CardDetailsModal(),
                   ),
                 ),
-                if (!auth.currentUser!.isAnonymous)
+                if (auth.currentUser != null &&
+                    (auth.currentUser?.isAnonymous ?? false))
                   GButton(
                     icon: Icons.account_circle_rounded,
                     text: 'Conta',

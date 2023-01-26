@@ -21,12 +21,13 @@ class CardItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var order = OrderModel(item: item, observations: "");
+    var sizeHeight = MediaQuery.of(context).size.height;
     return Builder(builder: (context) {
       return Stack(
         children: [
           Container(
-            width: 155,
-            height: 155,
+            // width: 155,
+            // height: 155,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
@@ -39,7 +40,7 @@ class CardItemWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 100,
+                  height: sizeHeight * 0.12,
                   width: double.maxFinite,
                   child: item.image_url == null || item.image_url!.isEmpty
                       ? Center(
@@ -47,7 +48,7 @@ class CardItemWidget extends StatelessWidget {
                             AppImages.snacks,
                             color: Colors.grey.shade400,
                             // fit: BoxFit.,
-                            width: 70,
+                            width: 80,
                           ),
                         )
                       : Image.network(item.image_url!, fit: BoxFit.cover),

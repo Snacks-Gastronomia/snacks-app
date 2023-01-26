@@ -325,12 +325,13 @@ class AllItemsWidget extends StatelessWidget {
         var data = state.menu;
 
         if (data.isNotEmpty) {
+          bool isTablet = MediaQuery.of(context).size.width > 600;
           return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isTablet ? 3 : 2,
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 15,
-                  mainAxisExtent: 160),
+                  mainAxisExtent: isTablet ? 230 : 160),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               // itemCount: data.length + (state.listIsLastPage ? 0 : 3),
