@@ -105,7 +105,7 @@ class PaymentScreen extends StatelessWidget {
                           // height: 41,
                         ),
                         GestureDetector(
-                          onTap: () => action(context, "Cartão de crédito"),
+                          onTap: () => action(context, "Cartão de crédito/débito"),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: const Color(0xffF7F8F9),
