@@ -49,18 +49,36 @@ class CartItemWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(8)),
-                    child: order.item.image_url == null ||
-                            order.item.image_url!.isEmpty
-                        ? Center(
-                            child: SvgPicture.asset(
-                              AppImages.snacks,
-                              color: Colors.grey.shade400,
-                              // fit: BoxFit.,
-                              width: 70,
+                    child: Stack(
+                      children: [
+                        order.item.image_url == null ||
+                                order.item.image_url!.isEmpty
+                            ? Center(
+                                child: SvgPicture.asset(
+                                  AppImages.snacks,
+                                  color: Colors.grey.shade400,
+                                  // fit: BoxFit.,
+                                  width: 70,
+                                ),
+                              )
+                            : Image.network(order.item.image_url!,
+                                fit: BoxFit.cover),
+                        Positioned(
+                          bottom: 0,
+                          child: Container(
+                            width: 60,
+                            color: Colors.black,
+                            child: Center(
+                              child: Text(
+                                "${order.item.time} min",
+                                style: AppTextStyles.medium(10,
+                                    color: Colors.white),
+                              ),
                             ),
-                          )
-                        : Image.network(order.item.image_url!,
-                            fit: BoxFit.cover),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     width: 10,
@@ -84,7 +102,9 @@ class CartItemWidget extends StatelessWidget {
                       ),
                       Text(
                         NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                            .format(order.item.value * order.amount),
+                            .format(double.parse(
+                                    order.option_selected["value"].toString()) *
+                                order.amount),
                         style:
                             AppTextStyles.regular(14, color: Color(0xff09B44D)),
                       ),

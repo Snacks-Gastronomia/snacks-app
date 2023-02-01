@@ -23,7 +23,8 @@ class PaymentScreen extends StatelessWidget {
   void action(context, method) {
     String description = "";
 
-    if (auth.currentUser!.isAnonymous) {
+    if (auth.currentUser?.isAnonymous != null &&
+        auth.currentUser!.isAnonymous) {
       if (method == "Cartão snacks") {
         description =
             "Seu está sendo preparado e logo será entregue em sua mesa. :-)";
@@ -105,7 +106,8 @@ class PaymentScreen extends StatelessWidget {
                           // height: 41,
                         ),
                         GestureDetector(
-                          onTap: () => action(context, "Cartão de crédito/débito"),
+                          onTap: () =>
+                              action(context, "Cartão de crédito/débito"),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: const Color(0xffF7F8F9),
@@ -158,7 +160,8 @@ class PaymentScreen extends StatelessWidget {
                         const SizedBox(
                           height: 15,
                         ),
-                        if (auth.currentUser!.isAnonymous)
+                        if (auth.currentUser?.isAnonymous != null &&
+                            auth.currentUser!.isAnonymous)
                           GestureDetector(
                             onTap: () async {
                               var cubit = context.read<CartCubit>();

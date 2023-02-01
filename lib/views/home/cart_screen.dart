@@ -2,20 +2,12 @@ import 'package:expandable/expandable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-
-import 'package:snacks_app/core/app.colors.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
-import 'package:snacks_app/models/order_model.dart';
-import 'package:snacks_app/utils/format.dart';
-import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
-import 'package:snacks_app/views/home/widgets/custom_switch.dart';
 import 'package:snacks_app/views/home/widgets/cart_item.dart';
 
 class MyCartScreen extends StatelessWidget {
@@ -29,6 +21,31 @@ class MyCartScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             backgroundColor: Colors.white,
+            floatingActionButton: !(auth.currentUser?.isAnonymous ?? false) &&
+                    state.cart.isNotEmpty
+                ? Container(
+                    height: 20,
+                    width: 140,
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        // border: Border.fromBorderSide(BorderSide()),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.delivery_dining_rounded,
+                            color: Colors.black),
+                        Text(
+                          "30~60 min",
+                          style:
+                              AppTextStyles.semiBold(14, color: Colors.black),
+                        )
+                      ],
+                    ),
+                  )
+                : null,
             bottomNavigationBar: state.cart.isNotEmpty
                 ? Padding(
                     padding:
@@ -38,6 +55,8 @@ class MyCartScreen extends StatelessWidget {
                           !(auth.currentUser?.isAnonymous ?? false) ? 180 : 150,
                       child: BlocBuilder<CartCubit, CartState>(
                           builder: (context, snapshot) {
+                        var total = snapshot.total +
+                            (!(auth.currentUser?.isAnonymous ?? false) ? 5 : 0);
                         return Container(
                           decoration: const BoxDecoration(
                               color: Color(0xffF6F6F6),
@@ -63,7 +82,7 @@ class MyCartScreen extends StatelessWidget {
                                           Text(
                                             'Subtotal',
                                             style: AppTextStyles.regular(17,
-                                                color: Color(0xff979797)),
+                                                color: const Color(0xff979797)),
                                           ),
                                           Text(
                                             NumberFormat.currency(
@@ -71,7 +90,7 @@ class MyCartScreen extends StatelessWidget {
                                                     symbol: r"R$ ")
                                                 .format(snapshot.total),
                                             style: AppTextStyles.regular(17,
-                                                color: Color(0xff979797)),
+                                                color: const Color(0xff979797)),
                                           ),
                                         ],
                                       ),
@@ -85,13 +104,15 @@ class MyCartScreen extends StatelessWidget {
                                                   'Entrega',
                                                   style: AppTextStyles.regular(
                                                       17,
-                                                      color: Color(0xff979797)),
+                                                      color: const Color(
+                                                          0xff979797)),
                                                 ),
                                                 Text(
-                                                  '5.00',
+                                                  '5,00',
                                                   style: AppTextStyles.regular(
                                                       17,
-                                                      color: Color(0xff979797)),
+                                                      color: const Color(
+                                                          0xff979797)),
                                                 ),
                                               ],
                                             )
@@ -103,15 +124,15 @@ class MyCartScreen extends StatelessWidget {
                                           Text(
                                             'Total',
                                             style: AppTextStyles.semiBold(17,
-                                                color: Color(0xff979797)),
+                                                color: const Color(0xff979797)),
                                           ),
                                           Text(
                                             NumberFormat.currency(
                                                     locale: "pt",
                                                     symbol: r"R$ ")
-                                                .format(snapshot.total),
+                                                .format(total),
                                             style: AppTextStyles.semiBold(17,
-                                                color: Color(0xff979797)),
+                                                color: const Color(0xff979797)),
                                           ),
                                         ],
                                       )
@@ -126,7 +147,7 @@ class MyCartScreen extends StatelessWidget {
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(15)),
-                                    primary: Colors.black,
+                                    backgroundColor: Colors.black,
                                     tapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                     fixedSize:
@@ -155,7 +176,7 @@ class MyCartScreen extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
-                            primary: Color(0xffF6F6F6),
+                            primary: const Color(0xffF6F6F6),
                             padding: EdgeInsets.zero,
                             minimumSize: const Size(41, 41)),
                         child: const Icon(

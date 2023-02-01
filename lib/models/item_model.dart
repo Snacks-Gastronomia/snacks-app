@@ -17,6 +17,7 @@ class Item {
   final bool active;
   // final Map<dynamic, String>? ingredients;
   final List<dynamic> extras;
+  final List<dynamic> options;
   final List<Ingredient> ingredients;
 
   Item({
@@ -31,6 +32,7 @@ class Item {
     this.image_url,
     required this.active,
     this.extras = const [],
+    this.options = const [],
     this.ingredients = const [],
   });
 
@@ -47,6 +49,7 @@ class Item {
     bool? active,
     List<Ingredient>? ingredients,
     List<dynamic>? extras,
+    List<dynamic>? options,
   }) {
     return Item(
       id: id ?? this.id,
@@ -60,6 +63,7 @@ class Item {
       extras: extras ?? this.extras,
       ingredients: ingredients ?? this.ingredients,
       time: time ?? this.time,
+      options: options ?? this.options,
       active: active ?? this.active,
     );
   }
@@ -94,6 +98,7 @@ class Item {
       image_url: map['image_url'],
       ingredients: List<Ingredient>.from(map['ingredients']),
       extras: List<dynamic>.from(map['extras'] ?? []),
+      options: List<dynamic>.from(map['options'] ?? []),
     );
   }
 
@@ -137,6 +142,7 @@ class Item {
         other.image_url == image_url &&
         other.active == active &&
         listEquals(other.ingredients, ingredients) &&
+        listEquals(other.options, options) &&
         listEquals(other.extras, extras);
   }
 }

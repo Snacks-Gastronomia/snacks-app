@@ -43,7 +43,9 @@ class CartCubit extends Cubit<CartState> {
       var ord = getOrderByItemId(newOrder.item.id!);
       if (ord != null) {
         ord.copyWith(
-            amount: newOrder.amount, observations: newOrder.observations);
+            amount: newOrder.amount,
+            observations: newOrder.observations,
+            option_selected: newOrder.option_selected);
       }
     }
 
@@ -52,7 +54,6 @@ class CartCubit extends Cubit<CartState> {
     emit(state.copyWith(cart: newCart));
     updateTotalValue();
     emit(state.copyWith(temp_observation: ""));
-    print(state);
   }
 
   updateItemFromCart(OrderModel order) {
@@ -121,9 +122,12 @@ class CartCubit extends Cubit<CartState> {
   void updateTotalValue() {
     double total = 0;
     for (var element in state.cart) {
-      total += element.item.value * element.amount;
+      total += double.parse(element.option_selected["value"].toString()) *
+          element.amount;
     }
-    print(total);
+    // if (!(auth.currentUser?.isAnonymous ?? false)) {
+    //   total += 5;
+    // }
     emit(state.copyWith(total: total));
   }
 
@@ -150,7 +154,7 @@ class CartCubit extends Cubit<CartState> {
 
   Future<List<Map<String, dynamic>>> generateDataObject(method) async {
     final dataStorage = await getStorage;
-    bool isDelivery = !auth.currentUser!.isAnonymous;
+    bool isDelivery = auth.currentUser?.isAnonymous ?? false;
 
     var status = method == "Cartão Snacks" || isDelivery
         ? OrderStatus.ready_to_start.name
@@ -181,7 +185,7 @@ class CartCubit extends Cubit<CartState> {
         dataTotal.done = [...dataTotal.done, e.item.restaurant_id];
         dataTotal.orders.add({
           "items": [e.toMap()],
-          "user_uid": auth.currentUser!.uid,
+          "user_uid": auth.currentUser?.uid ?? "",
           "payment_method": method,
           "value": e.item.value,
           "restaurant": e.item.restaurant_id,

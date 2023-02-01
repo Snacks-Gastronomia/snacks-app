@@ -30,7 +30,24 @@ class CartState {
   factory CartState.initial() => CartState(
         payment_method: "",
         table_code: 0,
-        cart: [],
+        cart: [
+          // OrderModel(
+          //     item: Item(
+          //         title: "title",
+          //         value: 20,
+          //         time: 30,
+          //         restaurant_id: "",
+          //         active: true),
+          //     observations: ""),
+          // OrderModel(
+          //     item: Item(
+          //         title: "title",
+          //         value: 20,
+          //         time: 30,
+          //         restaurant_id: "",
+          //         active: true),
+          //     observations: "")
+        ],
         status: AppStatus.initial,
         total: 0,
         error: "",

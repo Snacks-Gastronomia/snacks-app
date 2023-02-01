@@ -26,6 +26,12 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     print(state.order!.amount);
   }
 
+  void selectOption(dynamic op) {
+    var item = state.order;
+    emit(state.copyWith(order: item?.copyWith(option_selected: op)));
+    print(state.order?.option_selected);
+  }
+
   void decrementAmount() {
     var amount = state.order!.amount;
     if (amount != 1) {
@@ -45,6 +51,8 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
   }
 
   getNewValue() {
-    return state.order!.item.value * state.order!.amount;
+    return double.parse(
+            state.order?.option_selected["value"].toString() ?? "0") *
+        state.order!.amount;
   }
 }

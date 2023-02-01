@@ -58,10 +58,10 @@ class AppWidget extends StatelessWidget {
       var startTime = TimeOfDay(hour: start.hour, minute: start.minute);
       var endTime = TimeOfDay(hour: end.hour, minute: end.minute);
       //0 equal //-1 lesser // 1 greater
-      // return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <= 0
-      //     ? true
-      //     : false;
-      return true;
+      return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <= 0
+          ? true
+          : false;
+      // return true;
     }
 
     return MultiBlocProvider(
@@ -98,11 +98,13 @@ class AppWidget extends StatelessWidget {
                     textTheme: GoogleFonts.poppinsTextTheme(
                         Theme.of(context).textTheme)),
                 title: "Snacks App",
+                // initialRoute: AppRoutes.cart,
                 initialRoute: snapshot.data == true
                     ? auth.currentUser != null
                         ? AppRoutes.home
                         : AppRoutes.start
                     : AppRoutes.closedRestaurant,
+                // initialRoute: AppRoutes.payment,
                 // initialRoute: AppRoutes.cart,
                 routes: {
                   AppRoutes.start: (context) => StartScreen(),

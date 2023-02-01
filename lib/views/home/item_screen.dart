@@ -45,54 +45,109 @@ class _ItemScreenState extends State<ItemScreen> {
         child: Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, bottom: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            BlocBuilder<ItemScreenCubit, ItemScreenState>(
-              builder: (context, state) {
-                return Text(
-                  NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                      .format(context.read<ItemScreenCubit>().getNewValue()),
-                  style: AppTextStyles.medium(18, color: AppColors.highlight),
-                );
-              },
+            SizedBox(
+              height: 45,
+              child: BlocBuilder<ItemScreenCubit, ItemScreenState>(
+                builder: (context, state) {
+                  return ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        var option = widget.order.item.options[index];
+                        var selected = state.order?.option_selected;
+                        return GestureDetector(
+                          onTap: () => context
+                              .read<ItemScreenCubit>()
+                              .selectOption(option),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: selected != option
+                                  ? const Border.fromBorderSide(
+                                      BorderSide(color: Colors.black))
+                                  : null,
+                              color: selected == option
+                                  ? Colors.black
+                                  : Colors.white,
+                            ),
+                            child: Center(
+                                child: Text(
+                              '${option["title"]}',
+                              style: AppTextStyles.medium(14,
+                                  color: selected == option
+                                      ? Colors.white
+                                      : Colors.black),
+                            )),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(
+                            width: 10,
+                          ),
+                      itemCount: widget.order.item.options.length);
+                },
+              ),
             ),
-            ElevatedButton(
-              onPressed: () => AppModal().showModalBottomSheet(
-                context: context,
-                content: ModalContentObservation(
-                    action: () {
-                      var order = context.read<ItemScreenCubit>().state.order!;
-                      if (context.read<ItemScreenCubit>().state.isNew) {
-                        BlocProvider.of<CartCubit>(context).addToCart(order);
-                      } else {
-                        BlocProvider.of<CartCubit>(context)
-                            .updateItemFromCart(order);
-                      }
-                      Navigator.popUntil(
-                          context, ModalRoute.withName(AppRoutes.home));
+            const SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                BlocBuilder<ItemScreenCubit, ItemScreenState>(
+                  builder: (context, state) {
+                    return Text(
+                      NumberFormat.currency(locale: "pt", symbol: r"R$ ")
+                          .format(
+                              context.read<ItemScreenCubit>().getNewValue()),
+                      style:
+                          AppTextStyles.medium(18, color: AppColors.highlight),
+                    );
+                  },
+                ),
+                ElevatedButton(
+                  onPressed: () => AppModal().showModalBottomSheet(
+                    context: context,
+                    content: ModalContentObservation(
+                        action: () {
+                          var order =
+                              context.read<ItemScreenCubit>().state.order!;
+                          if (context.read<ItemScreenCubit>().state.isNew) {
+                            BlocProvider.of<CartCubit>(context)
+                                .addToCart(order);
+                          } else {
+                            BlocProvider.of<CartCubit>(context)
+                                .updateItemFromCart(order);
+                          }
+                          Navigator.popUntil(
+                              context, ModalRoute.withName(AppRoutes.home));
 
-                      Navigator.pushNamed(context, AppRoutes.cart);
-                    },
-                    value: context
-                        .read<ItemScreenCubit>()
-                        .state
-                        .order!
-                        .observations,
-                    onChanged:
-                        context.read<ItemScreenCubit>().observationChanged),
-              ),
-              style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  backgroundColor: Colors.black,
-                  fixedSize: const Size(200, 52)),
-              child: Text(
-                context.read<ItemScreenCubit>().state.isNew
-                    ? 'Adicionar'
-                    : "Ok",
-                style: AppTextStyles.regular(16, color: Colors.white),
-              ),
+                          Navigator.pushNamed(context, AppRoutes.cart);
+                        },
+                        value: context
+                            .read<ItemScreenCubit>()
+                            .state
+                            .order!
+                            .observations,
+                        onChanged:
+                            context.read<ItemScreenCubit>().observationChanged),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      backgroundColor: Colors.black,
+                      fixedSize: const Size(200, 52)),
+                  child: Text(
+                    context.read<ItemScreenCubit>().state.isNew
+                        ? 'Adicionar'
+                        : "Ok",
+                    style: AppTextStyles.regular(16, color: Colors.white),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -339,7 +394,7 @@ class _ItemScreenState extends State<ItemScreen> {
                               var list = List.from(widget.order.item.extras);
                               double? value = double.tryParse(
                                   list[index]['value'].toString());
-                              print(value);
+
                               return BlocBuilder<ItemScreenCubit,
                                       ItemScreenState>(
                                   // stream: null,

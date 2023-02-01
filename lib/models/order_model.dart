@@ -9,11 +9,13 @@ class OrderModel {
   String observations;
   List<String> extras;
   String status;
+  dynamic option_selected;
   OrderModel(
       {required this.item,
       this.amount = 1,
       this.status = "",
       required this.observations,
+      required this.option_selected,
       this.extras = const []}) {
     status = OrderStatus.waiting_payment.name;
   }
@@ -23,6 +25,7 @@ class OrderModel {
     int? amount,
     String? observations,
     String? status,
+    dynamic option_selected,
     List<String>? extras,
   }) {
     return OrderModel(
@@ -30,6 +33,7 @@ class OrderModel {
       amount: amount ?? this.amount,
       observations: observations ?? this.observations,
       extras: extras ?? this.extras,
+      option_selected: option_selected ?? this.option_selected,
       // status: status ?? this.status,
     );
   }
@@ -40,6 +44,7 @@ class OrderModel {
       'amount': amount,
       'observations': observations,
       'extras': extras,
+      'option_selected': option_selected,
     };
   }
 
@@ -48,6 +53,7 @@ class OrderModel {
       item: Item.fromMap(map['item']),
       amount: map['amount']?.toInt() ?? 0,
       observations: map['observations'] ?? '',
+      option_selected: map['option_selected'] ?? '',
       extras: map['extras'] ?? '',
     );
   }

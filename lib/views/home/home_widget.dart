@@ -149,18 +149,20 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
       floatingActionButton: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           return AnimatedOpacity(
-            opacity: state.showButton ? 1 : 0,
-            duration: const Duration(milliseconds: 300),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 70, left: 20, right: 20),
-              child: CustomSubmitButton(
-                  onPressedAction: () =>
-                      Navigator.pushNamed(context, AppRoutes.cart),
-                  label: "Continuar",
-                  loading_label: "",
-                  loading: false),
-            ),
-          );
+              opacity: state.showButton ? 1 : 0,
+              duration: const Duration(milliseconds: 300),
+              child: state.showButton
+                  ? Padding(
+                      padding: const EdgeInsets.only(
+                          bottom: 70, left: 20, right: 20),
+                      child: CustomSubmitButton(
+                          onPressedAction: () =>
+                              Navigator.pushNamed(context, AppRoutes.cart),
+                          label: "Continuar",
+                          loading_label: "",
+                          loading: false),
+                    )
+                  : const SizedBox());
           // }
           // return const SizedBox();
         },
@@ -349,7 +351,10 @@ class AllItemsWidget extends StatelessWidget {
                       onTap: () => modal.showIOSModalBottomSheet(
                           context: context,
                           content: ItemScreen(
-                              order: OrderModel(item: item, observations: ""))),
+                              order: OrderModel(
+                                  item: item,
+                                  observations: "",
+                                  option_selected: item.options[0]))),
                       child: CardItemWidget(
                         // ns: ns,
                         item: item,
@@ -399,7 +404,10 @@ class PopularItemsWidget extends StatelessWidget {
                         context: context,
                         expand: true,
                         content: ItemScreen(
-                            order: OrderModel(item: item, observations: ""))),
+                            order: OrderModel(
+                                item: item,
+                                observations: "",
+                                option_selected: {}))),
                     child: CardItemWidget(
                       // ns: ns,
                       item: item,
