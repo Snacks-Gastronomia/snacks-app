@@ -38,7 +38,8 @@ class OrdersScreen extends StatelessWidget {
               stream: BlocProvider.of<CartCubit>(context).fetchOrders(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  List<dynamic> orders = List.from(snapshot.data!.docs);
+                  List<QueryDocumentSnapshot<Object?>> orders =
+                      List.from(snapshot.data!.docs);
 
                   return ListView.builder(
                       physics: const BouncingScrollPhysics(),
@@ -47,7 +48,6 @@ class OrdersScreen extends StatelessWidget {
                       itemBuilder: (_, index) {
                         var item = orders[index];
                         Timestamp date = item["created_at"];
-                        // time.toDate();
                         String time = DateFormat("HH:mm").format(date.toDate());
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
@@ -59,7 +59,7 @@ class OrdersScreen extends StatelessWidget {
                               status: item["status"],
                               isDelivery: item["isDelivery"],
                               time: time,
-                              total: item["value"],
+                              total: double.parse(item["value"].toString()),
                               method: item["payment_method"],
                               items: item["items"]),
                         );
@@ -254,7 +254,7 @@ class CardOrderWidget extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            item.item.title,
+                                            '${item.item.title} - ${item.option_selected["title"]}',
                                             style: AppTextStyles.regular(14),
                                           ),
                                           if (item.observations.isNotEmpty)
@@ -273,7 +273,9 @@ class CardOrderWidget extends StatelessWidget {
                                   Text(
                                     NumberFormat.currency(
                                             locale: "pt", symbol: r"R$ ")
-                                        .format(item.item.value),
+                                        .format(double.parse(item
+                                            .option_selected["value"]
+                                            .toString())),
                                     style: AppTextStyles.regular(14,
                                         color: Colors.grey),
                                   ),

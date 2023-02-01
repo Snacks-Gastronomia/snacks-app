@@ -23,6 +23,8 @@ extension ParseToString on OrderStatus {
     switch (this) {
       case OrderStatus.waiting_payment:
         return "Aguardando pagamento";
+      case OrderStatus.ready_to_start:
+        return "Em fila";
       case OrderStatus.order_in_progress:
         return "Pedido em andamento";
       case OrderStatus.done:

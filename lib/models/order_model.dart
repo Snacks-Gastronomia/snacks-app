@@ -7,7 +7,7 @@ class OrderModel {
   final Item item;
   int amount;
   String observations;
-  List<String> extras;
+  List<dynamic> extras;
   String status;
   dynamic option_selected;
   OrderModel(
@@ -26,7 +26,7 @@ class OrderModel {
     String? observations,
     String? status,
     dynamic option_selected,
-    List<String>? extras,
+    List<dynamic>? extras,
   }) {
     return OrderModel(
       item: item ?? this.item,
@@ -53,8 +53,8 @@ class OrderModel {
       item: Item.fromMap(map['item']),
       amount: map['amount']?.toInt() ?? 0,
       observations: map['observations'] ?? '',
-      option_selected: map['option_selected'] ?? '',
-      extras: map['extras'] ?? '',
+      option_selected: map['option_selected'] ?? {},
+      extras: map['extras'] ?? [],
     );
   }
 

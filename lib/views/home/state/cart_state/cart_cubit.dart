@@ -154,7 +154,7 @@ class CartCubit extends Cubit<CartState> {
 
   Future<List<Map<String, dynamic>>> generateDataObject(method) async {
     final dataStorage = await getStorage;
-    bool isDelivery = auth.currentUser?.isAnonymous ?? false;
+    bool isDelivery = !(auth.currentUser?.isAnonymous ?? true);
 
     var status = method == "Cartão Snacks" || isDelivery
         ? OrderStatus.ready_to_start.name
@@ -187,7 +187,8 @@ class CartCubit extends Cubit<CartState> {
           "items": [e.toMap()],
           "user_uid": auth.currentUser?.uid ?? "",
           "payment_method": method,
-          "value": e.item.value,
+          "value": double.parse(e.option_selected["value"].toString()) +
+              (isDelivery ? 5 : 0),
           "restaurant": e.item.restaurant_id,
           "isDelivery": isDelivery,
           "status": status,
