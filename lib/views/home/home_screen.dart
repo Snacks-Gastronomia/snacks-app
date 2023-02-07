@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 if (auth.currentUser != null &&
-                    (auth.currentUser?.isAnonymous ?? false))
+                    !(auth.currentUser?.isAnonymous ?? false))
                   GButton(
                     icon: Icons.account_circle_rounded,
                     text: 'Conta',
