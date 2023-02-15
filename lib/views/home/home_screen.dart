@@ -82,14 +82,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (auth.currentUser != null &&
                     !(auth.currentUser?.isAnonymous ?? false))
                   GButton(
-                    icon: Icons.account_circle_rounded,
-                    text: 'Conta',
-                    onPressed: () => AppModal().showModalBottomSheet(
-                      withPadding: false,
-                      context: context,
-                      content: ProfileModal(),
-                    ),
-                  ),
+                      icon: Icons.account_circle_rounded,
+                      text: 'Conta',
+                      onPressed: () {
+                        // auth.signOut();
+                        AppModal().showModalBottomSheet(
+                          withPadding: false,
+                          context: context,
+                          content: ProfileModal(),
+                        );
+                      }),
               ],
               selectedIndex: _selectedIndex,
               onTabChange: (index) async {

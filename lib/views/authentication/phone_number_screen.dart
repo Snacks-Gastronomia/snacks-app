@@ -154,7 +154,8 @@ class PhoneNumberScreen extends StatelessWidget {
               //text 8391A1
               TextFormField(
                 style: AppTextStyles.medium(16, color: const Color(0xff8391A1)),
-                keyboardType: TextInputType.phone,
+                keyboardType:
+                    const TextInputType.numberWithOptions(signed: true),
                 onChanged: context.read<AuthCubit>().changePhone,
                 inputFormatters: [
                   MaskTextInputFormatter(

@@ -17,8 +17,10 @@ class AppStorage {
       ));
   Future<Map<String, String>> get getStorage async => await init.readAll();
 
-  Future<Map<String, dynamic>> getDataStorage(String data) async {
+  Future<String> getDataStorage(String data) async {
     var dataStorage = await init.readAll();
-    return data.isNotEmpty ? jsonDecode(dataStorage[data] ?? "") : dataStorage;
+    return data.isNotEmpty
+        ? dataStorage[data].toString()
+        : dataStorage.toString();
   }
 }

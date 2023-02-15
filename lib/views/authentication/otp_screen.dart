@@ -138,12 +138,12 @@ class _OtpScreenState extends State<OtpScreen> {
                         var res =
                             await context.read<AuthCubit>().sendOTPValidation();
 
-                        // if (res) {
-                        //   toast.showToast(
-                        //       context: context,
-                        //       content: "Código enviado!",
-                        //       type: ToastType.info);
-                        // }
+                        if (res) {
+                          toast.showToast(
+                              context: context,
+                              content: "Código enviado!",
+                              type: ToastType.info);
+                        }
                       },
                       child: RichText(
                         text: TextSpan(

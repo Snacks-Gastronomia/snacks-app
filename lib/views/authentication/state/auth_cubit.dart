@@ -108,10 +108,11 @@ class AuthCubit extends Cubit<AuthState> {
     await repository.createUser(
         uid: auth.currentUser!.uid, address: state.address.complete);
     await auth.currentUser!.updateDisplayName(state.name);
+    repository.storageAddress(state.address.complete);
     changeStatus(AppStatus.loaded);
   }
 
-  checkUser() async {
+  Future<bool> checkUser() async {
     changeStatus(AppStatus.loading);
     Map<String, dynamic>? response =
         await repository.checkUser(uid: auth.currentUser!.uid);
