@@ -44,7 +44,8 @@ class PhoneNumberScreen extends StatelessWidget {
             },
             verificationFailed: (FirebaseAuthException e) {
               print("Não foi possível enviar o código! Tente novamente.");
-
+              print(e.code + e.message.toString());
+              context.read<AuthCubit>().changeStatus(AppStatus.loaded);
               toast.showToast(
                   context: context,
                   type: ToastType.error,
@@ -55,7 +56,7 @@ class PhoneNumberScreen extends StatelessWidget {
               print("code sent");
               if (verificationID.isNotEmpty) {
                 context.read<AuthCubit>().changeVerificationId(verificationID);
-
+                context.read<AuthCubit>().changeStatus(AppStatus.loaded);
                 await navigator.pushNamed(AppRoutes.otp);
               }
             },
