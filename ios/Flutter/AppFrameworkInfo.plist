@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>App</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.snacks.snacksApp</string>
+	<string>com.snacks.snacks.app</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -15,11 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>1.4.6</string>
 	<key>MinimumOSVersion</key>
 	<string>11.0</string>
 </dict>
