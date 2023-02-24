@@ -39,7 +39,7 @@ class ItemsApiServices {
   Future<QuerySnapshot<Map<String, dynamic>>> getRestaurants() {
     return firebase
         .collection("restaurants")
-        .where('category', isNotEqualTo: "snacks")
+        .where('name', isNotEqualTo: "SNACKS")
         .get();
   }
 
