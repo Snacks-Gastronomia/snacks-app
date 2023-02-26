@@ -22,7 +22,7 @@ class UnavailableScreen extends StatelessWidget {
       // DateTime start = DateFormat("HH:mm").parse(doc.data()?["start"]);
       // DateTime end = DateFormat("HH:mm").parse(doc.data()?["end"]);
 
-      return doc.docs[0];
+      return doc.docs.length != 0 ? doc.docs[0] : null;
     }
 
     return SafeArea(

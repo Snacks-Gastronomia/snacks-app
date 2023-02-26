@@ -44,7 +44,7 @@ class AppWidget extends StatelessWidget {
 
     Future<bool> verifyRestaurantStatus() async {
       var time = DateTime.now();
-      var now = TimeOfDay.now();
+      var now = TimeOfDay.fromDateTime(time.subtract(const Duration(hours: 3)));
       await initializeDateFormatting("pt_BR");
       var doc = await fire
           .collection("snacks_config")
