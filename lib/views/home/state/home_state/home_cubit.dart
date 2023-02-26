@@ -55,8 +55,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void fetchItems() async {
-    print("has category");
-    print(state.category);
+    print("load more");
     if (!state.listIsLastPage) {
       emit(state.copyWith(status: AppStatus.loading));
       var last = state.menu.isEmpty ? null : state.lastDocument;
@@ -83,7 +82,6 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void fetchItemsByRestaurants(String restaurant, bool onSelect) {
-    print(restaurant);
     if (!state.listIsLastPage) {
       if (state.category == restaurant) {
         emit(state.copyWith(
