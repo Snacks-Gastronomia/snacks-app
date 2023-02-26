@@ -134,6 +134,33 @@ class PaymentScreen extends StatelessWidget {
                           height: 15,
                         ),
                         GestureDetector(
+                          onTap: () => action(context, "Dinheiro"),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: const Color(0xffF7F8F9),
+                                borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: const [
+                                    Icon(Icons.attach_money_rounded),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('Dinheiro'),
+                                  ],
+                                ),
+                                const Icon(Icons.arrow_forward)
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        GestureDetector(
                           onTap: () => action(context, "Pix"),
                           child: Container(
                             decoration: BoxDecoration(
@@ -145,7 +172,7 @@ class PaymentScreen extends StatelessWidget {
                               children: [
                                 Row(
                                   children: const [
-                                    Icon(Icons.credit_card_rounded),
+                                    Icon(Icons.pix_rounded),
                                     SizedBox(
                                       width: 10,
                                     ),

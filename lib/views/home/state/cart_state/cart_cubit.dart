@@ -187,8 +187,9 @@ class CartCubit extends Cubit<CartState> {
           "items": [e.toMap()],
           "user_uid": auth.currentUser?.uid ?? "",
           "payment_method": method,
-          "value": double.parse(e.option_selected["value"].toString()) +
-              (isDelivery ? 5 : 0),
+          "value":
+              double.parse(e.option_selected["value"].toString()) * e.amount +
+                  (isDelivery ? 5 : 0),
           "restaurant": e.item.restaurant_id,
           "isDelivery": isDelivery,
           "status": status,

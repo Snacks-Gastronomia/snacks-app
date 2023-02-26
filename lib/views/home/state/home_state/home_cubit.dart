@@ -55,6 +55,8 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void fetchItems() async {
+    print("has category");
+    print(state.category);
     if (!state.listIsLastPage) {
       emit(state.copyWith(status: AppStatus.loading));
       var last = state.menu.isEmpty ? null : state.lastDocument;
@@ -81,6 +83,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void fetchItemsByRestaurants(String restaurant, bool onSelect) {
+    print(restaurant);
     if (!state.listIsLastPage) {
       if (state.category == restaurant) {
         emit(state.copyWith(
@@ -98,7 +101,8 @@ class HomeCubit extends Cubit<HomeState> {
           ));
         }
         itemsRepository
-            .fetchItemsByRestaurant(restaurant, state.lastDocument)
+            .fetchItemsByRestaurant(
+                restaurant, !state.listIsLastPage ? null : state.lastDocument)
             .distinct()
             .listen((event) {
           if (event.docs.isNotEmpty || onSelect) {
@@ -146,10 +150,5 @@ class HomeCubit extends Cubit<HomeState> {
       ));
       print('state: $e');
     }
-  }
-
-  void updateCategory(String category) {
-    emit(state.copyWith(category: category));
-    fetchItems();
   }
 }
