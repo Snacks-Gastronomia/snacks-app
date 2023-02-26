@@ -28,17 +28,12 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   late ScrollController controller;
   // final key = GlobalKey();
   final auth = FirebaseAuth.instance;
-
+  String category = "";
   @override
   void initState() {
     controller = ScrollController();
     // TODO: implement initState
     //  _navigator.pushAndRemoveUntil(..., (route) => ...);
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
     controller.addListener(
       () {
         var state = context.read<HomeCubit>().state;
@@ -51,17 +46,19 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
         }
         if (controller.position.maxScrollExtent == controller.offset &&
             state.status == AppStatus.loaded) {
-          if (state.category != null) {
-            context
-                .read<HomeCubit>()
-                .fetchItemsByRestaurants(state.category ?? "", false);
+          if (category.isNotEmpty) {
+            context.read<HomeCubit>().fetchItemsByRestaurants(category, false);
           } else {
-            print("object 2");
             context.read<HomeCubit>().fetchItems();
           }
         }
       },
     );
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
     _navigator = Navigator.of(context);
     super.didChangeDependencies();
   }
@@ -218,63 +215,65 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                       future: context.read<HomeCubit>().fetchRestaurants(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          return BlocBuilder<HomeCubit, HomeState>(
-                            builder: (context, state) {
-                              return ListView.separated(
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(
-                                  width: 10,
-                                ),
-                                itemCount: snapshot.data?.docs.length ?? 0,
-                                physics: const BouncingScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  var item = snapshot.data?.docs[index];
-                                  return GestureDetector(
-                                    onTap: () => context
-                                        .read<HomeCubit>()
-                                        .fetchItemsByRestaurants(
-                                            item?.id ?? "", true),
-                                    child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 10),
-                                        decoration: BoxDecoration(
-                                            boxShadow: state.category ==
-                                                    item?.id
-                                                ? [
-                                                    BoxShadow(
-                                                        blurRadius: 15,
-                                                        spreadRadius: 0.5,
-                                                        // offset: O,
-                                                        color: AppColors
-                                                            .highlight
-                                                            .withOpacity(0.4))
-                                                  ]
-                                                : null,
-                                            color: state.category == item?.id
-                                                ? AppColors.highlight
-                                                : Colors.white,
-                                            border: state.category == item?.id
-                                                ? null
-                                                : Border.fromBorderSide(
-                                                    BorderSide(
-                                                        color: Colors
-                                                            .grey.shade300)),
-                                            borderRadius:
-                                                BorderRadius.circular(15)),
-                                        child: Center(
-                                          child: Text(
-                                            item?.get("name"),
-                                            style: AppTextStyles.medium(
-                                              16,
-                                              color: state.category == item?.id
-                                                  ? Colors.white
-                                                  : Colors.grey.shade500,
-                                            ),
-                                          ),
-                                        )),
-                                  );
+                          return ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(
+                              width: 10,
+                            ),
+                            itemCount: snapshot.data?.docs.length ?? 0,
+                            physics: const BouncingScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              var item = snapshot.data?.docs[index];
+                              bool isSelected = category == item?.id;
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      category = "";
+                                    } else {
+                                      category = item?.id ?? "";
+                                    }
+                                  });
+                                  context
+                                      .read<HomeCubit>()
+                                      .fetchItemsByRestaurants(
+                                          item?.id ?? "", true);
                                 },
+                                child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    decoration: BoxDecoration(
+                                        boxShadow: isSelected
+                                            ? [
+                                                BoxShadow(
+                                                    blurRadius: 15,
+                                                    spreadRadius: 0.5,
+                                                    // offset: O,
+                                                    color: AppColors.highlight
+                                                        .withOpacity(0.4))
+                                              ]
+                                            : null,
+                                        color: isSelected
+                                            ? AppColors.highlight
+                                            : Colors.white,
+                                        border: isSelected
+                                            ? null
+                                            : Border.fromBorderSide(BorderSide(
+                                                color: Colors.grey.shade300)),
+                                        borderRadius:
+                                            BorderRadius.circular(15)),
+                                    child: Center(
+                                      child: Text(
+                                        item?.get("name"),
+                                        style: AppTextStyles.medium(
+                                          16,
+                                          color: isSelected
+                                              ? Colors.white
+                                              : Colors.grey.shade500,
+                                        ),
+                                      ),
+                                    )),
                               );
                             },
                           );

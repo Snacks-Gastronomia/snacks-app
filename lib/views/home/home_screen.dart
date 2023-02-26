@@ -69,16 +69,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Icons.receipt_rounded,
                   text: 'Pedidos',
                 ),
-                GButton(
-                  icon: Icons.credit_card_rounded,
-                  text: 'Cartão',
-                  onPressed: () => AppModal().showModalBottomSheet(
-                    withPadding: false,
-                    context: context,
-                    dimisible: false,
-                    content: const CardDetailsModal(),
+                if (auth.currentUser != null &&
+                    (auth.currentUser?.isAnonymous ?? false))
+                  GButton(
+                    icon: Icons.credit_card_rounded,
+                    text: 'Cartão',
+                    onPressed: () => AppModal().showModalBottomSheet(
+                      withPadding: false,
+                      context: context,
+                      dimisible: false,
+                      content: const CardDetailsModal(),
+                    ),
                   ),
-                ),
                 if (auth.currentUser != null &&
                     !(auth.currentUser?.isAnonymous ?? false))
                   GButton(
