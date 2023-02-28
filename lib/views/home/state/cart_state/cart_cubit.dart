@@ -188,9 +188,11 @@ class CartCubit extends Cubit<CartState> {
           return el;
         }).toList();
       } else {
-        double extra = e.extras
-            .map((e) => double.parse(e["value"].toString()))
-            .reduce((value, element) => value + element);
+        double extra = e.extras.isNotEmpty
+            ? e.extras
+                .map((e) => double.parse(e["value"].toString()))
+                .reduce((value, element) => value + element)
+            : 0;
         dataTotal.done = [...dataTotal.done, e.item.restaurant_id];
         dataTotal.orders.add({
           "items": [e.toMap()],
