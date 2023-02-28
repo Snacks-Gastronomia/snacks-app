@@ -14,11 +14,14 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     print(state.order!.amount);
   }
 
-  void selecteExtras(String extra) {
-    List<String> extras = List.from(state.order!.extras);
+  void selectExtras(dynamic extra) {
+    List<dynamic> extras = List.from(state.order!.extras);
     if (extras.contains(extra)) {
       extras.remove(extra);
-      emit(state.copyWith(order: state.order!.copyWith(extras: extras)));
+      emit(state.copyWith(
+          order: state.order!.copyWith(
+        extras: extras,
+      )));
     } else {
       emit(state.copyWith(
           order: state.order!.copyWith(extras: [...extras, extra])));

@@ -242,7 +242,7 @@ class MyCartScreen extends StatelessWidget {
                                 headerAlignment:
                                     ExpandablePanelHeaderAlignment.center,
                                 tapBodyToCollapse: true,
-                                tapBodyToExpand: false,
+                                tapBodyToExpand: true,
                                 hasIcon: false,
                               ),
                               expanded: Container(
@@ -257,9 +257,19 @@ class MyCartScreen extends StatelessWidget {
                                       ListView.builder(
                                         itemCount: order.extras.length,
                                         shrinkWrap: true,
-                                        itemBuilder: (context, index) => Text(
-                                          order.extras[index],
-                                          style: AppTextStyles.semiBold(12),
+                                        itemBuilder: (context, index) => Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              order.extras[index]["title"],
+                                              style: AppTextStyles.medium(12),
+                                            ),
+                                            Text(
+                                              '+${NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(double.parse(order.extras[index]["value"].toString()))}',
+                                              style: AppTextStyles.semiBold(12),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       const Divider(),
@@ -271,7 +281,7 @@ class MyCartScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              collapsed: order.extras.isNotEmpty &&
+                              collapsed: order.extras.isNotEmpty ||
                                       order.observations.isNotEmpty
                                   ? Center(
                                       child: Text(

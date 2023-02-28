@@ -392,19 +392,19 @@ class _ItemScreenState extends State<ItemScreen> {
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               var list = List.from(widget.order.item.extras);
-                              double? value = double.tryParse(
-                                  list[index]['value'].toString());
+                              double value =
+                                  double.parse(list[index]['value'].toString());
 
                               return BlocBuilder<ItemScreenCubit,
                                       ItemScreenState>(
                                   // stream: null,
                                   builder: (context, state) {
-                                bool selected = state.order!.extras
-                                    .contains(list[index]["title"]);
+                                bool selected =
+                                    state.order!.extras.contains(list[index]);
                                 return GestureDetector(
                                   onTap: () => context
                                       .read<ItemScreenCubit>()
-                                      .selecteExtras(list[index]["title"]),
+                                      .selectExtras(list[index]),
                                   child: Container(
                                     // height: 50,
                                     padding: const EdgeInsets.all(15),

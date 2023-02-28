@@ -266,6 +266,19 @@ class CardOrderWidget extends StatelessWidget {
                                                     color: Colors.grey),
                                               ),
                                             ),
+                                          if (item.extras.isNotEmpty)
+                                            for (int i = 0;
+                                                i < item.extras.length;
+                                                i++)
+                                              SizedBox(
+                                                width: 200,
+                                                child: Text(
+                                                  '+${item.extras[i]["title"]}  (${NumberFormat.currency(locale: "pt", symbol: r"R$").format(double.parse(item.extras[i]["value"].toString()))})',
+                                                  style: AppTextStyles.regular(
+                                                      12,
+                                                      color: Colors.grey),
+                                                ),
+                                              ),
                                         ],
                                       )
                                     ],

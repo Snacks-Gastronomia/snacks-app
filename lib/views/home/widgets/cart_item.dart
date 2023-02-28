@@ -23,6 +23,11 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double extras_value = order.extras.isNotEmpty
+        ? order.extras
+            .map((e) => double.parse(e["value"].toString()))
+            .reduce((value, element) => value + element)
+        : 0;
     return Stack(
       children: [
         Container(
@@ -102,9 +107,10 @@ class CartItemWidget extends StatelessWidget {
                       ),
                       Text(
                         NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                            .format(double.parse(
-                                    order.option_selected["value"].toString()) *
-                                order.amount),
+                            .format((double.parse(order.option_selected["value"]
+                                        .toString()) *
+                                    order.amount) +
+                                extras_value),
                         style:
                             AppTextStyles.regular(14, color: Color(0xff09B44D)),
                       ),

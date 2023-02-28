@@ -122,8 +122,14 @@ class CartCubit extends Cubit<CartState> {
   void updateTotalValue() {
     double total = 0;
     for (var element in state.cart) {
-      total += double.parse(element.option_selected["value"].toString()) *
-          element.amount;
+      double extras_value = element.extras.isNotEmpty
+          ? element.extras
+              .map((e) => double.parse(e["value"].toString()))
+              .reduce((value, element) => value + element)
+          : 0;
+      total += (double.parse(element.option_selected["value"].toString()) *
+              element.amount) +
+          extras_value;
     }
     // if (!(auth.currentUser?.isAnonymous ?? false)) {
     //   total += 5;
@@ -182,6 +188,9 @@ class CartCubit extends Cubit<CartState> {
           return el;
         }).toList();
       } else {
+        double extra = e.extras
+            .map((e) => double.parse(e["value"].toString()))
+            .reduce((value, element) => value + element);
         dataTotal.done = [...dataTotal.done, e.item.restaurant_id];
         dataTotal.orders.add({
           "items": [e.toMap()],
@@ -189,6 +198,7 @@ class CartCubit extends Cubit<CartState> {
           "payment_method": method,
           "value":
               double.parse(e.option_selected["value"].toString()) * e.amount +
+                  extra +
                   (isDelivery ? 5 : 0),
           "restaurant": e.item.restaurant_id,
           "isDelivery": isDelivery,
