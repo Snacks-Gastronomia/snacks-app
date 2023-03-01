@@ -44,7 +44,7 @@ class AppWidget extends StatelessWidget {
 
     Future<bool> verifyRestaurantStatus() async {
       var time = DateTime.now();
-      var now = TimeOfDay.fromDateTime(time.subtract(const Duration(hours: 3)));
+      var now = TimeOfDay.fromDateTime(time);
       await initializeDateFormatting("pt_BR");
       var doc = await fire
           .collection("snacks_config")
@@ -53,7 +53,6 @@ class AppWidget extends StatelessWidget {
           .doc((time.weekday - 1).toString())
           .get();
       DateTime start = DateFormat("HH:mm").parse(doc.data()?["start"]);
-
       DateTime end = DateFormat("HH:mm").parse(doc.data()?["end"]);
       var startTime = TimeOfDay(hour: start.hour, minute: start.minute);
       var endTime = TimeOfDay(hour: end.hour, minute: end.minute);
