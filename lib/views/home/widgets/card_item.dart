@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -52,7 +53,25 @@ class CardItemWidget extends StatelessWidget {
                             width: 80,
                           ),
                         )
-                      : Image.network(item.image_url!, fit: BoxFit.cover),
+                      : CachedNetworkImage(
+                          imageUrl: item.image_url!,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => Center(
+                            child: SvgPicture.asset(
+                              AppImages.snacks,
+                              color: Colors.grey.shade400,
+                              width: 80,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Center(
+                            child: SvgPicture.asset(
+                              AppImages.snacks,
+                              color: Colors.grey.shade400,
+                              width: 80,
+                            ),
+                          ),
+                        ),
+                  //  Image.network(item.image_url!, fit: BoxFit.cover),
                 ),
                 Container(
                   height: 2,
