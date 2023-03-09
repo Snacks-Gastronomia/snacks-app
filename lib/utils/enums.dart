@@ -4,6 +4,7 @@ enum AppStatus { initial, loading, loaded, editing, error }
 
 enum OrderStatus {
   waiting_payment,
+  waiting_delivery,
   ready_to_start,
   order_in_progress,
   done,
@@ -27,6 +28,8 @@ extension ParseToString on OrderStatus {
         return "Em fila";
       case OrderStatus.order_in_progress:
         return "Pedido em andamento";
+      case OrderStatus.waiting_delivery:
+        return "Aguardando o envio";
       case OrderStatus.done:
         return "Pedido pronto";
 
@@ -41,6 +44,10 @@ extension ParseToString on OrderStatus {
         return Colors.black;
       case OrderStatus.order_in_progress:
         return Colors.blue.shade400;
+
+      case OrderStatus.waiting_delivery:
+        return Colors.pink.shade400;
+
       case OrderStatus.done:
         return Colors.green.shade400;
 

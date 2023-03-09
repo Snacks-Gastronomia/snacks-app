@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:group_button/group_button.dart';
 
 import 'package:snacks_app/components/custom_submit_button.dart';
+import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/views/review/state/cubit/review_cubit.dart';
 
@@ -323,7 +324,8 @@ class FinishedForm extends StatelessWidget {
         CustomSubmitButton(
             onPressedAction: () {
               // context.read<ReviewCubit>().submit();
-              Navigator.pop(context);
+              Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home,
+                  ModalRoute.withName(AppRoutes.start));
             },
             label: "Fechar",
             loading_label: "",

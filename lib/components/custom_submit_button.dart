@@ -9,12 +9,14 @@ class CustomSubmitButton extends StatelessWidget {
     required this.label,
     required this.loading_label,
     required this.loading,
+    this.dark_theme = true,
   }) : super(key: key);
 
   final VoidCallback onPressedAction;
   final String label;
   final String loading_label;
   final bool loading;
+  final bool dark_theme;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -22,7 +24,7 @@ class CustomSubmitButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          primary: Colors.black,
+          backgroundColor: dark_theme ? Colors.black : Colors.white,
           fixedSize: const Size(double.maxFinite, 59)),
       child: Row(
         // mainAxisAlignment: MainAxisAlignment.center,
@@ -43,7 +45,8 @@ class CustomSubmitButton extends StatelessWidget {
           Spacer(),
           Text(
             loading ? loading_label : label,
-            style: AppTextStyles.regular(16, color: Colors.white),
+            style: AppTextStyles.regular(16,
+                color: dark_theme ? Colors.white : Colors.black),
           ),
           Spacer(),
         ],

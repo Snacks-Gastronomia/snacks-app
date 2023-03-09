@@ -42,37 +42,39 @@ class CardItemWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: sizeHeight * 0.12,
-                  width: double.maxFinite,
-                  child: item.image_url == null || item.image_url!.isEmpty
-                      ? Center(
-                          child: SvgPicture.asset(
-                            AppImages.snacks,
-                            color: Colors.grey.shade400,
-                            // fit: BoxFit.,
-                            width: 80,
-                          ),
-                        )
-                      : CachedNetworkImage(
-                          imageUrl: item.image_url!,
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) => Center(
-                            child: SvgPicture.asset(
-                              AppImages.snacks,
-                              color: Colors.grey.shade400,
-                              width: 80,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Center(
-                            child: SvgPicture.asset(
-                              AppImages.snacks,
-                              color: Colors.grey.shade400,
-                              width: 80,
-                            ),
-                          ),
-                        ),
-                  //  Image.network(item.image_url!, fit: BoxFit.cover),
-                ),
+                    height: sizeHeight * 0.12,
+                    width: double.maxFinite,
+                    child:
+                        // item.image_url == null || item.image_url!.isEmpty
+                        //     ?
+                        Center(
+                      child: SvgPicture.asset(
+                        AppImages.snacks,
+                        color: Colors.grey.shade400,
+                        // fit: BoxFit.,
+                        width: 80,
+                      ),
+                    )
+                    // : CachedNetworkImage(
+                    //     imageUrl: item.image_url!,
+                    //     progressIndicatorBuilder:
+                    //         (context, url, downloadProgress) => Center(
+                    //       child: SvgPicture.asset(
+                    //         AppImages.snacks,
+                    //         color: Colors.grey.shade400,
+                    //         width: 80,
+                    //       ),
+                    //     ),
+                    //     errorWidget: (context, url, error) => Center(
+                    //       child: SvgPicture.asset(
+                    //         AppImages.snacks,
+                    //         color: Colors.grey.shade400,
+                    //         width: 80,
+                    //       ),
+                    //     ),
+                    //   ),
+                    //  Image.network(item.image_url!, fit: BoxFit.cover),
+                    ),
                 Container(
                   height: 2,
                   color: Colors.grey,

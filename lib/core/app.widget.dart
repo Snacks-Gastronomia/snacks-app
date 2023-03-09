@@ -60,6 +60,7 @@ class AppWidget extends StatelessWidget {
       return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <= 0
           ? true
           : false;
+      // return true;
     }
 
     return MultiBlocProvider(

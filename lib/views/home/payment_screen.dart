@@ -12,6 +12,7 @@ import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_failed.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_ok.dart';
+import 'package:snacks_app/views/home/widgets/modals/money_change_option.dart';
 import 'package:snacks_app/views/splash/loading_screen.dart';
 import 'package:snacks_app/views/success/success_screen.dart';
 
@@ -20,9 +21,15 @@ class PaymentScreen extends StatelessWidget {
   final fb = FirebaseDataBase();
   final auth = FirebaseAuth.instance;
   final modal = AppModal();
-  void action(context, method) {
+  void action(context, method) async {
     String description = "";
+    bool change = false;
 
+    if (method == "Dinheiro") {
+      var res = await modal.showModalBottomSheet(
+          context: context, drag: false, content: MoneyChangeOptionModal());
+      change = res;
+    }
     if (auth.currentUser?.isAnonymous != null &&
         auth.currentUser!.isAnonymous) {
       if (method == "Cartão snacks") {
@@ -38,8 +45,8 @@ class PaymentScreen extends StatelessWidget {
           ' O entregador levará a maquininha para que você possa realizar o pagamento. ;-)';
     }
 
-    BlocProvider.of<CartCubit>(context).makeOrder(method);
-    modal.showIOSModalBottomSheet(
+    BlocProvider.of<CartCubit>(context).makeOrder(method, change: change);
+    await modal.showIOSModalBottomSheet(
         context: context,
         drag: false,
         content: SuccessScreen(
@@ -47,6 +54,8 @@ class PaymentScreen extends StatelessWidget {
             title: "Pedido realizado!",
             backButton: true,
             description: description));
+    Navigator.pushNamedAndRemoveUntil(
+        context, AppRoutes.home, ModalRoute.withName(AppRoutes.start));
   }
 
   @override

@@ -145,7 +145,7 @@ class CartCubit extends Cubit<CartState> {
         accessibility: KeychainAccessibility.first_unlock,
       ));
 
-  void makeOrder(String method, {String rfid = ""}) async {
+  void makeOrder(String method, {String rfid = "", bool change = false}) async {
     final notification = AppNotification();
     if (method == "Cartão Snacks") {
       await cardRepository.doPayment(rfid, state.total);
@@ -153,12 +153,12 @@ class CartCubit extends Cubit<CartState> {
       var stor = await getStorage;
       notification.sendNotificationToWaiters(table: stor["table"].toString());
     }
-    var data = await generateDataObject(method);
+    var data = await generateDataObject(method, change);
     await repository.createOrder(data);
     clearCart();
   }
 
-  Future<List<Map<String, dynamic>>> generateDataObject(method) async {
+  Future<List<Map<String, dynamic>>> generateDataObject(method, change) async {
     final dataStorage = await getStorage;
     bool isDelivery = !(auth.currentUser?.isAnonymous ?? true);
 
@@ -205,6 +205,7 @@ class CartCubit extends Cubit<CartState> {
           "restaurant": e.item.restaurant_id,
           "isDelivery": isDelivery,
           "status": status,
+          "money_change": change,
           "created_at": DateTime.now(),
           if (isDelivery)
             "address": dataStorage["address"]

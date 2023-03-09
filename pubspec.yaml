@@ -61,7 +61,6 @@ dependencies:
   hive_flutter: ^1.1.0
   firebase_messaging: ^14.2.1
   cached_network_image: ^3.2.3
-
   
 dependency_overrides:
   firebase_core_platform_interface: 4.5.2
