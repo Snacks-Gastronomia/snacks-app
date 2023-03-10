@@ -23,4 +23,9 @@ class AppStorage {
         ? dataStorage[data].toString()
         : dataStorage.toString();
   }
+
+  Future<void> updateStorage(String key, String value) async {
+    await init.delete(key: key);
+    return await init.write(key: key, value: value);
+  }
 }

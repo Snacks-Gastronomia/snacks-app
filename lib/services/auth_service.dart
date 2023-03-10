@@ -132,4 +132,14 @@ class AuthApiServices {
     var docs = doc.docs;
     return docs.isEmpty ? null : docs[0].data();
   }
+
+  Future<void> updateAddress(String address, String uid) async {
+    final doc =
+        await db.readDocumentToCollectionByUid(collection: "users", uid: uid);
+    var docs = doc.docs;
+    var data = docs.isEmpty ? null : docs[0];
+
+    return await db.updateDocumentToCollectionById(
+        collection: "users", id: data?.id ?? "", data: {"address": address});
+  }
 }

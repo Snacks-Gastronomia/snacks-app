@@ -10,7 +10,7 @@ class CardCubit extends Cubit<CardState> {
   final repository = CardRepository();
   CardCubit() : super(CardState.initial());
 
-  void readCard(rfid) async {
+  Future<void> readCard(rfid) async {
     emit(state.copyWith(status: AppStatus.loading));
     var res = await repository.fetchCard(rfid);
     if (res != null) {

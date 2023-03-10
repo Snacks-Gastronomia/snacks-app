@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
+import 'package:snacks_app/services/beerpass_service.dart';
 import 'package:snacks_app/services/firebase/database.dart';
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/modal.dart';
@@ -16,18 +17,35 @@ import 'package:snacks_app/views/home/widgets/modals/money_change_option.dart';
 import 'package:snacks_app/views/splash/loading_screen.dart';
 import 'package:snacks_app/views/success/success_screen.dart';
 
-class PaymentScreen extends StatelessWidget {
+class PaymentScreen extends StatefulWidget {
   PaymentScreen({Key? key}) : super(key: key);
-  final fb = FirebaseDataBase();
+
+  @override
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends State<PaymentScreen> {
+  final beerpassService = BeerPassService();
+
   final auth = FirebaseAuth.instance;
+
   final modal = AppModal();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   void action(context, method) async {
     String description = "";
     bool change = false;
 
     if (method == "Dinheiro") {
       var res = await modal.showModalBottomSheet(
-          context: context, drag: false, content: MoneyChangeOptionModal());
+          context: context,
+          drag: false,
+          content: const MoneyChangeOptionModal());
       change = res;
     }
     if (auth.currentUser?.isAnonymous != null &&
@@ -60,6 +78,7 @@ class PaymentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    getModal(String name, double v1, double v2) {}
     return SafeArea(
       child: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
@@ -201,41 +220,49 @@ class PaymentScreen extends StatelessWidget {
                           GestureDetector(
                             onTap: () async {
                               var cubit = context.read<CartCubit>();
+                              // var navigator
                               double orderValue = cubit.state.total;
                               dynamic dataStorage = cubit.getStorage;
                               final card_code = await Navigator.pushNamed(
                                   context, AppRoutes.scanCard);
 
                               cubit.changeStatus(AppStatus.loading);
-                              final card = await fb.readSnacksCard(
-                                  code: card_code.toString());
-
-                              if (card != null && card.exists) {
-                                double cardBudget = card.get("value");
+                              var card = await beerpassService
+                                  .getCard(card_code.toString());
+                              if (card != null) {
+                                double cardBudget =
+                                    double.parse(card["saldo"].toString());
 
                                 if (orderValue <= cardBudget - 5) {
-                                  var result = cardBudget - orderValue;
+                                  double result = cardBudget - orderValue;
                                   try {
-                                    await fb.updateSnacksCard(
-                                        doc_id: card.id,
-                                        data: {"value": result.toString()});
+                                    await beerpassService.payWithSnacksCard(
+                                        card_code.toString(), orderValue);
+
+                                    // action(context, "Cartão snacks");
+                                    cubit.changeStatus(AppStatus.loaded);
+                                    modal.showModalBottomSheet(
+                                        context: context,
+                                        content: Builder(builder: (context) {
+                                          return PaymentSuccessContent(
+                                              customer: card["nome"],
+                                              order_value:
+                                                  NumberFormat.currency(
+                                                          locale: "pt",
+                                                          symbol: r"R$ ")
+                                                      .format(orderValue),
+                                              rest_value: NumberFormat.currency(
+                                                      locale: "pt",
+                                                      symbol: r"R$ ")
+                                                  .format(result),
+                                              action: () => action(
+                                                  context, "Cartão Snacks"));
+                                        }));
                                   } catch (e) {
                                     print(e);
                                   }
-
-                                  modal.showModalBottomSheet(
-                                      context: context,
-                                      content: PaymentSuccessContent(
-                                          customer: card.get("name"),
-                                          order_value: NumberFormat.currency(
-                                                  locale: "pt", symbol: r"R$ ")
-                                              .format(orderValue),
-                                          rest_value: NumberFormat.currency(
-                                                  locale: "pt", symbol: r"R$ ")
-                                              .format(result),
-                                          action: () => action(
-                                              context, "Cartão Snacks")));
                                 } else {
+                                  // cubit.changeStatus(AppStatus.loaded);
                                   modal.showModalBottomSheet(
                                       context: context,
                                       content: PaymentFailedContent(

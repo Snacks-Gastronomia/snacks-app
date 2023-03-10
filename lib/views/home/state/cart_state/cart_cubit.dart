@@ -203,6 +203,7 @@ class CartCubit extends Cubit<CartState> {
                   extra +
                   (isDelivery ? 5 : 0),
           "restaurant": e.item.restaurant_id,
+          "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
           "status": status,
           "money_change": change,

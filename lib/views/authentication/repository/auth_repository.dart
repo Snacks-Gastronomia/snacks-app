@@ -68,4 +68,12 @@ class AuthenticateRepository {
       throw e.toString();
     }
   }
+
+  Future<void> updateAddress(String uid, String address) async {
+    try {
+      return await services.updateAddress(address, uid);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
 }

@@ -26,7 +26,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<String?> getAddress() async {
     final dataStorage = await storage.getDataStorage("address");
-
+    // print(dataStorage);
     return dataStorage.toString();
   }
 

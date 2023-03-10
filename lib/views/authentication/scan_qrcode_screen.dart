@@ -64,9 +64,9 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                     builder: (context, state, child) {
                       switch (state) {
                         case CameraFacing.front:
-                          return const Icon(Icons.camera_front);
+                          return const Icon(Icons.sync_rounded);
                         case CameraFacing.back:
-                          return const Icon(Icons.camera_rear);
+                          return const Icon(Icons.sync_rounded);
                       }
                     },
                   ),

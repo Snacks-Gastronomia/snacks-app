@@ -46,7 +46,7 @@ class CardDetailsModal extends StatelessWidget {
                       var cubit = context.read<CardCubit>();
                       var code = await Navigator.pushNamed(
                           context, AppRoutes.scanCard);
-                      cubit.readCard(code);
+                      await cubit.readCard(code);
                     });
               },
             ),

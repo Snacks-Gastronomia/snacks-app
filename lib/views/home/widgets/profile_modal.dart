@@ -62,32 +62,40 @@ class ProfileModal extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.white24, borderRadius: BorderRadius.circular(15)),
             padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                FutureBuilder<String?>(
-                    future: BlocProvider.of<HomeCubit>(context).getAddress(),
-                    builder: (context, snapshot) {
-                      return SizedBox(
+            child: FutureBuilder<String?>(
+                future: BlocProvider.of<HomeCubit>(context).getAddress(),
+                builder: (context, snapshot) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
                         width: 200,
                         child: Text(
                           snapshot.data ?? "",
                           style: AppTextStyles.light(17, color: Colors.white),
                         ),
-                      );
-                    }),
-                Center(
-                  child: IconButton(
-                      onPressed: () async => await auth.signOut(),
-                      icon: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 30,
-                      )),
-                ),
-              ],
-            ),
+                      ),
+                      Center(
+                        child: IconButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await Navigator.pushNamed(
+                                  context, AppRoutes.address,
+                                  arguments: {
+                                    // "address": snapshot.data,
+                                    "uid": auth.currentUser?.uid
+                                  });
+                            },
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 30,
+                            )),
+                      ),
+                    ],
+                  );
+                }),
           ),
           const SizedBox(
             height: 20,

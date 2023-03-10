@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:snacks_app/core/app.images.dart';
+import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/success/success_screen.dart';
@@ -79,6 +80,8 @@ class PaymentSuccessContent extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
+              // Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home,
+              //     ModalRoute.withName(AppRoutes.start));
               action();
             },
             style: ElevatedButton.styleFrom(

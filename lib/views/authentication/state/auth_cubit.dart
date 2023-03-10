@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/authentication/repository/auth_repository.dart';
 import 'package:snacks_app/services/auth_service.dart';
 
@@ -11,6 +12,7 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthenticateRepository repository =
       AuthenticateRepository(services: AuthApiServices());
   final auth = FirebaseAuth.instance;
+  final _localStorage = AppStorage();
   AuthCubit() : super(AuthState.initial());
 
   otpVerification(String value) async {
@@ -154,10 +156,16 @@ class AuthCubit extends Cubit<AuthState> {
     print(state);
   }
 
-  void updateAddress() {
+  void updateAddressFromScreen() {
     state.address_input_controller.text = state.address.complete;
 
     emit(state.copyWith(status: AppStatus.editing));
+  }
+
+  void updateAddressFromDatabase() {
+    var address = state.address.complete;
+    repository.updateAddress(auth.currentUser!.uid, address);
+    _localStorage.updateStorage("address", address);
   }
 
   Future<Iterable<dynamic>> fecthAddress(String query) async {

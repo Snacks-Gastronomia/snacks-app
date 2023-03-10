@@ -39,15 +39,33 @@ class BeerPassService {
     }
   }
 
-  Future pay(String rfid) async {
-    var header = await getReqHeader();
-    // var response = await httpClient.post(
-    //     Uri.https(URL, "apiv2/comandas/fechar"),
-    //     body: jsonEncode(data),
-    //     headers: header);
+  Future<dynamic> getCard(String rfid) async {
+    try {
+      var header = await getReqHeader();
+      var data = {"rfid": rfid};
+      var response = await httpClient
+          .get(Uri.https(URL, "apiv2/comandas", data), headers: header);
 
-    // if (response.statusCode != 200) {
-    //   print(response.statusCode);
-    // }
+      return jsonDecode(response.body).toString().isEmpty
+          ? null
+          : jsonDecode(response.body)[0];
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> payWithSnacksCard(String rfid, double value) async {
+    try {
+      var header = await getReqHeader();
+      var data = {"rfid": rfid, "value": value, "type": "pre"};
+      var response = await httpClient.post(Uri.https(URL, "apiv2/consumos"),
+          body: jsonEncode(data), headers: header);
+
+      if (response.statusCode != 200) {
+        print(response.statusCode);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

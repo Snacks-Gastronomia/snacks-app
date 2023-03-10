@@ -18,6 +18,8 @@ class AddAddressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = (ModalRoute.of(context)?.settings.arguments ?? {}) as Map;
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -28,9 +30,14 @@ class AddAddressScreen extends StatelessWidget {
                   onPressedAction: () async {
                     final navigator = Navigator.of(context);
                     if (state.address.address.isNotEmpty) {
-                      context.read<AuthCubit>().saveUser();
-                      await navigator.pushNamedAndRemoveUntil(
-                          AppRoutes.home, ModalRoute.withName(AppRoutes.start));
+                      if (arguments.isNotEmpty) {
+                        context.read<AuthCubit>().updateAddressFromDatabase();
+                        navigator.pop();
+                      } else {
+                        context.read<AuthCubit>().saveUser();
+                        await navigator.pushNamedAndRemoveUntil(AppRoutes.home,
+                            ModalRoute.withName(AppRoutes.start));
+                      }
                     }
                   },
                   label: "Salvar",
@@ -93,7 +100,9 @@ class AddAddressScreen extends StatelessWidget {
                 height: 20,
               ),
               Text(
-                'Adicione seu endereço',
+                arguments.isNotEmpty
+                    ? 'Adicione seu novo endereço'
+                    : 'Adicione seu endereço',
                 style: AppTextStyles.semiBold(25),
               ),
               const SizedBox(
@@ -140,7 +149,7 @@ class AddAddressScreen extends StatelessWidget {
                           complete: place_name));
                     });
               }),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               BlocBuilder<AuthCubit, AuthState>(
@@ -152,7 +161,7 @@ class AddAddressScreen extends StatelessWidget {
                           address: context.read<AuthCubit>().state.address,
                           onEditPressed: () =>
                               BlocProvider.of<AuthCubit>(context)
-                                  .updateAddress());
+                                  .updateAddressFromScreen());
                     } else {
                       return const SizedBox();
                     }
@@ -195,7 +204,7 @@ class AddAddressScreen extends StatelessWidget {
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(15)),
-                                      primary: Colors.black,
+                                      backgroundColor: Colors.black,
                                       fixedSize:
                                           const Size(double.maxFinite, 59)),
                                   child: Text(
@@ -212,8 +221,8 @@ class AddAddressScreen extends StatelessWidget {
                         color: Color(0xff35C2C1)),
                     label: Text(
                       "Usar minha localização atual",
-                      style:
-                          AppTextStyles.semiBold(15, color: Color(0xff35C2C1)),
+                      style: AppTextStyles.semiBold(15,
+                          color: const Color(0xff35C2C1)),
                     )),
               ),
             ],
