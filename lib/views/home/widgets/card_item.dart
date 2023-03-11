@@ -42,7 +42,7 @@ class CardItemWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                    height: sizeHeight * 0.12,
+                    height: sizeHeight * 0.11,
                     width: double.maxFinite,
                     child:
                         // item.image_url == null || item.image_url!.isEmpty
