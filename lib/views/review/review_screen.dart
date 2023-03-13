@@ -268,6 +268,7 @@ class ObservationWidget extends StatelessWidget {
           height: 15,
         ),
         TextField(
+          textInputAction: TextInputAction.done,
           decoration: InputDecoration(
             filled: false,
             hintStyle: AppTextStyles.semiBold(16, color: Colors.black38),

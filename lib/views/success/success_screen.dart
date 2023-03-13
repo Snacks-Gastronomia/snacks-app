@@ -84,8 +84,8 @@ class SuccessScreen extends StatelessWidget {
                         ),
                         CustomSubmitButton(
                             onPressedAction: () {
-                              Navigator.popAndPushNamed(
-                                  context, AppRoutes.feedback);
+                              // Navigator.pop(context);
+                              Navigator.pushNamed(context, AppRoutes.feedback);
                             },
                             label: "Avaliar snacks",
                             loading_label: "",
