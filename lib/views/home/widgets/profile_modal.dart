@@ -4,15 +4,20 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pinput/pinput.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
+import 'package:snacks_app/services/auth_service.dart';
+import 'package:snacks_app/utils/snackbar.dart';
+import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 
 class ProfileModal extends StatelessWidget {
   ProfileModal({Key? key}) : super(key: key);
   final auth = FirebaseAuth.instance;
-
+  final addressService = AuthApiServices();
+  final toast = AppToast();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -103,21 +108,61 @@ class ProfileModal extends StatelessWidget {
           const Divider(
             color: Colors.white12,
           ),
-          Center(
-            child: TextButton.icon(
-              onPressed: () async {
-                await auth.signOut().then((value) =>
-                    Navigator.pushReplacementNamed(context, AppRoutes.start));
-              },
-              icon: const Icon(
-                Icons.power_settings_new_rounded,
-                color: Colors.white,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Center(
+                child: TextButton.icon(
+                  onPressed: () async {
+                    await auth.signOut().then((value) =>
+                        Navigator.pushReplacementNamed(
+                            context, AppRoutes.start));
+                  },
+                  icon: const Icon(
+                    Icons.power_settings_new_rounded,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    "Sair",
+                    style: AppTextStyles.light(18, color: Colors.white),
+                  ),
+                ),
               ),
-              label: Text(
-                "Sair",
-                style: AppTextStyles.light(18, color: Colors.white),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () async {
+                    var user = auth.currentUser;
+                    if (user != null) {
+                      await addressService.deleteAddress(user.uid);
+                    }
+
+                    await auth.currentUser?.delete().catchError((onError) {
+                      toast.init(context: context);
+                      toast.showToast(
+                          context: context,
+                          content:
+                              "É necessário entra novamente para realizar essa ação",
+                          type: ToastType.info);
+                      auth.signOut().then((value) =>
+                          Navigator.pushReplacementNamed(
+                              context, AppRoutes.start));
+                    });
+
+                    await auth.signOut().then((value) =>
+                        Navigator.pushReplacementNamed(
+                            context, AppRoutes.start));
+                  },
+                  icon: const Icon(
+                    Icons.delete_forever,
+                    color: Colors.red,
+                  ),
+                  label: Text(
+                    "Excluir conta",
+                    style: AppTextStyles.light(18, color: Colors.red),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

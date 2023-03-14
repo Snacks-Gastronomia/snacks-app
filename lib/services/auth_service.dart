@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
@@ -40,6 +41,7 @@ class GeocodingResponse {
 class AuthApiServices {
   final db = FirebaseDataBase();
   final fbauth = FirebasePhoneAuthentication();
+  final ff = FirebaseFirestore.instance;
   final http.Client httpClient = http.Client();
 
   Future<void> postUser(
@@ -131,6 +133,15 @@ class AuthApiServices {
         await db.readDocumentToCollectionByUid(collection: "users", uid: uid);
     var docs = doc.docs;
     return docs.isEmpty ? null : docs[0].data();
+  }
+
+  Future<void> deleteAddress(String uid) async {
+    final doc =
+        await db.readDocumentToCollectionByUid(collection: "users", uid: uid);
+    var docs = doc.docs;
+    if (docs.isNotEmpty) {
+      return await ff.collection("users").doc(docs[0].id).delete();
+    }
   }
 
   Future<void> updateAddress(String address, String uid) async {
