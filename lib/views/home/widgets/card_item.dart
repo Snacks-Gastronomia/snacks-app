@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,6 +11,7 @@ import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/modal.dart';
+import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 
@@ -18,7 +20,9 @@ import 'modals/modal_content_obs.dart';
 class CardItemWidget extends StatelessWidget {
   CardItemWidget({Key? key, required this.item}) : super(key: key);
   final Item item;
+  final auth = FirebaseAuth.instance;
   final modal = AppModal();
+  final toast = AppToast();
   @override
   Widget build(BuildContext context) {
     var order = OrderModel(
@@ -117,10 +121,21 @@ class CardItemWidget extends StatelessWidget {
                   // bool itemAdded = state.cart.contains(order);
                   return IconButton(
                     onPressed: () {
-                      context.read<ItemScreenCubit>().insertItem(order, true);
-                      context.read<CartCubit>().hasItem(order.item.id!)
-                          ? context.read<CartCubit>().removeToCart(order)
-                          : context.read<CartCubit>().addToCart(order);
+                      if (auth.currentUser != null) {
+                        context.read<ItemScreenCubit>().insertItem(order, true);
+                        context.read<CartCubit>().hasItem(order.item.id!)
+                            ? context.read<CartCubit>().removeToCart(order)
+                            : context.read<CartCubit>().addToCart(order);
+                      } else {
+                        toast.init(context: context);
+                        toast.showToast(
+                            context: context,
+                            content:
+                                "É necessário entrar para fazer o pedido. :)",
+                            type: ToastType.info);
+
+                        Navigator.pushNamed(context, AppRoutes.start);
+                      }
                       //  modal.showModalBottomSheet(
                       //     context: context,
                       //     // isScrollControlled: true,

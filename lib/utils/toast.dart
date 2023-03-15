@@ -1,5 +1,3 @@
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:snacks_app/core/app.text.dart';
@@ -71,9 +69,11 @@ class AppToast {
           const SizedBox(
             width: 12.0,
           ),
-          Text(
-            content,
-            style: AppTextStyles.regular(16, color: color),
+          Expanded(
+            child: Text(
+              content,
+              style: AppTextStyles.regular(16, color: color),
+            ),
           ),
         ],
       ),

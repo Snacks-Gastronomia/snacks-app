@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +10,7 @@ import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/modal.dart';
+import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 import 'package:snacks_app/views/home/widgets/modals/modal_content_obs.dart';
@@ -25,6 +27,8 @@ class ItemScreen extends StatefulWidget {
 class _ItemScreenState extends State<ItemScreen> {
   // late int amount;
   // bool updateItem = false;
+  final auth = FirebaseAuth.instance;
+  final toast = AppToast();
   @override
   void initState() {
     super.initState();
@@ -109,32 +113,45 @@ class _ItemScreenState extends State<ItemScreen> {
                   },
                 ),
                 ElevatedButton(
-                  onPressed: () => AppModal().showModalBottomSheet(
-                    context: context,
-                    content: ModalContentObservation(
-                        action: () {
-                          var order =
-                              context.read<ItemScreenCubit>().state.order!;
-                          if (context.read<ItemScreenCubit>().state.isNew) {
-                            BlocProvider.of<CartCubit>(context)
-                                .addToCart(order);
-                          } else {
-                            BlocProvider.of<CartCubit>(context)
-                                .updateItemFromCart(order);
-                          }
-                          Navigator.popUntil(
-                              context, ModalRoute.withName(AppRoutes.home));
+                  onPressed: () {
+                    if (auth.currentUser != null) {
+                      AppModal().showModalBottomSheet(
+                        context: context,
+                        content: ModalContentObservation(
+                            action: () {
+                              var order =
+                                  context.read<ItemScreenCubit>().state.order!;
+                              if (context.read<ItemScreenCubit>().state.isNew) {
+                                BlocProvider.of<CartCubit>(context)
+                                    .addToCart(order);
+                              } else {
+                                BlocProvider.of<CartCubit>(context)
+                                    .updateItemFromCart(order);
+                              }
+                              Navigator.popUntil(
+                                  context, ModalRoute.withName(AppRoutes.home));
 
-                          Navigator.pushNamed(context, AppRoutes.cart);
-                        },
-                        value: context
-                            .read<ItemScreenCubit>()
-                            .state
-                            .order!
-                            .observations,
-                        onChanged:
-                            context.read<ItemScreenCubit>().observationChanged),
-                  ),
+                              Navigator.pushNamed(context, AppRoutes.cart);
+                            },
+                            value: context
+                                .read<ItemScreenCubit>()
+                                .state
+                                .order!
+                                .observations,
+                            onChanged: context
+                                .read<ItemScreenCubit>()
+                                .observationChanged),
+                      );
+                    } else {
+                      toast.init(context: context);
+                      toast.showToast(
+                          context: context,
+                          content:
+                              "É necessário entrar para fazer o pedido. :)",
+                          type: ToastType.info);
+                      Navigator.pushNamed(context, AppRoutes.start);
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
