@@ -52,7 +52,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>O aplicativo precisa acessar sua localização para melhor experiência.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>O aplicativo precisa acessar sua localização para obter o seu endereço.</string>
+	<string>Precisamos do acesso a sua localização para obter o seu endereço e realizar o preenchimento automático da informação.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>O aplicativo precisa acessar suas fotos para usá-lo em seus dados personalizados.</string>
 	<key>UILaunchStoryboardName</key>
