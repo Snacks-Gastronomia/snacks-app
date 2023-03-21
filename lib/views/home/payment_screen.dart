@@ -14,6 +14,7 @@ import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_failed.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_ok.dart';
 import 'package:snacks_app/views/home/widgets/modals/money_change_option.dart';
+import 'package:snacks_app/views/home/widgets/modals/money_change_value.dart';
 import 'package:snacks_app/views/splash/loading_screen.dart';
 import 'package:snacks_app/views/success/success_screen.dart';
 
@@ -39,14 +40,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   void action(context, method) async {
     String description = "";
-    bool change = false;
+    String change = "";
 
     if (method == "Dinheiro") {
       var res = await modal.showModalBottomSheet(
           context: context,
           drag: false,
           content: const MoneyChangeOptionModal());
-      change = res;
+      if (res) {
+        await modal.showModalBottomSheet(
+            context: context,
+            drag: false,
+            content: MoneyChangeValue(
+              onSubmit: (value) {
+                change = value;
+              },
+            ));
+      }
     }
     if (auth.currentUser?.isAnonymous != null &&
         auth.currentUser!.isAnonymous) {

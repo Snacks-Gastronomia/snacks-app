@@ -145,7 +145,7 @@ class CartCubit extends Cubit<CartState> {
         accessibility: KeychainAccessibility.first_unlock,
       ));
 
-  void makeOrder(String method, {String rfid = "", bool change = false}) async {
+  void makeOrder(String method, {String rfid = "", String change = ""}) async {
     final notification = AppNotification();
     if (method == "Cartão Snacks") {
       await cardRepository.doPayment(rfid, state.total);
@@ -206,7 +206,8 @@ class CartCubit extends Cubit<CartState> {
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
           "status": status,
-          "money_change": change,
+          "need_change": change.toString().isNotEmpty,
+          if (change.toString().isNotEmpty) "money_change": change,
           "created_at": DateTime.now(),
           if (isDelivery)
             "address": dataStorage["address"]
