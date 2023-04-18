@@ -46,39 +46,38 @@ class CardItemWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                    height: sizeHeight * 0.11,
-                    width: double.maxFinite,
-                    child:
-                        // item.image_url == null || item.image_url!.isEmpty
-                        //     ?
-                        Center(
-                      child: SvgPicture.asset(
-                        AppImages.snacks,
-                        color: Colors.grey.shade400,
-                        // fit: BoxFit.,
-                        width: 80,
-                      ),
-                    )
-                    // : CachedNetworkImage(
-                    //     imageUrl: item.image_url!,
-                    //     progressIndicatorBuilder:
-                    //         (context, url, downloadProgress) => Center(
-                    //       child: SvgPicture.asset(
-                    //         AppImages.snacks,
-                    //         color: Colors.grey.shade400,
-                    //         width: 80,
-                    //       ),
-                    //     ),
-                    //     errorWidget: (context, url, error) => Center(
-                    //       child: SvgPicture.asset(
-                    //         AppImages.snacks,
-                    //         color: Colors.grey.shade400,
-                    //         width: 80,
-                    //       ),
-                    //     ),
-                    //   ),
-                    //  Image.network(item.image_url!, fit: BoxFit.cover),
-                    ),
+                  height: sizeHeight * 0.11,
+                  width: double.maxFinite,
+                  child: item.image_url == null || item.image_url!.isEmpty
+                      ? Center(
+                          child: SvgPicture.asset(
+                            AppImages.snacks,
+                            color: Colors.grey.shade400,
+                            // fit: BoxFit.,
+                            width: 80,
+                          ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: item.image_url!,
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => Center(
+                            child: SvgPicture.asset(
+                              AppImages.snacks,
+                              color: Colors.grey.shade400,
+                              width: 80,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Center(
+                            child: SvgPicture.asset(
+                              AppImages.snacks,
+                              color: Colors.grey.shade400,
+                              width: 80,
+                            ),
+                          ),
+                        ),
+                  //  Image.network(item.image_url!, fit: BoxFit.cover),
+                ),
                 Container(
                   height: 2,
                   color: Colors.grey,
@@ -123,7 +122,7 @@ class CardItemWidget extends StatelessWidget {
                     onPressed: () {
                       if (auth.currentUser != null) {
                         context.read<ItemScreenCubit>().insertItem(order, true);
-                        context.read<CartCubit>().hasItem(order.item.id!)
+                        context.read<CartCubit>().hasItem(order.item.id ?? "")
                             ? context.read<CartCubit>().removeToCart(order)
                             : context.read<CartCubit>().addToCart(order);
                       } else {
@@ -155,16 +154,19 @@ class CardItemWidget extends StatelessWidget {
                       //             .read<ItemScreenCubit>()
                       //             .observationChanged));
                     },
-                    tooltip: context.read<CartCubit>().hasItem(order.item.id!)
-                        ? "Remover pedido"
-                        : "Adicionar ao pedido",
+                    tooltip:
+                        context.read<CartCubit>().hasItem(order.item.id ?? "")
+                            ? "Remover pedido"
+                            : "Adicionar ao pedido",
                     icon: Container(
                         // height: 40,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.white,
                         ),
-                        child: context.read<CartCubit>().hasItem(order.item.id!)
+                        child: context
+                                .read<CartCubit>()
+                                .hasItem(order.item.id ?? "")
                             ? Icon(
                                 Icons.remove_rounded,
                                 color: Colors.red.shade700,

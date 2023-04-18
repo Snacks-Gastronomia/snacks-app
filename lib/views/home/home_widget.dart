@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -319,54 +322,61 @@ class AllItemsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) {
-        if (state.status == AppStatus.loading) {
-          return const ListSkeletons(direction: Axis.vertical);
-        }
-        var data = state.menu;
+    return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
+      if (state.status == AppStatus.loading) {
+        return const ListSkeletons(direction: Axis.vertical);
+      }
 
-        if (data.isNotEmpty) {
-          bool isTablet = MediaQuery.of(context).size.width > 600;
-          return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: isTablet ? 3 : 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  mainAxisExtent: isTablet ? 230 : 160),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              // itemCount: data.length + (state.listIsLastPage ? 0 : 3),
-              itemCount: data.length,
-              itemBuilder: (BuildContext ctx, index) {
-                if (data.length <= index && state.listIsLastPage) {
-                  return Transform.scale(
-                      scale: 0.9, child: const CardSkeleton());
-                } else {
-                  var item = Item.fromMap(data[index]);
-                  var id = data[index]["id"];
-                  item = item.copyWith(id: id);
+      bool isTablet = MediaQuery.of(context).size.width > 600;
+      return StreamBuilder<QuerySnapshot>(
+          stream: state.menu,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var data = snapshot.data?.docs ?? [];
+              if ((data).isEmpty) {
+                return const Center(
+                  child: Text("Cardapio vazio"),
+                );
+              }
 
-                  return GestureDetector(
-                      onTap: () => modal.showIOSModalBottomSheet(
-                          context: context,
-                          content: ItemScreen(
-                              order: OrderModel(
-                                  item: item,
-                                  observations: "",
-                                  option_selected: item.options[0]))),
-                      child: CardItemWidget(
-                        // ns: ns,
-                        item: item,
-                      ));
-                }
-              });
-        }
-        return const Center(
-          child: Text("Cardapio vazio"),
-        );
-      },
-    );
+              return GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: isTablet ? 3 : 2,
+                      crossAxisSpacing: 15,
+                      mainAxisSpacing: 15,
+                      mainAxisExtent: isTablet ? 230 : 160),
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  // itemCount: data.length + (state.listIsLastPage ? 0 : 3),
+                  itemCount: data.length,
+                  itemBuilder: (BuildContext ctx, index) {
+                    if (data.length <= index && state.listIsLastPage) {
+                      return Transform.scale(
+                          scale: 0.9, child: const CardSkeleton());
+                    } else {
+                      var item = Item.fromJson(jsonEncode(data[index].data()));
+                      var id = data[index].id;
+                      item = item.copyWith(id: id);
+
+                      return GestureDetector(
+                          onTap: () => modal.showIOSModalBottomSheet(
+                              context: context,
+                              content: ItemScreen(
+                                  order: OrderModel(
+                                      item: item,
+                                      observations: "",
+                                      option_selected: item.options[0]))),
+                          child: CardItemWidget(
+                            // ns: ns,
+                            item: item,
+                          ));
+                    }
+                  });
+            }
+
+            return const ListSkeletons(direction: Axis.vertical);
+          });
+    });
   }
 }
 

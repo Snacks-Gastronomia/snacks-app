@@ -1,6 +1,6 @@
 part of 'cart_cubit.dart';
 
-class CartState {
+class CartState implements Equatable {
   final List<OrderModel> cart;
   final String payment_method;
   final int table_code;
@@ -9,6 +9,7 @@ class CartState {
   final AppStatus status;
   final String? error;
   final String temp_observation;
+
   CartState({
     required this.cart,
     required this.payment_method,
@@ -19,56 +20,15 @@ class CartState {
     required this.temp_observation,
   });
 
-  // CartState({
-  //   required this.cart,
-  //   required this.status,
-  //   required this.total,
-  //   required this.error,
-  //   required this.temp_observation,
-  // });
-
   factory CartState.initial() => CartState(
         payment_method: "",
         table_code: 0,
-        cart: [
-          // OrderModel(
-          //     item: Item(
-          //         title: "title",
-          //         value: 20,
-          //         time: 30,
-          //         restaurant_id: "",
-          //         active: true),
-          //     observations: ""),
-          // OrderModel(
-          //     item: Item(
-          //         title: "title",
-          //         value: 20,
-          //         time: 30,
-          //         restaurant_id: "",
-          //         active: true),
-          //     observations: "")
-        ],
+        cart: [],
         status: AppStatus.initial,
         total: 0,
         error: "",
         temp_observation: "",
       );
-  // CartState copyWith({
-  //   List<Order>? cart,
-  //   AppStatus? status,
-  //   double? total,
-  //   String? error,
-  //   String? temp_observation,
-  //   List<String>? itens_added,
-  // }) {
-  //   return CartState(
-  //     cart: cart ?? this.cart,
-  //     status: status ?? this.status,
-  //     total: total ?? this.total,
-  //     error: error ?? this.error,
-  //     temp_observation: temp_observation ?? this.temp_observation,
-  //   );
-  // }
 
   CartState copyWith({
     List<OrderModel>? cart,
@@ -89,4 +49,12 @@ class CartState {
       temp_observation: temp_observation ?? this.temp_observation,
     );
   }
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
+
+  @override
+  // TODO: implement stringify
+  bool? get stringify => throw UnimplementedError();
 }

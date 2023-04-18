@@ -85,7 +85,7 @@ class ReviewState {
               id: 2,
               title:
                   'Em uma escala de 5 a 10, o que você achou da usabilidade do nosso aplicativo,'
-                  ' sendo 10 para muito bom e 5 para muito ruim.',
+                  ' sendo 10 para execelente e 5 para péssimo.',
               rate: "",
               values: const ["5", "6", "7", "8", "9", "10"]),
           Question(

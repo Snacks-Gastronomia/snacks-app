@@ -12,7 +12,7 @@ class HomeState {
   final AppStatus status;
   final bool search;
   final String? category;
-  final List<Map<String, dynamic>> menu;
+  final Stream<QuerySnapshot> menu;
   final String? error;
   HomeState({
     required this.items,
@@ -36,7 +36,7 @@ class HomeState {
       popular: [],
       showButton: false,
       lastDocument: null,
-      menu: [],
+      menu: const Stream.empty(),
       status: AppStatus.initial,
       listIsLastPage: false,
       listPageNumber: 1,
@@ -54,7 +54,7 @@ class HomeState {
         listEquals(other.items, items) &&
         category == other.category &&
         status == other.status &&
-        listEquals(other.menu, menu) &&
+        other.menu == menu &&
         lastDocument == other.lastDocument &&
         showButton == other.showButton &&
         listEquals(other.popular, popular);
@@ -72,7 +72,7 @@ class HomeState {
       AppStatus? status,
       bool? search,
       bool? showButton,
-      List<Map<String, dynamic>>? menu,
+      Stream<QuerySnapshot>? menu,
       String? category,
       String? error,
       DocumentSnapshot? lastDocument}) {

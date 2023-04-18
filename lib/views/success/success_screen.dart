@@ -74,7 +74,7 @@ class SuccessScreen extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          "Enquanto isso que tal nos falar o que tá\n achando do snacks?",
+                          "Enquanto isso que tal nos falar o que está\n achando do snacks?",
                           textAlign: TextAlign.center,
                           style: AppTextStyles.light(15,
                               color: const Color(0xff8391A1)),

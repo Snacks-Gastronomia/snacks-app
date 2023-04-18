@@ -67,7 +67,7 @@ class CartItemWidget extends StatelessWidget {
                                 ),
                               )
                             : Image.network(order.item.image_url!,
-                                fit: BoxFit.cover),
+                                height: 60, width: 60, fit: BoxFit.cover),
                         Positioned(
                           bottom: 0,
                           child: Container(
@@ -95,7 +95,7 @@ class CartItemWidget extends StatelessWidget {
                       SizedBox(
                         width: 130,
                         child: Text(
-                          order.item.title,
+                          "${order.item.title} - ${order.option_selected["title"]}",
                           style: AppTextStyles.regular(16),
                           maxLines: 2,
                           softWrap: true,

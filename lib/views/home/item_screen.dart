@@ -60,7 +60,9 @@ class _ItemScreenState extends State<ItemScreen> {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         var option = widget.order.item.options[index];
-                        var selected = state.order?.option_selected;
+                        bool selected =
+                            state.order?.option_selected["id"] == option["id"];
+                        print(selected);
                         return GestureDetector(
                           onTap: () => context
                               .read<ItemScreenCubit>()
@@ -68,22 +70,18 @@ class _ItemScreenState extends State<ItemScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: selected != option
-                                  ? const Border.fromBorderSide(
-                                      BorderSide(color: Colors.black))
-                                  : null,
-                              color: selected == option
-                                  ? Colors.black
-                                  : Colors.white,
-                            ),
+                                borderRadius: BorderRadius.circular(10),
+                                border: selected
+                                    ? null
+                                    : const Border.fromBorderSide(
+                                        BorderSide(color: Colors.black)),
+                                color: selected ? Colors.black : Colors.white),
                             child: Center(
                                 child: Text(
                               '${option["title"]}',
                               style: AppTextStyles.medium(14,
-                                  color: selected == option
-                                      ? Colors.white
-                                      : Colors.black),
+                                  color:
+                                      selected ? Colors.white : Colors.black),
                             )),
                           ),
                         );
@@ -121,13 +119,8 @@ class _ItemScreenState extends State<ItemScreen> {
                             action: () {
                               var order =
                                   context.read<ItemScreenCubit>().state.order!;
-                              if (context.read<ItemScreenCubit>().state.isNew) {
-                                BlocProvider.of<CartCubit>(context)
-                                    .addToCart(order);
-                              } else {
-                                BlocProvider.of<CartCubit>(context)
-                                    .updateItemFromCart(order);
-                              }
+                              BlocProvider.of<CartCubit>(context)
+                                  .addToCart(order);
                               Navigator.popUntil(
                                   context, ModalRoute.withName(AppRoutes.home));
 

@@ -45,10 +45,11 @@ class BeerPassService {
       var data = {"rfid": rfid};
       var response = await httpClient
           .get(Uri.https(URL, "apiv2/comandas", data), headers: header);
-
-      return jsonDecode(response.body).toString().isEmpty
-          ? null
-          : jsonDecode(response.body)[0];
+      if (response.statusCode == 200) {
+        List body = jsonDecode(response.body);
+        return body.isNotEmpty ? body[0] : null;
+      }
+      return null;
     } catch (e) {
       print(e);
     }

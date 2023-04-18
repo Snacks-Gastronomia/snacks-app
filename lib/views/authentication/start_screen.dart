@@ -53,10 +53,10 @@ class StartScreen extends StatelessWidget {
                                   await auth.signIn(table: code.toString());
 
                               if (user != null) {
-                                cubit.changeStatus(AppStatus.loaded);
                                 navigator.pushNamedAndRemoveUntil(
                                     AppRoutes.home,
                                     ModalRoute.withName(AppRoutes.start));
+                                cubit.changeStatus(AppStatus.loaded);
                               }
                             } else {
                               cubit.changeStatus(AppStatus.loaded);

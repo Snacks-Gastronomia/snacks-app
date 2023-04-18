@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -35,34 +36,28 @@ class CartCubit extends Cubit<CartState> {
   CartCubit() : super(CartState.initial());
 
   void addToCart(OrderModel newOrder) {
-    // print(newOrder);
-
-    // newOrder.observations = state.temp_observation;
-
     if (hasItem(newOrder.item.id!)) {
       var ord = getOrderByItemId(newOrder.item.id!);
       if (ord != null) {
-        ord.copyWith(
-            amount: newOrder.amount,
-            observations: newOrder.observations,
-            option_selected: newOrder.option_selected);
+        updateItemFromCart(newOrder);
       }
+    } else {
+      final newCart = [...state.cart, newOrder];
+
+      emit(state.copyWith(cart: newCart));
     }
-
-    final newCart = [...state.cart, newOrder];
-
-    emit(state.copyWith(cart: newCart));
     updateTotalValue();
     emit(state.copyWith(temp_observation: ""));
   }
 
-  updateItemFromCart(OrderModel order) {
+  updateItemFromCart(OrderModel newOrder) {
     final newCart = state.cart.map((item) {
-      if (item.item.id == order.item.id) {
+      if (item.item.id == newOrder.item.id) {
         return item.copyWith(
-            amount: order.amount,
-            item: order.item,
-            observations: order.observations);
+            observations: newOrder.observations,
+            option_selected: newOrder.option_selected,
+            amount: newOrder.amount,
+            extras: newOrder.extras);
       }
       return item;
     }).toList();
@@ -92,7 +87,6 @@ class CartCubit extends Cubit<CartState> {
 
     emit(state.copyWith(cart: newCart));
     updateTotalValue();
-    print(state);
   }
 
   void decrementItem(String id) {
@@ -105,8 +99,6 @@ class CartCubit extends Cubit<CartState> {
 
     emit(state.copyWith(cart: newCart));
     updateTotalValue();
-    print(state);
-    print(state.total);
   }
 
   void removeToCart(OrderModel order) {
@@ -116,7 +108,6 @@ class CartCubit extends Cubit<CartState> {
     emit(state.copyWith(cart: newCart));
 
     updateTotalValue();
-    print(state);
   }
 
   void updateTotalValue() {
@@ -127,13 +118,11 @@ class CartCubit extends Cubit<CartState> {
               .map((e) => double.parse(e["value"].toString()))
               .reduce((value, element) => value + element)
           : 0;
+
       total += (double.parse(element.option_selected["value"].toString()) *
               element.amount) +
           extras_value;
     }
-    // if (!(auth.currentUser?.isAnonymous ?? false)) {
-    //   total += 5;
-    // }
     emit(state.copyWith(total: total));
   }
 

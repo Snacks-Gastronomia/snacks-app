@@ -54,28 +54,28 @@ class HomeCubit extends Cubit<HomeState> {
     return storage[item];
   }
 
-  void fetchItems() async {
-    print("load more");
-    if (!state.listIsLastPage) {
-      emit(state.copyWith(status: AppStatus.loading));
-      var last = state.menu.isEmpty ? null : state.lastDocument;
-      itemsRepository.fetchItems(last).distinct().listen((event) {
-        if (event.docs.isNotEmpty) {
-          var data = event.docs.map<Map<String, dynamic>>((e) {
-            var el = e.data();
-            el.addAll({"id": e.id});
-            return el;
-          }).toList();
-          // print(data);
-          emit(state.copyWith(
-              lastDocument: event.docs.last, menu: [...state.menu, ...data]));
-        } else {
-          emit(state.copyWith(listIsLastPage: true));
-        }
-      });
-      emit(state.copyWith(status: AppStatus.loaded));
-    }
-  }
+  // void fetchItems() async {
+  //   print("load more");
+  //   if (!state.listIsLastPage) {
+  //     emit(state.copyWith(status: AppStatus.loading));
+  //     var last = state.menu.isEmpty ? null : state.lastDocument;
+  //     itemsRepository.fetchItems(last).distinct().listen((event) {
+  //       if (event.docs.isNotEmpty) {
+  //         var data = event.docs.map<Map<String, dynamic>>((e) {
+  //           var el = e.data();
+  //           el.addAll({"id": e.id});
+  //           return el;
+  //         }).toList();
+  //         // print(data);
+  //         emit(state.copyWith(
+  //             lastDocument: event.docs.last, menu: [...state.menu, ...data]));
+  //       } else {
+  //         emit(state.copyWith(listIsLastPage: true));
+  //       }
+  //     });
+  //     emit(state.copyWith(status: AppStatus.loaded));
+  //   }
+  // }
 
   Future<QuerySnapshot<Map<String, dynamic>>> fetchRestaurants() async {
     return await itemsRepository.fetchRestaurants();
@@ -87,66 +87,81 @@ class HomeCubit extends Cubit<HomeState> {
         emit(state.copyWith(
           category: null,
           status: AppStatus.loading,
-          menu: [],
         ));
         fetchItems();
       } else {
         if (onSelect) {
           emit(state.copyWith(
-            status: AppStatus.loading,
-            menu: [],
             lastDocument: null,
           ));
         }
-        itemsRepository
+        var _stream = itemsRepository
             .fetchItemsByRestaurant(
                 restaurant, !state.listIsLastPage ? null : state.lastDocument)
-            .distinct()
-            .listen((event) {
-          if (event.docs.isNotEmpty || onSelect) {
-            var data = event.docs.map<Map<String, dynamic>>((e) {
-              var el = e.data();
-              el.addAll({"id": e.id});
-              return el;
-            }).toList();
-            emit(state.copyWith(
-                lastDocument: event.docs.isNotEmpty ? event.docs.last : null,
-                menu: data,
-                category: restaurant,
-                listIsLastPage: false));
-          } else {
-            emit(state.copyWith(listIsLastPage: true));
-          }
-        });
-        emit(state.copyWith(status: AppStatus.loaded));
+            .distinct();
+
+        emit(state.copyWith(menu: _stream));
+        // itemsRepository
+        //     .fetchItemsByRestaurant(
+        //         restaurant, !state.listIsLastPage ? null : state.lastDocument)
+        //     .distinct()
+        //     .listen((event) {
+        //   if (event.docs.isNotEmpty || onSelect) {
+        //     var data = event.docs.map<Map<String, dynamic>>((e) {
+        //       var el = e.data();
+        //       el.addAll({"id": e.id});
+        //       return el;
+        //     }).toList();
+        //     emit(state.copyWith(
+        //         lastDocument: event.docs.isNotEmpty ? event.docs.last : null,
+        //         menu: data,
+        //         category: restaurant,
+        //         listIsLastPage: false));
+        //   } else {
+        //     emit(state.copyWith(listIsLastPage: true));
+        //   }
+        // });
+        // emit(state.copyWith(status: AppStatus.loaded));
         // print(state.status);
       }
     }
   }
 
-  Future<void> fetchQuery(String query) async {
-    emit(state.copyWith(status: AppStatus.loading));
+  // Future<void> fetchQuery(String query) async {
+  //   emit(state.copyWith(status: AppStatus.loading));
 
-    try {
-      itemsRepository.searchQuery(query, state.category).listen((event) {
-        if (event.docs.isNotEmpty) {
-          emit(state.copyWith(
-              menu: event.docs.map<Map<String, dynamic>>((e) {
-            var el = e.data();
-            el.addAll({"id": e.id});
-            return el;
-          }).toList()));
-        }
-        emit(state.copyWith(
-          status: AppStatus.loaded,
-        ));
-      });
-    } catch (e) {
-      emit(state.copyWith(
-        status: AppStatus.error,
-        error: e.toString(),
-      ));
-      print('state: $e');
-    }
+  //   try {
+  //     itemsRepository.searchQuery(query, state.category).listen((event) {
+  //       if (event.docs.isNotEmpty) {
+  //         emit(state.copyWith(
+  //             menu: event.docs.map<Map<String, dynamic>>((e) {
+  //           var el = e.data();
+  //           el.addAll({"id": e.id});
+  //           return el;
+  //         }).toList()));
+  //       }
+  //       emit(state.copyWith(
+  //         status: AppStatus.loaded,
+  //       ));
+  //     });
+  //   } catch (e) {
+  //     emit(state.copyWith(
+  //       status: AppStatus.error,
+  //       error: e.toString(),
+  //     ));
+  //     print('state: $e');
+  //   }
+  // }
+
+  void fetchItems() {
+    var _stream = itemsRepository.fetchItems(state.lastDocument).distinct();
+
+    emit(state.copyWith(menu: _stream));
+  }
+
+  Future<void> fetchQuery(String query) async {
+    var _stream = itemsRepository.searchQuery(query, state.category);
+
+    emit(state.copyWith(menu: _stream));
   }
 }
