@@ -144,8 +144,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           // height: 41,
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              action(context, "Cartão de crédito/débito"),
+                          onTap: () => action(context, "Cartão de crédito"),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: const Color(0xffF7F8F9),
@@ -160,7 +159,34 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     SizedBox(
                                       width: 10,
                                     ),
-                                    Text('Cartão de crédito/débito'),
+                                    Text('Cartão de crédito'),
+                                  ],
+                                ),
+                                const Icon(Icons.arrow_forward)
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        GestureDetector(
+                          onTap: () => action(context, "Cartão de débito"),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: const Color(0xffF7F8F9),
+                                borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: const [
+                                    Icon(Icons.credit_card_rounded),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('Cartão de débito'),
                                   ],
                                 ),
                                 const Icon(Icons.arrow_forward)
