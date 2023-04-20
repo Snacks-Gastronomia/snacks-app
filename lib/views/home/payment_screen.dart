@@ -88,7 +88,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    getModal(String name, double v1, double v2) {}
     return SafeArea(
       child: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
@@ -277,6 +276,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                                     // action(context, "Cartão snacks");
                                     cubit.changeStatus(AppStatus.loaded);
+                                    // ignore: use_build_context_synchronously
                                     modal.showModalBottomSheet(
                                         context: context,
                                         content: Builder(builder: (context) {

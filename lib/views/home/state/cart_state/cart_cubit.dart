@@ -142,6 +142,7 @@ class CartCubit extends Cubit<CartState> {
       var stor = await getStorage;
       notification.sendNotificationToWaiters(table: stor["table"].toString());
     }
+
     var data = await generateDataObject(method, change);
     await repository.createOrder(data);
     clearCart();

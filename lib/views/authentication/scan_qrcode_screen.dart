@@ -23,7 +23,9 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
   @override
   void initState() {
     // TODO: implement initState
+
     controller = MobileScannerController();
+
     super.initState();
   }
 
@@ -103,6 +105,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
               QRCodeBuilder(
                   controller: controller,
                   onDetect: (barcode) async {
+                    controller.stop();
                     if (barcode.barcodes.isEmpty) {
                       debugPrint('Failed to scan Barcode');
                     } else {

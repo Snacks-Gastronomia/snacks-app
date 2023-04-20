@@ -37,6 +37,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
     controller = ScrollController();
     // TODO: implement initState
     //  _navigator.pushAndRemoveUntil(..., (route) => ...);
+    context.read<HomeCubit>().fetchItems();
     controller.addListener(
       () {
         var state = context.read<HomeCubit>().state;
@@ -240,8 +241,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                                   });
                                   context
                                       .read<HomeCubit>()
-                                      .fetchItemsByRestaurants(
-                                          item?.id ?? "", true);
+                                      .fetchItemsByRestaurants(category, true);
                                 },
                                 child: Container(
                                     padding: const EdgeInsets.symmetric(
@@ -331,7 +331,8 @@ class AllItemsWidget extends StatelessWidget {
       return StreamBuilder<QuerySnapshot>(
           stream: state.menu,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData ||
+                snapshot.connectionState == ConnectionState.done) {
               var data = snapshot.data?.docs ?? [];
               if ((data).isEmpty) {
                 return const Center(
