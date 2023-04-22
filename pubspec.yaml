@@ -51,17 +51,18 @@ dependencies:
   flutter_secure_storage: ^7.0.1
   google_nav_bar: ^5.0.6
   permission_handler: ^10.2.0
-  cloud_firestore: ^4.3.1
-  firebase_core: ^2.4.1
-  firebase_auth: ^4.2.4
-  google_mlkit_barcode_scanning: ^0.5.0
   group_button: ^5.2.2
   jwt_decoder: ^2.0.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  firebase_messaging: ^14.2.1
   cached_network_image: ^3.2.3
   flutter_masked_text2: ^0.9.1
+  
+  firebase_messaging: ^14.2.1
+  google_mlkit_barcode_scanning: ^0.5.0
+  firebase_core: ^2.4.1
+  firebase_auth: ^4.2.4
+  cloud_firestore: ^4.3.1
   
 dependency_overrides:
   firebase_core_platform_interface: 4.5.2
