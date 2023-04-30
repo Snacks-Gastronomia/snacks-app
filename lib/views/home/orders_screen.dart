@@ -54,8 +54,9 @@ class OrdersScreen extends StatelessWidget {
                           child: CardOrderWidget(
                               leading:
                                   item["isDelivery"] ? null : item["table"],
-                              address:
-                                  item["isDelivery"] ? item["address"] : "",
+                              address: item["isDelivery"]
+                                  ? item["address"] ?? ""
+                                  : "",
                               status: item["status"],
                               isDelivery: item["isDelivery"],
                               time: time,

@@ -97,14 +97,11 @@ class AppWidget extends StatelessWidget {
                     textTheme: GoogleFonts.poppinsTextTheme(
                         Theme.of(context).textTheme)),
                 title: "Snacks App",
-                // initialRoute: AppRoutes.cart,
                 initialRoute: snapshot.data == true
                     ? auth.currentUser != null
                         ? AppRoutes.home
                         : AppRoutes.start
                     : AppRoutes.closedRestaurant,
-                // initialRoute: AppRoutes.payment,
-                // initialRoute: AppRoutes.cart,
                 routes: {
                   AppRoutes.start: (context) => StartScreen(),
                   AppRoutes.otp: (context) => const OtpScreen(),

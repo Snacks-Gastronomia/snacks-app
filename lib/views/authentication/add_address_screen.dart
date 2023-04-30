@@ -43,23 +43,7 @@ class AddAddressScreen extends StatelessWidget {
                   label: "Salvar",
                   loading_label: "Salvando dados",
                   loading: state.status == AppStatus.loading);
-            })
-            // ElevatedButton(
-            //   onPressed: () =>
-            //       context.read<AuthCubit>().state.address.address.isEmpty
-            //           ? null
-            //           : Navigator.pushNamed(context, AppRoutes.home),
-            //   style: ElevatedButton.styleFrom(
-            //       shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(15)),
-            //       primary: Colors.black,
-            //       fixedSize: const Size(double.maxFinite, 59)),
-            //   child: Text(
-            //     'Adicionar endereço',
-            //     style: AppTextStyles.regular(16, color: Colors.white),
-            //   ),
-            // ),
-            ),
+            })),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(70.0),
           child: Padding(
@@ -108,7 +92,6 @@ class AddAddressScreen extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              //text 8391A1
               BlocBuilder<AuthCubit, AuthState>(builder: (context, snapshot) {
                 if (snapshot.status == AppStatus.editing) {
                   searchFocus.requestFocus();
@@ -283,62 +266,3 @@ class AddressCard extends StatelessWidget {
     );
   }
 }
-
-// class AutoCompleteAddress extends StatelessWidget {
-//   const AutoCompleteAddress({
-//     Key? key,
-//     required this.searchController,
-//     required this.onSelected,
-//     required this.focus,
-//   }) : super(key: key);
-
-//   final TextEditingController searchController;
-//   final Function(dynamic) onSelected;
-//   final FocusNode focus;
-//   @override
-//   Widget build(BuildContext context) {
-//     return TypeAheadField(
-//       hideOnEmpty: true,
-//       onSuggestionSelected: onSelected,
-//       autoFlipDirection: true,
-//       itemBuilder: (BuildContext context, dynamic option) => ListTile(
-//         // leading: Icon(Icons.location_on),
-//         title: Text(
-//           option.text,
-//           style: AppTextStyles.bold(18),
-//         ),
-//         subtitle: Text(option.place_name, style: AppTextStyles.light(16)),
-//       ),
-//       suggestionsCallback: (pattern) async {
-//         return await context.read<AuthCubit>().fecthAddress(pattern);
-//         // return await getAddresses(pattern);
-//       },
-//       transitionBuilder: (context, suggestionsBox, animationController) =>
-//           FadeTransition(
-//         opacity: CurvedAnimation(
-//             parent: animationController!.view, curve: Curves.fastOutSlowIn),
-//         child: suggestionsBox,
-//       ),
-//       textFieldConfiguration: TextFieldConfiguration(
-//         autofocus: false,
-//         focusNode: focus,
-//         controller: searchController,
-//         style: AppTextStyles.medium(16, color: Color(0xff8391A1)),
-//         decoration: InputDecoration(
-//           fillColor: Color(0xffF7F8F9),
-//           filled: true,
-//           suffixIcon: Icon(Icons.search_rounded),
-//           hintStyle: AppTextStyles.medium(16,
-//               color: Color(0xff8391A1).withOpacity(0.5)),
-//           enabledBorder: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(8),
-//               borderSide: const BorderSide(color: Color(0xffE8ECF4), width: 1)),
-//           border: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(8),
-//               borderSide: const BorderSide(color: Color(0xffE8ECF4), width: 1)),
-//           hintText: 'Ex: Rua xxxx, numero, bairro, cidade',
-//         ),
-//       ),
-//     );
-//   }
-// }
