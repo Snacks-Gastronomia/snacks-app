@@ -62,7 +62,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         auth.currentUser!.isAnonymous) {
       if (method == "Cartão snacks") {
         description =
-            "Seu está sendo preparado e logo será entregue em sua mesa. :-)";
+            "Seu pedido está sendo preparado e logo será entregue em sua mesa. :-)";
       } else {
         description =
             'Em breve o garçom será direcionado até sua mesa para finalizar o pagamento. :-)';
@@ -292,7 +292,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                       symbol: r"R$ ")
                                                   .format(result),
                                               action: () => action(
-                                                  context, "Cartão Snacks"));
+                                                  context, "Cartão snacks"));
                                         }));
                                   } catch (e) {
                                     print(e);
