@@ -26,7 +26,7 @@ class BeerPassService {
         var response = await httpClient.get(Uri.https(
             URL,
             "apiv2/autenticacao/obter-token",
-            {"usuario": "snacks", "senha": r"sDbw203@#$nd234"}));
+            {"usuario": "beersnack", "senha": r"$@BeeSnckhsa2023"}));
 
         var body = jsonDecode(response.body)["token"];
         box.put('value', body);
