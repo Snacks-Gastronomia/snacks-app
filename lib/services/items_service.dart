@@ -47,13 +47,10 @@ class ItemsApiServices {
       DocumentSnapshot? document,
       {int limit = 8}) {
     try {
-      var ref = firebase
-          .collection("menu")
-          .where("active", isEqualTo: true)
-          .limit(limit);
-      if (document != null) {
-        return ref.startAfterDocument(document).snapshots();
-      }
+      var ref = firebase.collection("menu").where("active", isEqualTo: true);
+      // if (document != null) {
+      //   return ref.startAfterDocument(document).snapshots();
+      // }
       return ref.snapshots();
     } catch (e) {
       rethrow;

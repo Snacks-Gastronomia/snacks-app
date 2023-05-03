@@ -136,7 +136,7 @@ class CartCubit extends Cubit<CartState> {
 
   void makeOrder(String method, {String rfid = "", String change = ""}) async {
     final notification = AppNotification();
-    if (method == "Cartão Snacks") {
+    if (method == "Cartão snacks") {
       await cardRepository.doPayment(rfid, state.total);
     } else {
       var stor = await getStorage;
@@ -152,7 +152,7 @@ class CartCubit extends Cubit<CartState> {
     final dataStorage = await getStorage;
     bool isDelivery = !(auth.currentUser?.isAnonymous ?? true);
 
-    var status = method == "Cartão Snacks" || isDelivery
+    var status = method == "Cartão snacks" || isDelivery
         ? OrderStatus.ready_to_start.name
         : OrderStatus.waiting_payment.name;
 

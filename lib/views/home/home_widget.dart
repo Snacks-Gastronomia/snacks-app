@@ -48,14 +48,14 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
         } else {
           context.read<HomeCubit>().changeButtonDone(false);
         }
-        if (controller.position.maxScrollExtent == controller.offset &&
-            state.status == AppStatus.loaded) {
-          if (category.isNotEmpty) {
-            context.read<HomeCubit>().fetchItemsByRestaurants(category, false);
-          } else {
-            context.read<HomeCubit>().fetchItems();
-          }
-        }
+        // if (controller.position.maxScrollExtent == controller.offset &&
+        //     state.status == AppStatus.loaded) {
+        //   if (category.isNotEmpty) {
+        //     context.read<HomeCubit>().fetchItemsByRestaurants(category, false);
+        //   } else {
+        //     context.read<HomeCubit>().fetchItems();
+        //   }
+        // }
       },
     );
     super.initState();
