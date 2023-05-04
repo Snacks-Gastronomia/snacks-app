@@ -195,7 +195,9 @@ class CartCubit extends Cubit<CartState> {
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
-          "code": generateOrderCode(auth.currentUser?.displayName ?? ""),
+          "code": auth.currentUser?.isAnonymous ?? true
+              ? ""
+              : generateOrderCode(auth.currentUser?.displayName ?? "xxx"),
           "status": status,
           "need_change": change.toString().isNotEmpty,
           if (change.toString().isNotEmpty) "money_change": change,
@@ -216,7 +218,7 @@ class CartCubit extends Cubit<CartState> {
     int max = 9;
     var miliseconds = DateTime.now().millisecond;
     var randomNumber = min + random.nextInt(max - min);
-    return '${name.substring(0, 3)} $miliseconds $randomNumber';
+    return '${name.substring(0, 3)}$miliseconds$randomNumber';
   }
 
   Stream<QuerySnapshot> fetchOrders() {
