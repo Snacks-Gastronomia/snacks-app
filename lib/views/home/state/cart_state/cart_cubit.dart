@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
@@ -195,6 +195,7 @@ class CartCubit extends Cubit<CartState> {
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
+          "code": generateOrderCode(auth.currentUser?.displayName ?? ""),
           "status": status,
           "need_change": change.toString().isNotEmpty,
           if (change.toString().isNotEmpty) "money_change": change,
@@ -207,6 +208,15 @@ class CartCubit extends Cubit<CartState> {
       }
     }
     return dataTotal.orders;
+  }
+
+  generateOrderCode(String name) {
+    var random = Random();
+    int min = 0;
+    int max = 9;
+    var miliseconds = DateTime.now().millisecond;
+    var randomNumber = min + random.nextInt(max - min);
+    return '${name.substring(0, 3)} $miliseconds $randomNumber';
   }
 
   Stream<QuerySnapshot> fetchOrders() {

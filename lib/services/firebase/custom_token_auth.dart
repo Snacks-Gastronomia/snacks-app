@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class FirebaseCustomTokenAuth {
@@ -16,9 +17,13 @@ class FirebaseCustomTokenAuth {
 
     try {
       final userCredential = await auth.signInAnonymously();
-      // userCredential.user.
-      // Write value
+      // var time =
+      //     TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 7)));
+      var dateTime = DateTime.now().add(const Duration(hours: 7));
+
+      print(dateTime);
       await storage.write(key: "table", value: table);
+      await storage.write(key: "endAt", value: dateTime.toString());
 
       print("Sign-in successful.");
       return userCredential;

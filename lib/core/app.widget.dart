@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:snacks_app/core/app.routes.dart';
+import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/authentication/add_address_screen.dart';
 import 'package:snacks_app/views/authentication/add_name_screen.dart';
 import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
@@ -31,9 +32,24 @@ import 'package:snacks_app/views/splash/splash_screen.dart';
 class AppWidget extends StatelessWidget {
   AppWidget({Key? key}) : super(key: key);
   final auth = FirebaseAuth.instance;
+  final storage = AppStorage();
   final fire = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
+    validateAccess() async {
+      if (auth.currentUser != null && auth.currentUser!.isAnonymous) {
+        var dateTimeString = await storage.getDataStorage("endAt");
+        var dateTime = DateTime.parse(dateTimeString).toLocal();
+        var dateTimeNow = DateTime.now().toLocal();
+
+        if (dateTimeNow.compareTo(dateTime) > 0) {
+          await storage.deleteStorage("table");
+          await storage.deleteStorage("endAt");
+          auth.signOut();
+        }
+      }
+    }
+
     int compareTo(TimeOfDay now, TimeOfDay other) {
       return now.hour * 60 + now.minute == other.hour * 60 + other.minute
           ? 0
@@ -43,19 +59,23 @@ class AppWidget extends StatelessWidget {
     }
 
     Future<bool> verifyRestaurantStatus() async {
+      await initializeDateFormatting("pt_BR");
+
       var time = DateTime.now();
       var now = TimeOfDay.fromDateTime(time);
-      await initializeDateFormatting("pt_BR");
+
       var doc = await fire
           .collection("snacks_config")
           .doc("work_time")
           .collection("days")
           .doc((time.weekday - 1).toString())
           .get();
+
       DateTime start = DateFormat("HH:mm").parse(doc.data()?["start"]);
       DateTime end = DateFormat("HH:mm").parse(doc.data()?["end"]);
       var startTime = TimeOfDay(hour: start.hour, minute: start.minute);
       var endTime = TimeOfDay(hour: end.hour, minute: end.minute);
+      await validateAccess();
       //0 equal //-1 lesser // 1 greater
       // return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <= 0
       //     ? true
