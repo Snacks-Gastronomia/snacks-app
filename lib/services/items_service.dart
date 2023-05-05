@@ -25,11 +25,8 @@ class ItemsApiServices {
       var ref = firebase
           .collection("menu")
           .where("restaurant_id", isEqualTo: id)
-          .where("active", isEqualTo: true)
-          .limit(8);
-      if (document != null) {
-        return ref.startAfterDocument(document).snapshots();
-      }
+          .where("active", isEqualTo: true);
+
       return ref.snapshots();
     } catch (e) {
       rethrow;
