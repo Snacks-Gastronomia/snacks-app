@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -182,23 +183,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(status: status));
   }
 
-  int convertDateTimeToMinute(DateTime dt) =>
-      dt.day * 24 + dt.hour * 60 + dt.minute;
-
-  validateAccess() async {
-    if (auth.currentUser != null && auth.currentUser!.isAnonymous) {
-      var dateTimeString = await _localStorage.getDataStorage("endAt");
-      var dateTime = DateTime.parse(dateTimeString).toLocal();
-      var dateTimeNow = DateTime.now().toLocal();
-
-      var now = convertDateTimeToMinute(dateTimeNow);
-      var last = convertDateTimeToMinute(dateTime);
-
-      if (now >= last) {
-        await _localStorage.deleteStorage("table");
-        await _localStorage.deleteStorage("endAt");
-        auth.signOut();
-      }
-    }
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getFeatureDelivery() {
+    return repository.getDeliveryFeatureStatus();
   }
 }

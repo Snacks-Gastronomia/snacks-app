@@ -144,6 +144,15 @@ class AuthApiServices {
     }
   }
 
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getDeliveryFeatureStatus() {
+    return ff
+        .collection("snacks_config")
+        .doc("features")
+        .collection("all")
+        .doc("7Pc63Q8xurvNLPlZn5QP")
+        .snapshots();
+  }
+
   Future<void> updateAddress(String address, String uid) async {
     final doc =
         await db.readDocumentToCollectionByUid(collection: "users", uid: uid);

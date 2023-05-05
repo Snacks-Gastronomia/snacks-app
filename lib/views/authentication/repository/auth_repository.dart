@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:snacks_app/services/auth_service.dart';
 
@@ -18,6 +19,14 @@ class AuthenticateRepository {
   Future<dynamic> getLocationAddress(double lat, double long) async {
     try {
       return await services.getAddressFromCoordinates(lat, long);
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getDeliveryFeatureStatus() {
+    try {
+      return services.getDeliveryFeatureStatus();
     } catch (e) {
       throw e.toString();
     }

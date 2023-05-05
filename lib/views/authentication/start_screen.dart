@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -72,12 +73,24 @@ class StartScreen extends StatelessWidget {
                   const SizedBox(
                     height: 15,
                   ),
-                  CustomButton(
-                      icon: Icons.login_rounded,
-                      action: () =>
-                          Navigator.pushNamed(context, AppRoutes.phoneAuth),
-                      title: "Delivery",
-                      description: "Entre na plataforma"),
+                  StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                      stream: context.read<AuthCubit>().getFeatureDelivery(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var data = snapshot.data?.data();
+                          bool value = data?["active"] ?? false;
+
+                          if (value) {
+                            return CustomButton(
+                                icon: Icons.login_rounded,
+                                action: () => Navigator.pushNamed(
+                                    context, AppRoutes.phoneAuth),
+                                title: "Delivery",
+                                description: "Entre na plataforma");
+                          }
+                        }
+                        return const SizedBox();
+                      }),
                   TextButton.icon(
                     onPressed: () =>
                         Navigator.pushNamed(context, AppRoutes.home),
