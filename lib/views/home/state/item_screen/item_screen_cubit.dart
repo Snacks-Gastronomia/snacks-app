@@ -14,25 +14,37 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     print(state.order!.amount);
   }
 
+  bool hasItemId(int id) {
+    List<dynamic> extras = List.from(state.order!.extras);
+    bool found = false;
+
+    for (var element in extras) {
+      if (element["id"] == id) found = true;
+    }
+
+    return found;
+  }
+
   void selectExtras(dynamic extra) {
     List<dynamic> extras = List.from(state.order!.extras);
-    if (extras.contains(extra)) {
+
+    if (hasItemId(extra["id"])) {
+      bool isLast = extras.length == 1;
       extras.remove(extra);
-      emit(state.copyWith(
-          order: state.order!.copyWith(
-        extras: extras,
-      )));
+
+      var order = state.order!.copyWith(
+        extras: isLast ? [] : extras,
+      );
+      emit(state.copyWith(order: order));
     } else {
       emit(state.copyWith(
           order: state.order!.copyWith(extras: [...extras, extra])));
     }
-    print(state.order!.amount);
   }
 
   void selectOption(dynamic op) {
     var item = state.order;
     emit(state.copyWith(order: item?.copyWith(option_selected: op)));
-    print(state.order?.option_selected);
   }
 
   void decrementAmount() {
@@ -45,12 +57,10 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
 
   void observationChanged(String obs) {
     emit(state.copyWith(order: state.order!.copyWith(observations: obs)));
-    print(state);
   }
 
   void insertItem(OrderModel order, bool isNew) {
     emit(state.copyWith(order: order, isNew: isNew));
-    print(state);
   }
 
   getNewValue() {

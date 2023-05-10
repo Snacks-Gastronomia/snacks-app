@@ -35,7 +35,7 @@ class _ItemScreenState extends State<ItemScreen> {
 
     var item =
         context.read<CartCubit>().getOrderByItemId(widget.order.item.id!);
-    print(item);
+
     if (item != null) {
       context.read<ItemScreenCubit>().insertItem(item, false);
     } else {
@@ -402,19 +402,22 @@ class _ItemScreenState extends State<ItemScreen> {
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               var list = List.from(widget.order.item.extras);
+                              var item = list[index];
                               double value =
-                                  double.parse(list[index]['value'].toString());
+                                  double.parse(item['value'].toString());
 
                               return BlocBuilder<ItemScreenCubit,
                                       ItemScreenState>(
                                   // stream: null,
                                   builder: (context, state) {
-                                bool selected =
-                                    state.order!.extras.contains(list[index]);
+                                bool selected = context
+                                    .read<ItemScreenCubit>()
+                                    .hasItemId(item["id"]);
+
                                 return GestureDetector(
                                   onTap: () => context
                                       .read<ItemScreenCubit>()
-                                      .selectExtras(list[index]),
+                                      .selectExtras(item),
                                   child: Container(
                                     // height: 50,
                                     padding: const EdgeInsets.all(15),
@@ -443,7 +446,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                               width: 15,
                                             ),
                                             Text(
-                                              list[index]["title"],
+                                              item["title"],
                                               style: AppTextStyles.medium(
                                                 16,
                                                 color: selected

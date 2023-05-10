@@ -35,27 +35,22 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   @override
   void initState() {
     controller = ScrollController();
-    // TODO: implement initState
-    //  _navigator.pushAndRemoveUntil(..., (route) => ...);
     context.read<HomeCubit>().fetchItems();
     controller.addListener(
       () {
-        var state = context.read<HomeCubit>().state;
-        var cart = context.read<CartCubit>().state;
+        var cart = context.read<CartCubit>().emptyCart();
 
-        if (controller.offset > 60 && cart.cart.isNotEmpty) {
+        if (controller.offset > 60 && !cart) {
           context.read<HomeCubit>().changeButtonDone(true);
+          // setState(() {
+          //   button = true;
+          // });
         } else {
           context.read<HomeCubit>().changeButtonDone(false);
+          // setState(() {
+          //   button = false;
+          // });
         }
-        // if (controller.position.maxScrollExtent == controller.offset &&
-        //     state.status == AppStatus.loaded) {
-        //   if (category.isNotEmpty) {
-        //     context.read<HomeCubit>().fetchItemsByRestaurants(category, false);
-        //   } else {
-        //     context.read<HomeCubit>().fetchItems();
-        //   }
-        // }
       },
     );
     super.initState();

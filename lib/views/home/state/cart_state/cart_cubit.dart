@@ -201,7 +201,7 @@ class CartCubit extends Cubit<CartState> {
           "status": status,
           "need_change": change.toString().isNotEmpty,
           if (change.toString().isNotEmpty) "money_change": change,
-          "created_at": DateTime.now(),
+          "created_at": FieldValue.serverTimestamp(),
           if (isDelivery)
             "address": dataStorage["address"]
           else
@@ -227,6 +227,10 @@ class CartCubit extends Cubit<CartState> {
 
   void clearCart() {
     emit(state.copyWith(cart: []));
+  }
+
+  bool emptyCart() {
+    return state.cart.isEmpty;
   }
 
   void changeStatus(AppStatus status) {
