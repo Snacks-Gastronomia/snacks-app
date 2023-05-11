@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/utils/storage.dart';
+import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/authentication/add_address_screen.dart';
 import 'package:snacks_app/views/authentication/add_name_screen.dart';
 import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
@@ -33,19 +34,26 @@ class AppWidget extends StatelessWidget {
   AppWidget({Key? key}) : super(key: key);
   final auth = FirebaseAuth.instance;
   final storage = AppStorage();
+  final toast = AppToast();
   final fire = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
-    validateAccess() async {
+    void validateAccess() async {
       if (auth.currentUser != null && auth.currentUser!.isAnonymous) {
-        var dateTimeString = await storage.getDataStorage("endAt");
-        var dateTime = DateTime.parse(dateTimeString).toLocal();
-        var dateTimeNow = DateTime.now().toLocal();
-
-        if (dateTimeNow.compareTo(dateTime) > 0) {
-          await storage.deleteStorage("table");
-          await storage.deleteStorage("endAt");
-          auth.signOut();
+        try {
+          var dateTimeString = await storage.getDataStorage("endAt");
+          var dateTime = DateTime.parse(dateTimeString).toLocal();
+          var dateTimeNow = DateTime.now().toLocal();
+          if (dateTimeNow.compareTo(dateTime) > 0) {
+            await storage.deleteStorage("table");
+            await storage.deleteStorage("endAt");
+            auth.signOut();
+          }
+        } catch (e) {
+          toast.init(context: context);
+          toast.showToast(
+              context: context, content: e.toString(), type: ToastType.error);
+          print(e);
         }
       }
     }
@@ -75,7 +83,7 @@ class AppWidget extends StatelessWidget {
       DateTime end = DateFormat("HH:mm").parse(doc.data()?["end"]);
       var startTime = TimeOfDay(hour: start.hour, minute: start.minute);
       var endTime = TimeOfDay(hour: end.hour, minute: end.minute);
-      await validateAccess();
+      validateAccess();
       //0 equal //-1 lesser // 1 greater
       // return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <= 0
       //     ? true

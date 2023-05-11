@@ -38,7 +38,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     super.dispose();
   }
 
-  void action(context, method) async {
+  void action(context, method, {card}) async {
     String description = "";
     String change = "";
 
@@ -73,7 +73,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ' O entregador levará a maquininha para que você possa realizar o pagamento. ;-)';
     }
 
-    BlocProvider.of<CartCubit>(context).makeOrder(method, change: change);
+    BlocProvider.of<CartCubit>(context)
+        .makeOrder(method, change: change, rfid: card);
     await modal.showIOSModalBottomSheet(
         context: context,
         drag: false,
@@ -292,7 +293,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                       symbol: r"R$ ")
                                                   .format(result),
                                               action: () => action(
-                                                  context, "Cartão snacks"));
+                                                  context, "Cartão snacks",
+                                                  card: card_code));
                                         }));
                                   } catch (e) {
                                     print(e);

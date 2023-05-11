@@ -134,21 +134,23 @@ class CartCubit extends Cubit<CartState> {
         accessibility: KeychainAccessibility.first_unlock,
       ));
 
-  void makeOrder(String method, {String rfid = "", String change = ""}) async {
+  void makeOrder(String method, {String? rfid = "", String change = ""}) async {
     final notification = AppNotification();
-    if (method == "Cartão snacks") {
-      await cardRepository.doPayment(rfid, state.total);
-    } else {
+    var data = await generateDataObject(method, change, rfid);
+    await repository.createOrder(data);
+
+    if (auth.currentUser?.isAnonymous ?? false) {
       var stor = await getStorage;
       notification.sendNotificationToWaiters(table: stor["table"].toString());
+
+      // await cardRepository.doPayment(rfid, state.total);
     }
 
-    var data = await generateDataObject(method, change);
-    await repository.createOrder(data);
     clearCart();
   }
 
-  Future<List<Map<String, dynamic>>> generateDataObject(method, change) async {
+  Future<List<Map<String, dynamic>>> generateDataObject(
+      method, change, rfid) async {
     final dataStorage = await getStorage;
     bool isDelivery = !(auth.currentUser?.isAnonymous ?? true);
 
@@ -167,6 +169,9 @@ class CartCubit extends Cubit<CartState> {
     });
     DataOrder dataTotal = DataOrder(done: [], orders: []);
     // ignore: iterable_contains_unrelated_type
+
+    String order_code = generateOrderCode();
+
     for (var e in state.cart) {
       if (dataTotal.done.contains(e.item.restaurant_id)) {
         dataTotal.orders.map((el) {
@@ -188,6 +193,7 @@ class CartCubit extends Cubit<CartState> {
           "items": [e.toMap()],
           "user_uid": auth.currentUser?.uid ?? "",
           "payment_method": method,
+          "rfid": rfid,
           "value":
               double.parse(e.option_selected["value"].toString()) * e.amount +
                   extra +
@@ -195,9 +201,8 @@ class CartCubit extends Cubit<CartState> {
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
-          "code": auth.currentUser?.isAnonymous ?? true
-              ? ""
-              : generateOrderCode(auth.currentUser?.displayName ?? "xxx"),
+          "code": order_code,
+          "part_code": order_code.split("-")[0],
           "status": status,
           "need_change": change.toString().isNotEmpty,
           if (change.toString().isNotEmpty) "money_change": change,
@@ -212,13 +217,32 @@ class CartCubit extends Cubit<CartState> {
     return dataTotal.orders;
   }
 
-  generateOrderCode(String name) {
+  generateOrderCode() {
+    var str = generateRandomString(3);
+    var str_code = generateRandomStringWNumbers(6);
+    var numb = generateRandomNumber(100, 999);
+
+    return '$str$numb-$str_code';
+  }
+
+  String generateRandomString(int len) {
+    var r = Random();
+    const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
+        .join();
+  }
+
+  String generateRandomStringWNumbers(int len) {
+    var r = Random();
+    const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890@#&';
+    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
+        .join();
+  }
+
+  int generateRandomNumber(int min, int max) {
     var random = Random();
-    int min = 0;
-    int max = 9;
-    var miliseconds = DateTime.now().millisecond;
     var randomNumber = min + random.nextInt(max - min);
-    return '${name.substring(0, 3)}$miliseconds$randomNumber';
+    return randomNumber;
   }
 
   Stream<QuerySnapshot> fetchOrders() {
@@ -226,7 +250,9 @@ class CartCubit extends Cubit<CartState> {
   }
 
   void clearCart() {
-    emit(state.copyWith(cart: []));
+    emit(state.copyWith(
+      cart: [],
+    ));
   }
 
   bool emptyCart() {
