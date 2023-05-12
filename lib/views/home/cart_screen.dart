@@ -108,7 +108,7 @@ class MyCartScreen extends StatelessWidget {
                                                           0xff979797)),
                                                 ),
                                                 Text(
-                                                  '5,00',
+                                                  '0,00',
                                                   style: AppTextStyles.regular(
                                                       17,
                                                       color: const Color(

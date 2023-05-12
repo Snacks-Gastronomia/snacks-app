@@ -196,8 +196,8 @@ class CartCubit extends Cubit<CartState> {
           "rfid": rfid,
           "value":
               double.parse(e.option_selected["value"].toString()) * e.amount +
-                  extra +
-                  (isDelivery ? 5 : 0),
+                  extra,
+          //  +(isDelivery ? 5 : 0),
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,

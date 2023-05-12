@@ -265,6 +265,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               cubit.changeStatus(AppStatus.loading);
                               var card = await beerpassService
                                   .getCard(card_code.toString());
+
                               if (card != null) {
                                 double cardBudget =
                                     double.parse(card["saldo"].toString());
@@ -300,7 +301,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     print(e);
                                   }
                                 } else {
-                                  // cubit.changeStatus(AppStatus.loaded);
+                                  // ignore: use_build_context_synchronously
                                   modal.showModalBottomSheet(
                                       context: context,
                                       content: PaymentFailedContent(
@@ -310,6 +311,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       ));
                                 }
                               } else {
+                                // ignore: use_build_context_synchronously
                                 modal.showModalBottomSheet(
                                     context: context,
                                     content: const PaymentFailedContent(

@@ -59,6 +59,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   @override
   void didChangeDependencies() {
     _navigator = Navigator.of(context);
+
     super.didChangeDependencies();
   }
 
