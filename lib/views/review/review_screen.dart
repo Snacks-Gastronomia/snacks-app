@@ -5,6 +5,7 @@ import 'package:group_button/group_button.dart';
 import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
+import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/review/state/cubit/review_cubit.dart';
 
 import './widgets/review_widget.dart';
@@ -12,20 +13,20 @@ import './widgets/review_widget.dart';
 class ReviewScreen extends StatelessWidget {
   ReviewScreen({Key? key}) : super(key: key);
   final controller = PageController(initialPage: 0, keepPage: true);
-
+  final toast = AppToast();
   @override
   Widget build(BuildContext context) {
-    final screens = [
-      FeedbackForm(
-        onSubmit: () {
-          controller.nextPage(
-              duration: const Duration(milliseconds: 600),
-              curve: Curves.easeInOut);
-        },
-      ),
-      ObservationWidget(controller: controller),
-      const FinishedForm()
-    ];
+    // final screens = [
+    //   FeedbackForm(
+    //     onSubmit: () {
+    //       controller.nextPage(
+    //           duration: const Duration(milliseconds: 600),
+    //           curve: Curves.easeInOut);
+    //     },
+    //   ),
+    //   ObservationWidget(controller: controller),
+    //   const FinishedForm()
+    // ];
     return SafeArea(
       child: Scaffold(body: BlocBuilder<ReviewCubit, ReviewState>(
         builder: (context, state) {
@@ -45,7 +46,27 @@ class ReviewScreen extends StatelessWidget {
                             curve: Curves.easeInOut);
                       },
                     ),
-                    ObservationWidget(controller: controller),
+                    ObservationWidget(onSubmit: () async {
+                      var lowRateQ1 = int.parse(state.questions[0].rate) <= 6;
+                      var lowRateQ2 = int.parse(state.questions[1].rate) <= 7;
+                      var lowRateQ3 = ["Nada", "Pouco", "Moderadamente"]
+                          .contains(state.questions[2].rate);
+
+                      if ((lowRateQ1 || lowRateQ2 || lowRateQ3) &&
+                          state.observations.isEmpty) {
+                        toast.init(context: context);
+                        toast.showToast(
+                            context: context,
+                            content:
+                                "Diga algum coisa para continuarmos a melhorar. : )",
+                            type: ToastType.info);
+                      } else {
+                        await context.read<ReviewCubit>().submit();
+                        controller.nextPage(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOut);
+                      }
+                    }),
                     const FinishedForm()
                   ]));
         },
@@ -241,9 +262,9 @@ class _CustomRadioButtonState extends State<CustomRadioButton> {
 class ObservationWidget extends StatelessWidget {
   const ObservationWidget({
     Key? key,
-    required this.controller,
+    required this.onSubmit,
   }) : super(key: key);
-  final PageController controller;
+  final VoidCallback onSubmit;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -277,19 +298,13 @@ class ObservationWidget extends StatelessWidget {
             counterText: "",
             contentPadding: EdgeInsets.zero,
           ),
-          maxLength: 30,
+          maxLength: 1000,
           onChanged: context.read<ReviewCubit>().changeObservation,
-          maxLines: 6,
+          maxLines: 10,
         ),
         const Spacer(),
         CustomSubmitButton(
-            onPressedAction: () async {
-              await context.read<ReviewCubit>().submit();
-              // Navigator.pop(context);
-              controller.nextPage(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut);
-            },
+            onPressedAction: onSubmit,
             label: "Feito",
             loading_label: "",
             loading: false)

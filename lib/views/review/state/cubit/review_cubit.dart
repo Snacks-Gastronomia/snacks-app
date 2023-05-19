@@ -45,7 +45,8 @@ class ReviewCubit extends Cubit<ReviewState> {
         .toList();
     var data = {
       "questions": FieldValue.arrayUnion(questions),
-      "observations": state.observations
+      "observations": state.observations,
+      "created_at": FieldValue.serverTimestamp()
     };
 
     debugPrint(questions.toString());
