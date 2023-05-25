@@ -55,9 +55,9 @@ class MyCartScreen extends StatelessWidget {
                           !(auth.currentUser?.isAnonymous ?? false) ? 180 : 150,
                       child: BlocBuilder<CartCubit, CartState>(
                           builder: (context, snapshot) {
-                        var total = snapshot.total ;
-                        // +
-                        //     (!(auth.currentUser?.isAnonymous ?? false) ? 5 : 0);
+                        var total = snapshot.total 
+                        +
+                            (!(auth.currentUser?.isAnonymous ?? false) ? 7 : 0);
                         return Container(
                           decoration: const BoxDecoration(
                               color: Color(0xffF6F6F6),
@@ -109,7 +109,7 @@ class MyCartScreen extends StatelessWidget {
                                                           0xff979797)),
                                                 ),
                                                 Text(
-                                                  '0,00',
+                                                  '7,00',
                                                   style: AppTextStyles.regular(
                                                       17,
                                                       color: const Color(
