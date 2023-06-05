@@ -72,10 +72,20 @@ class AuthCubit extends Cubit<AuthState> {
 
       print('${position.latitude}  ${position.longitude}');
 
-      var data = await repository.getLocationAddress(
-          position.latitude, position.longitude);
+      // var data = await repository.getLocationAddress(
+      //     position.latitude, position.longitude);
+      var data = await repository
+          .getAddressesFromQuery('${position.longitude},${position.latitude}');
+      if (List.from(data).isNotEmpty) {
+        GeocodingResponse addressRes = List.from(data)[0];
 
-      address = formatAddress(data["address"], data["address_type"]);
+        var street = addressRes.place_name.split(",")[0];
+        var _address = addressRes.place_name.replaceFirst("$street,", "");
+
+        address = AddressType(
+            street: street, address: _address, complete: addressRes.place_name);
+        // address = formatAddress(data["address"], data["address_type"]);
+      }
     } catch (e) {
       print("cubit error");
     }
@@ -84,36 +94,57 @@ class AuthCubit extends Cubit<AuthState> {
     return address;
   }
 
-  formatAddress(dynamic address, dynamic address_type) {
-    var street = address["road"] ?? "";
+  formatAddress(GeocodingResponse address) {
+    var ads = AddressType.initial();
 
-    String number = address["house_number"] ?? "";
-    var district = address["city_district"] ?? "";
-    var state = address["state"] ?? "";
-    var city = address["city"] ?? "";
-    var postcode = address["postcode"] ?? "";
+    var street = address.place_name.split(",")[0];
+    var _address =
+        address.place_name.substring(0, address.place_name.indexOf(','));
+    // var street = address["road"] ?? "";
 
-    String number_district = number;
-    number_district += number.isNotEmpty ? " - " : "";
-    number_district += district;
-    number_district += number_district.isEmpty ? "" : ", ";
-    var ads = AddressType(
-      address: ' $number_district'
-          '$state - $city, $postcode',
-      street: street,
-      complete: '$street, $number_district'
-          '$state - $city, $postcode',
-    );
+    // String number = address["house_number"] ?? "";
+    // var district = address["city_district"] ?? "";
+    // var state = address["state"] ?? "";
+    // var city = address["city"] ?? "";
+    // var postcode = address["postcode"] ?? "";
+
+    // String number_district = number;
+    // number_district += number.isNotEmpty ? " - " : "";
+    // number_district += district;
+    // number_district += number_district.isEmpty ? "" : ", ";
+    // var ads = AddressType(
+    //   address: ' $number_district'
+    //       '$state - $city, $postcode',
+    //   street: street,
+    //   complete: '$street, $number_district'
+    //       '$state - $city, $postcode',
+    // );
     return ads;
   }
 
   void saveUser() async {
     changeStatus(AppStatus.loading);
-    await repository.createUser(
-        uid: auth.currentUser!.uid, address: state.address.complete);
-    await auth.currentUser!.updateDisplayName(state.name);
-    repository.storageAddress(state.address.complete);
+    String address = convertAddressToString;
+    await repository.createUser(uid: auth.currentUser!.uid, address: address);
+
+    repository.storageAddress(address);
     changeStatus(AppStatus.loaded);
+  }
+
+  void saveUserName() async {
+    await auth.currentUser!.updateDisplayName(state.name);
+  }
+
+  String get convertAddressToString =>
+      '${state.street_address}, ${state.number_address}, ${state.district_address} - ${state.obs_address}';
+  void convertAddressStringToObject(String str) {
+    var split = str.split(", ");
+    emit(state.copyWith(
+      street_address: split[0],
+      number_address: split[1],
+      district_address: split[2].split(" - ")[0],
+      obs_address: split[2].split(" - ")[1],
+    ));
   }
 
   Future<bool> checkUser() async {
@@ -147,31 +178,42 @@ class AuthCubit extends Cubit<AuthState> {
     // print(state);
   }
 
-  void changeAddress(AddressType value) {
-    state.address_input_controller.clear();
-    emit(state.copyWith(address: value));
+  void changeStreet(String value) {
+    emit(state.copyWith(street_address: value));
     print(state);
   }
 
-  void changePassword(String value) {
-    emit(state.copyWith(password: value));
+  void changeNumber(String value) {
+    emit(state.copyWith(number_address: value));
     print(state);
   }
 
-  void updateAddressFromScreen() {
-    state.address_input_controller.text = state.address.complete;
+  void changeObservations(String value) {
+    emit(state.copyWith(obs_address: value));
+    print(state);
+  }
 
+  void changeDistrict(String value) {
+    emit(state.copyWith(district_address: value));
+    print(state);
+  }
+
+  void updateAddress(String address) {
+    // state.address_input_controller.text = state.address.complete;
+    convertAddressStringToObject(address);
     emit(state.copyWith(status: AppStatus.editing));
   }
 
   void updateAddressFromDatabase() {
-    var address = state.address.complete;
+    var address = convertAddressToString;
     repository.updateAddress(auth.currentUser!.uid, address);
     _localStorage.updateStorage("address", address);
   }
 
   Future<Iterable<dynamic>> fecthAddress(String query) async {
-    return await repository.getAddressesFromQuery(query);
+    var position = await determinePosition();
+    // position
+    return await repository.getAddressesFromQuery(query, proximity: position);
   }
 
   void throwError(String message) {

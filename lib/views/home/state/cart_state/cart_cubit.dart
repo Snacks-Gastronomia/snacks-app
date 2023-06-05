@@ -193,6 +193,8 @@ class CartCubit extends Cubit<CartState> {
           "items": [e.toMap()],
           "user_uid": auth.currentUser?.uid ?? "",
           "payment_method": method,
+          "customer": auth.currentUser?.displayName,
+          "phone_number": auth.currentUser?.phoneNumber,
           "rfid": rfid,
           "value":
               double.parse(e.option_selected["value"].toString()) * e.amount +

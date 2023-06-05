@@ -11,6 +11,7 @@ import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/services/auth_service.dart';
 import 'package:snacks_app/utils/snackbar.dart';
 import 'package:snacks_app/utils/toast.dart';
+import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 
 class ProfileModal extends StatelessWidget {
@@ -84,12 +85,17 @@ class ProfileModal extends StatelessWidget {
                       Center(
                         child: IconButton(
                             onPressed: () async {
+                              context
+                                  .read<AuthCubit>()
+                                  .updateAddress(snapshot.data ?? "");
+
                               Navigator.pop(context);
+
                               await Navigator.pushNamed(
                                   context, AppRoutes.address,
                                   arguments: {
-                                    // "address": snapshot.data,
-                                    "uid": auth.currentUser?.uid
+                                    "address": snapshot.data,
+                                    // "uid": auth.currentUser?.uid
                                   });
                             },
                             icon: const Icon(

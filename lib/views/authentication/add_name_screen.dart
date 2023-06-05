@@ -15,7 +15,10 @@ class AddNameScreen extends StatelessWidget {
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
           child: ElevatedButton(
-            onPressed: () => Navigator.pushNamed(context, AppRoutes.address),
+            onPressed: () async {
+              context.read<AuthCubit>().saveUserName();
+              Navigator.pushNamed(context, AppRoutes.address);
+            },
             style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),

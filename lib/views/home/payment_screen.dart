@@ -10,6 +10,7 @@ import 'package:snacks_app/services/beerpass_service.dart';
 import 'package:snacks_app/services/firebase/database.dart';
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/modal.dart';
+import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_failed.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_ok.dart';
@@ -29,6 +30,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final beerpassService = BeerPassService();
 
   final auth = FirebaseAuth.instance;
+  final storage = AppStorage();
 
   final modal = AppModal();
 
@@ -72,7 +74,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
           'Seu está sendo preparado e logo sairá para entrega ao seu endereço.\n'
           ' O entregador levará a maquininha para que você possa realizar o pagamento. ;-)';
     }
+    var address = "";
+    if (!auth.currentUser!.isAnonymous) {
+      address = await storage.getDataStorage("address");
 
+      if (address == "null") {
+        Navigator.pushNamed(context, AppRoutes.address,
+            arguments: {"backToScreen": true});
+      } else {
+        sendOrder(context, method, change, card, description);
+      }
+    } else {
+      sendOrder(context, method, change, card, description);
+    }
+  }
+
+  sendOrder(context, method, change, card, description) async {
     BlocProvider.of<CartCubit>(context)
         .makeOrder(method, change: change, rfid: card);
     await modal.showIOSModalBottomSheet(

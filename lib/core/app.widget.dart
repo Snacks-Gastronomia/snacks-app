@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:snacks_app/core/app.routes.dart';
+import 'package:snacks_app/services/firebase/remote_config.dart';
 import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/authentication/add_address_screen.dart';
@@ -25,6 +28,7 @@ import 'package:snacks_app/views/authentication/scan_qrcode_screen.dart';
 import 'package:snacks_app/views/authentication/otp_screen.dart';
 import 'package:snacks_app/views/authentication/phone_number_screen.dart';
 import 'package:snacks_app/views/authentication/start_screen.dart';
+import 'package:snacks_app/views/new_version_available/page.dart';
 // import 'package:snacks_app/views/review/main.dart';
 import 'package:snacks_app/views/review/review_screen.dart';
 import 'package:snacks_app/views/review/state/cubit/review_cubit.dart';
@@ -58,6 +62,18 @@ class AppWidget extends StatelessWidget {
       }
     }
 
+    Future<bool> validateAppVersion() async {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      final firebaseRemoteConfigService = FirebaseRemoteConfigService(
+        firebaseRemoteConfig: FirebaseRemoteConfig.instance,
+      );
+      await firebaseRemoteConfigService.init();
+
+      String remoteVersion = firebaseRemoteConfigService.getAppVersionJson();
+
+      return remoteVersion == packageInfo.version;
+    }
+
     int compareTo(TimeOfDay now, TimeOfDay other) {
       return now.hour * 60 + now.minute == other.hour * 60 + other.minute
           ? 0
@@ -66,7 +82,7 @@ class AppWidget extends StatelessWidget {
               : -1;
     }
 
-    Future<bool> verifyRestaurantStatus() async {
+    Future<Map<String, dynamic>> verifyRestaurantStatus() async {
       await initializeDateFormatting("pt_BR");
 
       var time = DateTime.now();
@@ -84,11 +100,15 @@ class AppWidget extends StatelessWidget {
       var startTime = TimeOfDay(hour: start.hour, minute: start.minute);
       var endTime = TimeOfDay(hour: end.hour, minute: end.minute);
       validateAccess();
+      var rightVersion = await validateAppVersion();
       //0 equal //-1 lesser // 1 greater
       // return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <= 0
       //     ? true
       //     : false;
-      return true;
+      return {
+        "restaurant_available": true,
+        "right_app_version": rightVersion,
+      };
     }
 
     return MultiBlocProvider(
@@ -113,10 +133,12 @@ class AppWidget extends StatelessWidget {
         ),
       ],
       key: UniqueKey(),
-      child: FutureBuilder<bool>(
+      child: FutureBuilder<Map<String, dynamic>>(
           future: verifyRestaurantStatus(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              var data = snapshot.data;
+              bool current_version = data?["right_app_version"];
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
@@ -125,11 +147,14 @@ class AppWidget extends StatelessWidget {
                     textTheme: GoogleFonts.poppinsTextTheme(
                         Theme.of(context).textTheme)),
                 title: "Snacks App",
-                initialRoute: snapshot.data == true
-                    ? auth.currentUser != null
-                        ? AppRoutes.home
-                        : AppRoutes.start
-                    : AppRoutes.closedRestaurant,
+                // initialRoute: AppRoutes.address,
+                initialRoute: current_version
+                    ? data!["restaurant_available"]
+                        ? auth.currentUser != null
+                            ? AppRoutes.home
+                            : AppRoutes.start
+                        : AppRoutes.closedRestaurant
+                    : AppRoutes.newVersionAvailable,
                 routes: {
                   AppRoutes.start: (context) => StartScreen(),
                   AppRoutes.otp: (context) => const OtpScreen(),
@@ -143,7 +168,9 @@ class AppWidget extends StatelessWidget {
                   AppRoutes.orders: (context) => const OrdersScreen(),
                   AppRoutes.home: (context) => HomeScreen(),
                   AppRoutes.feedback: (context) => ReviewScreen(),
-                  AppRoutes.closedRestaurant: (context) => UnavailableScreen()
+                  AppRoutes.closedRestaurant: (context) => UnavailableScreen(),
+                  AppRoutes.newVersionAvailable: (context) =>
+                      const NewVersionAvailableScreen()
                 },
               );
             }

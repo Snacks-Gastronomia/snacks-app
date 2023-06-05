@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:snacks_app/services/auth_service.dart';
 
 class AuthenticateRepository {
@@ -70,9 +71,10 @@ class AuthenticateRepository {
     }
   }
 
-  Future<Iterable<dynamic>> getAddressesFromQuery(String query) async {
+  Future<Iterable<dynamic>> getAddressesFromQuery(String query,
+      {Position? proximity}) async {
     try {
-      return await services.fetchAddresses(query);
+      return await services.fetchAddresses(query, proximity: proximity);
     } catch (e) {
       throw e.toString();
     }

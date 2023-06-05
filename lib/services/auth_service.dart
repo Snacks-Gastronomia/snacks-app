@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:snacks_app/models/item_model.dart';
@@ -12,16 +14,19 @@ import 'package:snacks_app/services/firebase/phone_auth.dart';
 class GeocodingResponse {
   final String text;
   final String place_name;
+  final Map<String, dynamic> properties;
 
   GeocodingResponse({
     required this.text,
     required this.place_name,
+    required this.properties,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'text': text,
       'place_name': place_name,
+      'properties': properties,
     };
   }
 
@@ -29,6 +34,7 @@ class GeocodingResponse {
     return GeocodingResponse(
       text: map['text'] ?? '',
       place_name: map['place_name'] ?? '',
+      properties: Map<String, dynamic>.from(map['properties']),
     );
   }
 
@@ -36,6 +42,35 @@ class GeocodingResponse {
 
   factory GeocodingResponse.fromJson(String source) =>
       GeocodingResponse.fromMap(json.decode(source));
+
+  GeocodingResponse copyWith({
+    String? text,
+    String? place_name,
+    Map<String, dynamic>? properties,
+  }) {
+    return GeocodingResponse(
+      text: text ?? this.text,
+      place_name: place_name ?? this.place_name,
+      properties: properties ?? this.properties,
+    );
+  }
+
+  @override
+  String toString() =>
+      'GeocodingResponse(text: $text, place_name: $place_name, properties: $properties)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is GeocodingResponse &&
+        other.text == text &&
+        other.place_name == place_name &&
+        mapEquals(other.properties, properties);
+  }
+
+  @override
+  int get hashCode => text.hashCode ^ place_name.hashCode ^ properties.hashCode;
 }
 
 class AuthApiServices {
@@ -77,13 +112,16 @@ class AuthApiServices {
     }
   }
 
-  Future<List> fetchAddresses(String query) async {
+  Future<List> fetchAddresses(String query, {Position? proximity}) async {
     List<GeocodingResponse> list = [];
     const mapbox_token =
         "pk.eyJ1IjoiamFja3Nvbi1hZ3VpYXIyMiIsImEiOiJja3lsa3Y3c2kweXE1MzFwMHE0ZGFrbWFkIn0.joULi-b9eXkZiUSLg-54mA";
-    var path = '/geocoding/v5/mapbox.places/$query' 'Brazil.json';
+    var path = '/geocoding/v5/mapbox.places/$query' '.json';
     var params = {
       "country": "br",
+      "language": "pt",
+      if (proximity != null)
+        "proximity": '${proximity.longitude},${proximity.latitude}',
       "autocomplete": "true",
       "access_token": mapbox_token
     };
@@ -94,7 +132,7 @@ class AuthApiServices {
       print(response.body);
     }
     final responseBody = jsonDecode(response.body);
-
+    // print(responseBody);
     List<dynamic> items = responseBody["features"];
     for (var item in items) {
       list.add(GeocodingResponse.fromMap(item));

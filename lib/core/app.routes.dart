@@ -21,5 +21,5 @@ class AppRoutes {
   static String get addBankAccount => '/add-bank-account';
   static String get feedback => '/feedback';
   static String get closedRestaurant => '/closed';
-
+  static String get newVersionAvailable => '/new-version';
 }
