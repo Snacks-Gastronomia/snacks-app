@@ -250,37 +250,42 @@ class CardOrderWidget extends StatelessWidget {
                                       const SizedBox(
                                         width: 15,
                                       ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '${item.item.title} - ${item.option_selected["title"]}',
-                                            style: AppTextStyles.regular(14),
-                                          ),
-                                          if (item.observations.isNotEmpty)
-                                            SizedBox(
-                                              width: 200,
-                                              child: Text(
-                                                item.observations,
-                                                style: AppTextStyles.regular(12,
-                                                    color: Colors.grey),
-                                              ),
+                                      SizedBox(
+                                        width: 180,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${item.item.title} - ${item.option_selected["title"]}',
+                                              style: AppTextStyles.regular(14),
                                             ),
-                                          if (item.extras.isNotEmpty)
-                                            for (int i = 0;
-                                                i < item.extras.length;
-                                                i++)
+                                            if (item.observations.isNotEmpty)
                                               SizedBox(
                                                 width: 200,
                                                 child: Text(
-                                                  '+${item.extras[i]["title"]}  (${NumberFormat.currency(locale: "pt", symbol: r"R$").format(double.parse(item.extras[i]["value"].toString()))})',
+                                                  item.observations,
                                                   style: AppTextStyles.regular(
                                                       12,
                                                       color: Colors.grey),
                                                 ),
                                               ),
-                                        ],
+                                            if (item.extras.isNotEmpty)
+                                              for (int i = 0;
+                                                  i < item.extras.length;
+                                                  i++)
+                                                SizedBox(
+                                                  width: 200,
+                                                  child: Text(
+                                                    '+${item.extras[i]["title"]}  (${NumberFormat.currency(locale: "pt", symbol: r"R$").format(double.parse(item.extras[i]["value"].toString()))})',
+                                                    style:
+                                                        AppTextStyles.regular(
+                                                            12,
+                                                            color: Colors.grey),
+                                                  ),
+                                                ),
+                                          ],
+                                        ),
                                       )
                                     ],
                                   ),

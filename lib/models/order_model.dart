@@ -48,6 +48,15 @@ class OrderModel {
     };
   }
 
+  double get getTotalValue {
+    double extra = extras.isNotEmpty
+        ? extras
+            .map((e) => double.parse(e["value"].toString()))
+            .reduce((value, element) => value + element)
+        : 0;
+    return double.parse(option_selected["value"].toString()) * amount + extra;
+  }
+
   factory OrderModel.fromMap(Map<String, dynamic> map) {
     return OrderModel(
       item: Item.fromMap(map['item']),

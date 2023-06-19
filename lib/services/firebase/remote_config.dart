@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -29,5 +30,6 @@ class FirebaseRemoteConfigService {
     }
   }
 
-  String getAppVersionJson() => firebaseRemoteConfig.getString('app_version');
+  String getAppVersionJson() => firebaseRemoteConfig.getString(
+      Platform.isAndroid ? 'app_version_android' : 'app_version_ios');
 }

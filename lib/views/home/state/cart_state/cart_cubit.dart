@@ -137,6 +137,7 @@ class CartCubit extends Cubit<CartState> {
   void makeOrder(String method, {String? rfid = "", String change = ""}) async {
     final notification = AppNotification();
     var data = await generateDataObject(method, change, rfid);
+
     await repository.createOrder(data);
 
     if (auth.currentUser?.isAnonymous ?? false) {
@@ -158,8 +159,6 @@ class CartCubit extends Cubit<CartState> {
         ? OrderStatus.ready_to_start.name
         : OrderStatus.waiting_payment.name;
 
-    final now = DateTime.now();
-    DateFormat dateFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
     List<String> restaurants = [];
 
     state.cart.map((e) {
@@ -177,17 +176,12 @@ class CartCubit extends Cubit<CartState> {
         dataTotal.orders.map((el) {
           if (el["restaurant"] == e.item.restaurant_id) {
             el["items"] = [...el["items"], e.toMap()];
-            el["value"] += e.item.value;
+            el["value"] += e.getTotalValue;
             return el;
           }
           return el;
         }).toList();
       } else {
-        double extra = e.extras.isNotEmpty
-            ? e.extras
-                .map((e) => double.parse(e["value"].toString()))
-                .reduce((value, element) => value + element)
-            : 0;
         dataTotal.done = [...dataTotal.done, e.item.restaurant_id];
         dataTotal.orders.add({
           "items": [e.toMap()],
@@ -196,10 +190,7 @@ class CartCubit extends Cubit<CartState> {
           "customer": auth.currentUser?.displayName,
           "phone_number": auth.currentUser?.phoneNumber,
           "rfid": rfid,
-          "value":
-              double.parse(e.option_selected["value"].toString()) * e.amount +
-                  extra +
-                  (isDelivery ? 7 : 0),
+          "value": e.getTotalValue + (isDelivery ? 7 : 0),
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
