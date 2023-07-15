@@ -37,9 +37,10 @@ class OrdersScreen extends StatelessWidget {
           child: StreamBuilder<QuerySnapshot>(
               stream: BlocProvider.of<CartCubit>(context).fetchOrders(),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData ||
+                    snapshot.connectionState == ConnectionState.done) {
                   List<QueryDocumentSnapshot<Object?>> orders =
-                      List.from(snapshot.data!.docs);
+                      List.from(snapshot.data?.docs ?? []);
 
                   return ListView.builder(
                       physics: const BouncingScrollPhysics(),

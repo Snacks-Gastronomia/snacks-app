@@ -55,8 +55,7 @@ class MyCartScreen extends StatelessWidget {
                           !(auth.currentUser?.isAnonymous ?? false) ? 180 : 150,
                       child: BlocBuilder<CartCubit, CartState>(
                           builder: (context, snapshot) {
-                        var total = snapshot.total 
-                        +
+                        var total = snapshot.total +
                             (!(auth.currentUser?.isAnonymous ?? false) ? 7 : 0);
                         return Container(
                           decoration: const BoxDecoration(
@@ -142,8 +141,11 @@ class MyCartScreen extends StatelessWidget {
                                 ),
                               ),
                               ElevatedButton(
-                                onPressed: () => Navigator.pushNamed(
-                                    context, AppRoutes.payment),
+                                onPressed: () => auth.currentUser != null
+                                    ? Navigator.pushNamed(
+                                        context, AppRoutes.payment)
+                                    : Navigator.pushNamedAndRemoveUntil(context,
+                                        AppRoutes.start, (route) => false),
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
                                         borderRadius:

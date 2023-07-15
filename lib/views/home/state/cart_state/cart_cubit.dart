@@ -239,7 +239,11 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Stream<QuerySnapshot> fetchOrders() {
-    return repository.fetchOrdersByUserId(auth.currentUser!.uid);
+    if (auth.currentUser != null) {
+      return repository.fetchOrdersByUserId(auth.currentUser!.uid);
+    }
+
+    return const Stream.empty();
   }
 
   void clearCart() {

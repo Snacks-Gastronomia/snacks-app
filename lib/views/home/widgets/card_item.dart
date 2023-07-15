@@ -133,26 +133,9 @@ class CardItemWidget extends StatelessWidget {
                                 "É necessário entrar para fazer o pedido. :)",
                             type: ToastType.info);
 
-                        Navigator.pushNamed(context, AppRoutes.start);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, AppRoutes.start, (route) => false);
                       }
-                      //  modal.showModalBottomSheet(
-                      //     context: context,
-                      //     // isScrollControlled: true,
-                      //     content: ModalContentObservation(
-                      //         action: () {
-                      //           BlocProvider.of<CartCubit>(context)
-                      //               .addToCart(order);
-                      //           Navigator.popUntil(context,
-                      //               ModalRoute.withName(AppRoutes.home));
-                      //         },
-                      //         value: context
-                      //             .read<ItemScreenCubit>()
-                      //             .state
-                      //             .order!
-                      //             .observations,
-                      //         onChanged: context
-                      //             .read<ItemScreenCubit>()
-                      //             .observationChanged));
                     },
                     tooltip:
                         context.read<CartCubit>().hasItem(order.item.id ?? "")

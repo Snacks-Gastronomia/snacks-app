@@ -116,19 +116,13 @@ class _OtpScreenState extends State<OtpScreen> {
                             // ignore: use_build_context_synchronously
                             await context.read<AuthCubit>().checkUser();
                         if (hasUser) {
-                          navigator.pushNamedAndRemoveUntil(AppRoutes.home,
-                              ModalRoute.withName(AppRoutes.start));
+                          navigator.pushNamedAndRemoveUntil(
+                              AppRoutes.home, (route) => false);
                         } else {
-                          navigator.pushNamedAndRemoveUntil(AppRoutes.addName,
-                              ModalRoute.withName(AppRoutes.start));
+                          navigator.pushNamedAndRemoveUntil(
+                              AppRoutes.addName, (route) => false);
                         }
                       }
-                      // else {
-                      //   // toast.showToast(
-                      //   //     context: context,
-                      //   //     content: "Codigo inválido",
-                      //   //     type: ToastType.error);
-                      // }
                     },
                   )),
                   const Spacer(),
@@ -139,6 +133,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             await context.read<AuthCubit>().sendOTPValidation();
 
                         if (res) {
+                          // ignore: use_build_context_synchronously
                           toast.showToast(
                               context: context,
                               content: "Código enviado!",

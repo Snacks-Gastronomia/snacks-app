@@ -55,8 +55,7 @@ class StartScreen extends StatelessWidget {
 
                               if (user != null) {
                                 navigator.pushNamedAndRemoveUntil(
-                                    AppRoutes.home,
-                                    ModalRoute.withName(AppRoutes.start));
+                                    AppRoutes.home, (route) => false);
                                 cubit.changeStatus(AppStatus.loaded);
                               }
                             } else {

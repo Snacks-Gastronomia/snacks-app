@@ -8,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:snacks_app/core/app.routes.dart';
+import 'package:snacks_app/services/app_session.dart';
 import 'package:snacks_app/services/firebase/remote_config.dart';
 import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/utils/toast.dart';
@@ -42,19 +43,17 @@ class AppWidget extends StatelessWidget {
   final fire = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
-    void validateAccess() async {
-      if (auth.currentUser != null && auth.currentUser!.isAnonymous) {
+    Future<void> validateAccess() async {
+      if (auth.currentUser != null) {
+        toast.init(context: context);
         try {
-          var dateTimeString = await storage.getDataStorage("endAt");
-          var dateTime = DateTime.parse(dateTimeString).toLocal();
-          var dateTimeNow = DateTime.now().toLocal();
-          if (dateTimeNow.compareTo(dateTime) > 0) {
-            await storage.deleteStorage("table");
-            await storage.deleteStorage("endAt");
+          final session = AppSession();
+
+          final token = await session.validate();
+          if (!token) {
             auth.signOut();
           }
         } catch (e) {
-          toast.init(context: context);
           toast.showToast(
               context: context, content: e.toString(), type: ToastType.error);
           print(e);

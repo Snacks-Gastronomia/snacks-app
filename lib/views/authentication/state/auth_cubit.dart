@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:snacks_app/services/app_session.dart';
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/authentication/repository/auth_repository.dart';
@@ -151,10 +152,11 @@ class AuthCubit extends Cubit<AuthState> {
     changeStatus(AppStatus.loading);
     Map<String, dynamic>? response =
         await repository.checkUser(uid: auth.currentUser!.uid);
-
+    final session = AppSession();
     changeStatus(AppStatus.loaded);
     if (response != null) {
       repository.storageAddress(response["address"]);
+      await session.create();
       return true;
     }
     return false;
