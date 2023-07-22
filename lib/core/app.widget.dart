@@ -73,12 +73,34 @@ class AppWidget extends StatelessWidget {
       return remoteVersion == packageInfo.version;
     }
 
+    //0 equal //-1 lesser // 1 greater
     int compareTo(TimeOfDay now, TimeOfDay other) {
       return now.hour * 60 + now.minute == other.hour * 60 + other.minute
           ? 0
           : now.hour * 60 + now.minute >= other.hour * 60 + other.minute
               ? 1
               : -1;
+    }
+
+    TimeOfDay transformTime(String date) {
+      DateTime dt = DateFormat("HH:mm").parse(date);
+      return TimeOfDay(hour: dt.hour, minute: dt.minute);
+    }
+
+    DateTime transformToDateTime(TimeOfDay time) {
+      return DateTime.utc(DateTime.now().year, DateTime.now().month,
+          DateTime.now().day, time.hour, time.minute);
+    }
+
+    TimeOfDay subtractTime(TimeOfDay v1, TimeOfDay v2) =>
+        TimeOfDay(hour: v1.hour - v2.hour, minute: v1.minute - v2.minute);
+
+    TimeOfDay sumTime(TimeOfDay v1, TimeOfDay v2) {
+      var time = transformToDateTime(v1);
+      var time2 = transformToDateTime(v2);
+      var result = time.add(Duration(hours: time2.hour, minutes: time2.minute));
+
+      return TimeOfDay(hour: result.hour, minute: result.minute);
     }
 
     Future<Map<String, dynamic>> verifyRestaurantStatus() async {
@@ -93,19 +115,59 @@ class AppWidget extends StatelessWidget {
           .collection("days")
           .doc((time.weekday - 1).toString())
           .get();
+      bool isDayActive = doc.data()?["active"];
+      var startTime = transformTime(doc.data()?["start"]);
+      var endTime = transformTime(doc.data()?["end"]);
 
-      DateTime start = DateFormat("HH:mm").parse(doc.data()?["start"]);
-      DateTime end = DateFormat("HH:mm").parse(doc.data()?["end"]);
-      var startTime = TimeOfDay(hour: start.hour, minute: start.minute);
-      var endTime = TimeOfDay(hour: end.hour, minute: end.minute);
+      final hasMidnight = compareTo(startTime, endTime) >= 0;
+
+      bool dayValid = compareTo(now, startTime) >= 0 &&
+          (compareTo(now, endTime) <= 0 || hasMidnight);
+
+      bool isMidnight =
+          compareTo(now, const TimeOfDay(hour: 00, minute: 00)) >= 0 &&
+              compareTo(now, startTime) < 0;
+
+      if (isMidnight) {
+        var pevious_schedule = await fire
+            .collection("snacks_config")
+            .doc("work_time")
+            .collection("days")
+            .doc((time.weekday - 2).toString())
+            .get();
+
+        bool previousDayActive = pevious_schedule.data()?["active"];
+        var previousStartTime =
+            transformTime(pevious_schedule.data()?["start"]);
+        var previousEndTime = transformTime(pevious_schedule.data()?["end"]);
+
+        final goThroughMidnight =
+            compareTo(previousEndTime, previousStartTime) <= 0;
+
+        if (goThroughMidnight) {
+          var fullTime = const TimeOfDay(hour: 23, minute: 59);
+
+          var totalDayTime = subtractTime(fullTime, previousStartTime);
+
+          var totalTime = sumTime(totalDayTime, previousEndTime);
+
+          var shouldClose = sumTime(totalTime, previousStartTime);
+
+          shouldClose =
+              sumTime(shouldClose, const TimeOfDay(hour: 00, minute: 01));
+
+          bool isOpen = compareTo(now, shouldClose) <= 0;
+
+          dayValid = isOpen;
+          isDayActive = previousDayActive;
+        }
+      }
+
       validateAccess();
       var rightVersion = await validateAppVersion();
-      //0 equal //-1 lesser // 1 greater
-      // return compareTo(now, startTime) >= 0 && compareTo(now, endTime) <= 0
-      //     ? true
-      //     : false;
+
       return {
-        "restaurant_available": true,
+        "restaurant_available": isDayActive && dayValid,
         "right_app_version": rightVersion,
       };
     }
