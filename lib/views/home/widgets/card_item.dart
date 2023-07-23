@@ -28,6 +28,7 @@ class CardItemWidget extends StatelessWidget {
     var order = OrderModel(
         item: item, observations: "", option_selected: item.options[0]);
     var sizeHeight = MediaQuery.of(context).size.height;
+
     return Builder(builder: (context) {
       return Stack(
         children: [

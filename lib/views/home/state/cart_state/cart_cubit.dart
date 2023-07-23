@@ -78,11 +78,12 @@ class CartCubit extends Cubit<CartState> {
   }
 
   void incrementItem(String id) {
-    final newCart = state.cart.map((item) {
-      if (item.item.id == id) {
-        return item.copyWith(amount: (item.amount + 1));
+    final newCart = state.cart.map((order) {
+      var item = order.item;
+      if (order.item.id == id) {
+        return order.copyWith(amount: (order.amount + 1));
       }
-      return item;
+      return order;
     }).toList();
 
     emit(state.copyWith(cart: newCart));

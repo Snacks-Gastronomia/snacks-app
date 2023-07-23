@@ -60,6 +60,24 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                       size: 19,
                     )),
                 IconButton(
+                  color: Colors.white,
+                  icon: ValueListenableBuilder(
+                    valueListenable: controller.torchState,
+                    builder: (context, state, child) {
+                      switch (state) {
+                        case TorchState.off:
+                          return const Icon(Icons.flash_off,
+                              color: Colors.white30);
+                        case TorchState.on:
+                          return const Icon(Icons.flash_on,
+                              color: Colors.yellow);
+                      }
+                    },
+                  ),
+                  iconSize: 30.0,
+                  onPressed: () => controller.toggleTorch(),
+                ),
+                IconButton(
                   color: Colors.white30,
                   icon: ValueListenableBuilder(
                     valueListenable: controller.cameraFacingState,
@@ -72,7 +90,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                       }
                     },
                   ),
-                  iconSize: 32.0,
+                  iconSize: 30.0,
                   onPressed: () => controller.switchCamera(),
                 ),
               ],
@@ -91,7 +109,7 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                   Icon(Icons.qr_code_scanner_rounded,
                       size: 40, color: Colors.white.withOpacity(0.5)),
                   const SizedBox(
-                    width: 20,
+                    width: 25,
                   ),
                   Expanded(
                     child: Text(

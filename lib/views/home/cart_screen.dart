@@ -55,8 +55,13 @@ class MyCartScreen extends StatelessWidget {
                           !(auth.currentUser?.isAnonymous ?? false) ? 180 : 150,
                       child: BlocBuilder<CartCubit, CartState>(
                           builder: (context, snapshot) {
-                        var total = snapshot.total +
+                        var subTotal = snapshot.cart
+                            .map((e) => e.getTotalValue)
+                            .reduce((value, element) => value + element);
+                        double delivery =
                             (!(auth.currentUser?.isAnonymous ?? false) ? 7 : 0);
+                        double total = subTotal + delivery;
+
                         return Container(
                           decoration: const BoxDecoration(
                               color: Color(0xffF6F6F6),
@@ -88,7 +93,7 @@ class MyCartScreen extends StatelessWidget {
                                             NumberFormat.currency(
                                                     locale: "pt",
                                                     symbol: r"R$ ")
-                                                .format(snapshot.total),
+                                                .format(subTotal),
                                             style: AppTextStyles.regular(17,
                                                 color: const Color(0xff979797)),
                                           ),
@@ -108,7 +113,10 @@ class MyCartScreen extends StatelessWidget {
                                                           0xff979797)),
                                                 ),
                                                 Text(
-                                                  '7,00',
+                                                  NumberFormat.currency(
+                                                          locale: "pt",
+                                                          symbol: r"R$ ")
+                                                      .format(delivery),
                                                   style: AppTextStyles.regular(
                                                       17,
                                                       color: const Color(
@@ -260,24 +268,31 @@ class MyCartScreen extends StatelessWidget {
                                       ListView.builder(
                                         itemCount: order.extras.length,
                                         shrinkWrap: true,
-                                        itemBuilder: (context, index) => Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                        itemBuilder: (context, index) => Column(
                                           children: [
-                                            Text(
-                                              order.extras[index]["title"],
-                                              style: AppTextStyles.medium(12),
-                                            ),
-                                            Text(
-                                              '+${NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(double.parse(order.extras[index]["value"].toString()))}',
-                                              style: AppTextStyles.semiBold(12),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  order.extras[index]["title"],
+                                                  style:
+                                                      AppTextStyles.medium(12),
+                                                ),
+                                                Text(
+                                                  '+${NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(double.parse(order.extras[index]["value"].toString()))}',
+                                                  style: AppTextStyles.semiBold(
+                                                      12),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
                                       ),
                                       const Divider(),
                                       Text(
-                                        '\"${order.observations}\"',
+                                        order.observations,
                                         style: AppTextStyles.light(12),
                                       ),
                                     ],

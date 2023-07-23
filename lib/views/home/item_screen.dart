@@ -48,12 +48,13 @@ class _ItemScreenState extends State<ItemScreen> {
     return SafeArea(
         child: Scaffold(
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(left: 25, right: 25, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 25, right: 25, bottom: 20, top: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              height: 45,
+              height: 50,
               child: BlocBuilder<ItemScreenCubit, ItemScreenState>(
                 builder: (context, state) {
                   return ListView.separated(
@@ -62,13 +63,14 @@ class _ItemScreenState extends State<ItemScreen> {
                         var option = widget.order.item.options[index];
                         bool selected =
                             state.order?.option_selected["id"] == option["id"];
-                        print(selected);
+
                         return GestureDetector(
                           onTap: () => context
                               .read<ItemScreenCubit>()
                               .selectOption(option),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border: selected
@@ -76,13 +78,29 @@ class _ItemScreenState extends State<ItemScreen> {
                                     : const Border.fromBorderSide(
                                         BorderSide(color: Colors.black)),
                                 color: selected ? Colors.black : Colors.white),
-                            child: Center(
-                                child: Text(
-                              '${option["title"]}',
-                              style: AppTextStyles.medium(14,
-                                  color:
-                                      selected ? Colors.white : Colors.black),
-                            )),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${option["title"]}',
+                                  style: AppTextStyles.medium(14,
+                                      color: selected
+                                          ? Colors.white
+                                          : Colors.black),
+                                ),
+                                Text(
+                                  NumberFormat.currency(
+                                          locale: "pt", symbol: r"R$ ")
+                                      .format(double.tryParse(
+                                          option["value"].toString())),
+                                  style: AppTextStyles.medium(10,
+                                      color: selected
+                                          ? Colors.white38
+                                          : Colors.black26),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -103,8 +121,12 @@ class _ItemScreenState extends State<ItemScreen> {
                   builder: (context, state) {
                     return Text(
                       NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                          .format(
-                              context.read<ItemScreenCubit>().getNewValue()),
+                          .format(context
+                                  .read<ItemScreenCubit>()
+                                  .state
+                                  .order
+                                  ?.getTotalValue ??
+                              0),
                       style:
                           AppTextStyles.medium(18, color: AppColors.highlight),
                     );
@@ -372,6 +394,13 @@ class _ItemScreenState extends State<ItemScreen> {
                     ],
                   ),
                   const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    'Este prato serve ${widget.order.item.num_served} pessoa${widget.order.item.num_served > 1 ? "s" : ""}',
+                    style: AppTextStyles.light(12),
+                  ),
+                  const SizedBox(
                     height: 25,
                   ),
                   Text(
@@ -384,11 +413,24 @@ class _ItemScreenState extends State<ItemScreen> {
                   ),
                   if (widget.order.item.extras.isNotEmpty)
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Extras",
-                          style: AppTextStyles.medium(16),
+                          style: AppTextStyles.semiBold(18),
                         ),
+                        if (widget.order.item.limit_extra_options != null)
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'Selecione até ${widget.order.item.limit_extra_options} opç${widget.order.item.num_served > 1 ? "ões" : "ão"}',
+                                style: AppTextStyles.light(12),
+                              ),
+                            ],
+                          ),
                         const SizedBox(
                           height: 10,
                         ),
@@ -445,13 +487,16 @@ class _ItemScreenState extends State<ItemScreen> {
                                             const SizedBox(
                                               width: 15,
                                             ),
-                                            Text(
-                                              item["title"],
-                                              style: AppTextStyles.medium(
-                                                16,
-                                                color: selected
-                                                    ? Colors.white
-                                                    : Colors.black,
+                                            SizedBox(
+                                              width: 150,
+                                              child: Text(
+                                                item["title"],
+                                                style: AppTextStyles.medium(
+                                                  16,
+                                                  color: selected
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
                                               ),
                                             ),
                                           ],

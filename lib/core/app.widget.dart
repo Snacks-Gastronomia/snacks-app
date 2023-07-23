@@ -70,7 +70,8 @@ class AppWidget extends StatelessWidget {
 
       String remoteVersion = firebaseRemoteConfigService.getAppVersionJson();
 
-      return remoteVersion == packageInfo.version;
+      // return remoteVersion == packageInfo.version;
+      return true;
     }
 
     //0 equal //-1 lesser // 1 greater
@@ -113,7 +114,7 @@ class AppWidget extends StatelessWidget {
           .collection("snacks_config")
           .doc("work_time")
           .collection("days")
-          .doc((time.weekday - 1).toString())
+          .doc((time.weekday).toString())
           .get();
       bool isDayActive = doc.data()?["active"];
       var startTime = transformTime(doc.data()?["start"]);
@@ -133,7 +134,7 @@ class AppWidget extends StatelessWidget {
             .collection("snacks_config")
             .doc("work_time")
             .collection("days")
-            .doc((time.weekday - 2).toString())
+            .doc((time.weekday == 1 ? 7 : time.weekday - 1).toString())
             .get();
 
         bool previousDayActive = pevious_schedule.data()?["active"];

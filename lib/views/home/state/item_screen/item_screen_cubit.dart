@@ -37,8 +37,14 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
       );
       emit(state.copyWith(order: order));
     } else {
-      emit(state.copyWith(
-          order: state.order!.copyWith(extras: [...extras, extra])));
+      bool has_limit = state.order?.item.limit_extra_options != null;
+      bool allow_to_add =
+          extras.length < state.order!.item.limit_extra_options!;
+
+      if ((has_limit && allow_to_add) || !has_limit) {
+        emit(state.copyWith(
+            order: state.order!.copyWith(extras: [...extras, extra])));
+      }
     }
   }
 
