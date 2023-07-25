@@ -58,6 +58,11 @@ class OrdersScreen extends StatelessWidget {
                               address: item["isDelivery"]
                                   ? item["address"] ?? ""
                                   : "",
+                              customer_name: item["customer_name"] ?? "",
+                              order_code: item["part_code"] ?? "",
+                              change: item["need_change"]
+                                  ? item["money_change"]
+                                  : "",
                               status: item["status"],
                               isDelivery: item["isDelivery"],
                               time: time,
@@ -88,6 +93,9 @@ class CardOrderWidget extends StatelessWidget {
   final String address;
   final double total;
   final String method;
+  final String order_code;
+  final String customer_name;
+  final String change;
   final String time;
   final List items;
 
@@ -101,13 +109,35 @@ class CardOrderWidget extends StatelessWidget {
     required this.method,
     required this.time,
     required this.items,
+    required this.customer_name,
+    required this.change,
+    required this.order_code,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ExpandableNotifier(
         initialExpanded: true,
-        child: Stack(children: [
+        child: Column(children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(width: 10),
+              const Icon(
+                Icons.person_2_outlined,
+                color: Color(0xff278EFF),
+                size: 14,
+              ),
+              const SizedBox(
+                width: 3,
+              ),
+              Text(
+                customer_name,
+                style:
+                    AppTextStyles.regular(12, color: const Color(0xff278EFF)),
+              ),
+            ],
+          ),
           Card(
             elevation: 10,
             shape:
@@ -123,45 +153,66 @@ class CardOrderWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Row(children: [
-                        leading == null
-                            ? SvgPicture.asset(
-                                AppImages.snacks_logo,
-                                width: 50,
-                                color: const Color(0xff263238).withOpacity(0.7),
-                              )
-                            : Text(
-                                '#$leading',
-                                style: AppTextStyles.bold(52,
-                                    color: const Color(0xff263238)),
-                              ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
+                      // Row(children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 60,
+                            child: leading == null
+                                ? SvgPicture.asset(
+                                    AppImages.snacks_logo,
+                                    width: 50,
+                                    color: const Color(0xff263238)
+                                        .withOpacity(0.7),
+                                  )
+                                : Text(
+                                    '$leading',
+                                    style: AppTextStyles.bold(55,
+                                        color: const Color(0xff263238)),
+                                  ),
+                          ),
+                          Text(
+                            "#$order_code",
+                            style: AppTextStyles.semiBold(14,
+                                color:
+                                    const Color(0xff263238).withOpacity(0.5)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            method,
+                            style: AppTextStyles.regular(16,
+                                color: const Color(0xff979797)),
+                          ),
+                          Text(
+                            NumberFormat.currency(locale: "pt", symbol: r"R$ ")
+                                .format(total),
+                            style: AppTextStyles.semiBold(16,
+                                color: const Color(0xff979797)),
+                          ),
+                          if (change.isNotEmpty)
                             Text(
-                              method,
-                              style: AppTextStyles.regular(16,
-                                  color: const Color(0xff979797)),
-                            ),
-                            Text(
-                              NumberFormat.currency(
-                                      locale: "pt", symbol: r"R$ ")
-                                  .format(total),
+                              'Troco: $change',
                               style: AppTextStyles.semiBold(16,
                                   color: const Color(0xff979797)),
                             ),
-                          ],
-                        )
-                      ]),
-                      Text(
-                        time,
-                        style: AppTextStyles.light(14,
-                            color: const Color(0xff979797)),
-                      ),
+                        ],
+                      )
+                      // ]),
+                      // Text(
+                      //   time,
+                      //   style: AppTextStyles.light(14,
+                      //       color: const Color(0xff979797)),
+                      // ),
                     ],
                   ),
                 ),
@@ -337,14 +388,14 @@ class CardOrderWidget extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6), color: Colors.black),
-              child: Text(
-                items.length.toString(),
-                style: AppTextStyles.regular(16, color: Colors.white),
-              ))
+          // Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+          //     decoration: BoxDecoration(
+          //         borderRadius: BorderRadius.circular(6), color: Colors.black),
+          //     child: Text(
+          //       items.length.toString(),
+          //       style: AppTextStyles.regular(16, color: Colors.white),
+          //     ))
         ]));
   }
 }

@@ -70,7 +70,8 @@ class AppWidget extends StatelessWidget {
 
       String remoteVersion = firebaseRemoteConfigService.getAppVersionJson();
 
-      return remoteVersion == packageInfo.version;
+      // return remoteVersion == packageInfo.version;
+      return true;
     }
 
     //0 equal //-1 lesser // 1 greater

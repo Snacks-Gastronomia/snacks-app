@@ -14,6 +14,7 @@ import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_failed.dart';
 import 'package:snacks_app/views/home/widgets/modals/content_payment_ok.dart';
+import 'package:snacks_app/views/home/widgets/modals/customer_name_modal.dart';
 import 'package:snacks_app/views/home/widgets/modals/money_change_option.dart';
 import 'package:snacks_app/views/home/widgets/modals/money_change_value.dart';
 import 'package:snacks_app/views/splash/loading_screen.dart';
@@ -90,6 +91,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   sendOrder(context, method, change, card, description) async {
+    await modal.showModalBottomSheet(
+        context: context, drag: false, content: CustomerNameModal());
     BlocProvider.of<CartCubit>(context)
         .makeOrder(method, change: change, rfid: card);
     await modal.showIOSModalBottomSheet(

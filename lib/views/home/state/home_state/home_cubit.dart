@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meta/meta.dart';
@@ -15,10 +16,15 @@ class HomeCubit extends Cubit<HomeState> {
   final ItemsRepository itemsRepository =
       ItemsRepository(services: ItemsApiServices());
   final storage = AppStorage();
+  final auth = FirebaseAuth.instance;
   final appStorage = AppStorage.initStorage;
 
   HomeCubit() : super(HomeState.initial()) {
     fetchItems();
+  }
+
+  Future<void>? setCustomerName(String name) {
+    return auth.currentUser?.updateDisplayName(name);
   }
 
   void changeButtonDone(bool value) {
