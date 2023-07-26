@@ -3,19 +3,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:group_button/group_button.dart';
 import 'package:intl/intl.dart';
+import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
+import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/widgets/cart_item.dart';
+import 'package:snacks_app/views/review/review_screen.dart';
 
 class MyCartScreen extends StatelessWidget {
   MyCartScreen({Key? key}) : super(key: key);
   final auth = FirebaseAuth.instance;
+  final storage = AppStorage();
 
   @override
   Widget build(BuildContext context) {
+    context.read<CartCubit>().fetchDeliveryConfig();
     return SafeArea(
       child: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
@@ -24,8 +30,8 @@ class MyCartScreen extends StatelessWidget {
             floatingActionButton: !(auth.currentUser?.isAnonymous ?? false) &&
                     state.cart.isNotEmpty
                 ? Container(
-                    height: 20,
-                    width: 140,
+                    height: 30,
+                    width: 130,
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -35,12 +41,12 @@ class MyCartScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Icon(Icons.delivery_dining_rounded,
-                            color: Colors.black),
+                        const Icon(Icons.hourglass_bottom,
+                            color: Colors.black38),
                         Text(
                           "30~60 min",
                           style:
-                              AppTextStyles.semiBold(14, color: Colors.black),
+                              AppTextStyles.semiBold(14, color: Colors.black38),
                         )
                       ],
                     ),
@@ -52,125 +58,190 @@ class MyCartScreen extends StatelessWidget {
                         const EdgeInsets.only(left: 25, right: 25, bottom: 30),
                     child: SizedBox(
                       height:
-                          !(auth.currentUser?.isAnonymous ?? false) ? 180 : 150,
+                          !(auth.currentUser?.isAnonymous ?? false) ? 265 : 150,
                       child: BlocBuilder<CartCubit, CartState>(
                           builder: (context, snapshot) {
                         var subTotal = snapshot.cart
                             .map((e) => e.getTotalValue)
                             .reduce((value, element) => value + element);
-                        double delivery =
-                            (!(auth.currentUser?.isAnonymous ?? false) ? 7 : 0);
+                        double delivery = (state.receive_order == "address"
+                            ? state.delivery_value
+                            : 0);
                         double total = subTotal + delivery;
+                        bool isDelivery =
+                            !(auth.currentUser?.isAnonymous ?? false);
 
-                        return Container(
-                          decoration: const BoxDecoration(
-                              color: Color(0xffF6F6F6),
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(12),
-                                  bottom: Radius.circular(30))),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 17),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Subtotal',
-                                            style: AppTextStyles.regular(17,
-                                                color: const Color(0xff979797)),
-                                          ),
-                                          Text(
-                                            NumberFormat.currency(
-                                                    locale: "pt",
-                                                    symbol: r"R$ ")
-                                                .format(subTotal),
-                                            style: AppTextStyles.regular(17,
-                                                color: const Color(0xff979797)),
-                                          ),
-                                        ],
-                                      ),
-                                      !(auth.currentUser?.isAnonymous ?? false)
-                                          ? Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Entrega',
-                                                  style: AppTextStyles.regular(
-                                                      17,
-                                                      color: const Color(
-                                                          0xff979797)),
-                                                ),
-                                                Text(
-                                                  NumberFormat.currency(
-                                                          locale: "pt",
-                                                          symbol: r"R$ ")
-                                                      .format(delivery),
-                                                  style: AppTextStyles.regular(
-                                                      17,
-                                                      color: const Color(
-                                                          0xff979797)),
-                                                ),
-                                              ],
-                                            )
-                                          : const SizedBox(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Total',
-                                            style: AppTextStyles.semiBold(17,
-                                                color: const Color(0xff979797)),
-                                          ),
-                                          Text(
-                                            NumberFormat.currency(
-                                                    locale: "pt",
-                                                    symbol: r"R$ ")
-                                                .format(total),
-                                            style: AppTextStyles.semiBold(17,
-                                                color: const Color(0xff979797)),
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (isDelivery)
+                              Column(
+                                children: [
+                                  CustomRadioButtonSelect(
+                                    text: "Ir até o local",
+                                    selected: state.receive_order,
+                                    value: "local",
+                                    onChange: (value) => context
+                                        .read<CartCubit>()
+                                        .updateReceiveOrderMethod(value),
                                   ),
-                                ),
+                                  FutureBuilder(
+                                      future: storage.getDataStorage("address"),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.data == "" ||
+                                            snapshot.data == null) {
+                                          context
+                                              .read<CartCubit>()
+                                              .updateReceiveOrderMethod(
+                                                  "local");
+                                          return TextButton(
+                                            onPressed: () =>
+                                                Navigator.pushNamed(
+                                                    context, AppRoutes.address),
+                                            child: Text(
+                                              'Adicionar endereço',
+                                              style: AppTextStyles.medium(12),
+                                            ),
+                                          );
+                                        } else {
+                                          return CustomRadioButtonSelect(
+                                            text:
+                                                'Entregar no endereço: ${snapshot.data}',
+                                            selected: state.receive_order,
+                                            value: "address",
+                                            disable: state.delivery_disable,
+                                            onChange: (value) => context
+                                                .read<CartCubit>()
+                                                .updateReceiveOrderMethod(
+                                                    value),
+                                          );
+                                        }
+                                      })
+                                ],
                               ),
-                              ElevatedButton(
-                                onPressed: () => auth.currentUser != null
-                                    ? Navigator.pushNamed(
-                                        context, AppRoutes.payment)
-                                    : Navigator.pushNamedAndRemoveUntil(context,
-                                        AppRoutes.start, (route) => false),
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15)),
-                                    backgroundColor: Colors.black,
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    fixedSize:
-                                        const Size(double.maxFinite, 59)),
-                                child: Text(
-                                  'Continuar',
-                                  style: AppTextStyles.regular(16,
-                                      color: Colors.white),
-                                ),
+                            Container(
+                              decoration: const BoxDecoration(
+                                  color: Color(0xffF6F6F6),
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(12),
+                                      bottom: Radius.circular(30))),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 17),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Subtotal',
+                                              style: AppTextStyles.regular(17,
+                                                  color:
+                                                      const Color(0xff979797)),
+                                            ),
+                                            Text(
+                                              NumberFormat.currency(
+                                                      locale: "pt",
+                                                      symbol: r"R$ ")
+                                                  .format(subTotal),
+                                              style: AppTextStyles.regular(17,
+                                                  color:
+                                                      const Color(0xff979797)),
+                                            ),
+                                          ],
+                                        ),
+                                        isDelivery
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    'Entrega',
+                                                    style:
+                                                        AppTextStyles.regular(
+                                                            17,
+                                                            color: const Color(
+                                                                0xff979797)),
+                                                  ),
+                                                  Text(
+                                                    NumberFormat.currency(
+                                                            locale: "pt",
+                                                            symbol: r"R$ ")
+                                                        .format(delivery),
+                                                    style:
+                                                        AppTextStyles.regular(
+                                                            17,
+                                                            color: const Color(
+                                                                0xff979797)),
+                                                  ),
+                                                ],
+                                              )
+                                            : const SizedBox(),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Total',
+                                              style: AppTextStyles.semiBold(17,
+                                                  color:
+                                                      const Color(0xff979797)),
+                                            ),
+                                            Text(
+                                              NumberFormat.currency(
+                                                      locale: "pt",
+                                                      symbol: r"R$ ")
+                                                  .format(total),
+                                              style: AppTextStyles.semiBold(17,
+                                                  color:
+                                                      const Color(0xff979797)),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  CustomSubmitButton(
+                                      onPressedAction: () => auth.currentUser !=
+                                              null
+                                          ? Navigator.pushNamed(
+                                              context, AppRoutes.payment)
+                                          : Navigator.pushNamedAndRemoveUntil(
+                                              context,
+                                              AppRoutes.start,
+                                              (route) => false),
+                                      label: "Continuar",
+                                      loading_label: "",
+                                      loading: false)
+                                  // ElevatedButton(
+                                  //   onPressed: () {},
+                                  //   style: ElevatedButton.styleFrom(
+                                  //       shape: RoundedRectangleBorder(
+                                  //           borderRadius:
+                                  //               BorderRadius.circular(15)),
+                                  //       backgroundColor: Colors.black,
+                                  //       tapTargetSize:
+                                  //           MaterialTapTargetSize.shrinkWrap,
+                                  //       fixedSize:
+                                  //           const Size(double.maxFinite, 59)),
+                                  //   child: Text(
+                                  //     'Continuar',
+                                  //     style: AppTextStyles.regular(16,
+                                  //         color: Colors.white),
+                                  //   ),
+                                  // ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         );
                       }),
                     ),
@@ -327,6 +398,30 @@ class MyCartScreen extends StatelessWidget {
                     })),
           );
         },
+      ),
+    );
+  }
+
+  Widget CustomRadioButtonSelect(
+      {required String text,
+      required String value,
+      required String selected,
+      required onChange,
+      bool disable = false}) {
+    bool isSelected = selected == value;
+    return OutlinedButton(
+      onPressed: () => disable ? null : onChange(value),
+      style: ElevatedButton.styleFrom(
+        fixedSize: const Size(double.maxFinite, 30),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+        side: BorderSide(color: isSelected ? Colors.green : Colors.black12),
+      ),
+      child: Text(
+        text,
+        style: AppTextStyles.semiBold(
+          12,
+          color: isSelected ? Colors.green : Colors.black12,
+        ),
       ),
     );
   }

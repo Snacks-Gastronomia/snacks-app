@@ -13,6 +13,7 @@ import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/services/firebase/notifications.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/home/repository/card_repository.dart';
 import 'package:snacks_app/views/home/repository/orders_repository.dart';
 
@@ -31,7 +32,8 @@ class CartCubit extends Cubit<CartState> {
   final repository = OrdersRepository();
   final cardRepository = CardRepository();
   final auth = FirebaseAuth.instance;
-  final storage = const FlutterSecureStorage();
+  //final storage = const FlutterSecureStorage();
+  final storage = AppStorage.initStorage;
 
   CartCubit() : super(CartState.initial());
 
@@ -142,13 +144,18 @@ class CartCubit extends Cubit<CartState> {
     await repository.createOrder(data);
 
     if (auth.currentUser?.isAnonymous ?? false) {
-      var stor = await getStorage;
+      var stor = await storage.readAll();
       notification.sendNotificationToWaiters(table: stor["table"].toString());
 
       // await cardRepository.doPayment(rfid, state.total);
     }
 
     clearCart();
+  }
+
+  void updateReceiveOrderMethod(String value) {
+    // print(value);
+    emit(state.copyWith(receive_order: value));
   }
 
   Future<List<Map<String, dynamic>>> generateDataObject(
@@ -198,6 +205,7 @@ class CartCubit extends Cubit<CartState> {
           "customer_name": auth.currentUser?.displayName,
           "part_code": order_code.split("-")[0],
           "status": status,
+          "receive_order": state.receive_order,
           "need_change": change.toString().isNotEmpty,
           if (change.toString().isNotEmpty) "money_change": change,
           "created_at": FieldValue.serverTimestamp(),
@@ -259,5 +267,18 @@ class CartCubit extends Cubit<CartState> {
 
   void changeStatus(AppStatus status) {
     emit(state.copyWith(status: status));
+  }
+
+  Future<void> fetchDeliveryConfig() async {
+    final value = await repository.fetchDeliveryConfig();
+
+    emit(state.copyWith(
+        receive_order: value.docs[0].data()["active"] &&
+                !(auth.currentUser?.isAnonymous ?? true)
+            ? "address"
+            : "local",
+        delivery_disable: !value.docs[0].data()["active"],
+        delivery_value:
+            double.tryParse(value.docs[0].data()["value"].toString())));
   }
 }

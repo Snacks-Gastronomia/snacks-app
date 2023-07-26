@@ -55,9 +55,9 @@ class OrdersScreen extends StatelessWidget {
                           child: CardOrderWidget(
                               leading:
                                   item["isDelivery"] ? null : item["table"],
-                              address: item["isDelivery"]
+                              address: item["receive_order"] == "address"
                                   ? item["address"] ?? ""
-                                  : "",
+                                  : "Irá até o local buscar o pedido",
                               customer_name: item["customer_name"] ?? "",
                               order_code: item["part_code"] ?? "",
                               change: item["need_change"]
