@@ -10,6 +10,7 @@ class FeatureService {
         .doc("features")
         .collection("all")
         .where("name", isEqualTo: name)
+        .limit(1)
         .get();
 
     // return data.docs;
