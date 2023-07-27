@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:snacks_app/components/custom_submit_button.dart';
 
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/state/card_state/card_cubit.dart';
+import 'package:snacks_app/views/home/widgets/modals/customer_report/report_screen.dart';
 
 class CardDetailsModal extends StatelessWidget {
   const CardDetailsModal({super.key});
@@ -29,43 +32,61 @@ class CardDetailsModal extends StatelessWidget {
               height: 20,
             ),
             Text(
-              'Escaneie o cartão para ver o saldo disponível.',
+              'Escaneie o cartão para ver o saldo disponível e o extrato de consumo.',
               style: AppTextStyles.light(14),
             ),
             const SizedBox(
               height: 15,
             ),
-            BlocBuilder<CardCubit, CardState>(
-              builder: (context, state) {
-                return CardWidget(
-                    name: state.nome,
-                    value: state.value,
-                    hasData: state.hasData,
-                    loading: state.status == AppStatus.loading,
-                    onTap: () async {
-                      var cubit = context.read<CardCubit>();
-                      await Navigator.pushNamed(context, AppRoutes.scanCard)
-                          .then((code) async =>
-                              await cubit.readCard(code, context));
-                    });
-              },
-            ),
+            // BlocBuilder<CardCubit, CardState>(
+            //   builder: (context, state) {
+            //     return CardWidget(
+            //         name: state.nome,
+            //         value: state.value,
+            //         hasData: state.hasData,
+            //         loading: state.status == AppStatus.loading,
+            //         onTap: () async {
+            //           var cubit = context.read<CardCubit>();
+            //           await Navigator.pushNamed(context, AppRoutes.scanCard)
+            //               .then((code) async =>
+            //                   await cubit.readCard(code, context));
+            //         });
+            //   },
+            // ),
             const SizedBox(
               height: 15,
             ),
-            ElevatedButton(
+
+            BlocBuilder<CardCubit, CardState>(
+              builder: (context, state) {
+                return CustomSubmitButton(
+                    onPressedAction: () async {
+                      var nav = Navigator.of(context);
+                      var cubit = context.read<CardCubit>();
+                      await Navigator.pushNamed(context, AppRoutes.scanCard)
+                          .then((code) async =>
+                              await cubit.readCard(code, context).then((value) {
+                                nav.pop();
+                                AppModal().showIOSModalBottomSheet(
+                                  drag: false,
+                                  context: context,
+                                  content: const CustomerReportScreen(),
+                                );
+                              }));
+                    },
+                    label: "Ler cartão",
+                    loading_label: "Escaneando",
+                    loading: state.status == AppStatus.loading);
+              },
+            ),
+            TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 context.read<CardCubit>().clear();
               },
-              style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  backgroundColor: Colors.black,
-                  fixedSize: const Size(double.maxFinite, 59)),
               child: Text(
                 'Fechar',
-                style: AppTextStyles.regular(16, color: Colors.white),
+                style: AppTextStyles.regular(16, color: Colors.black),
               ),
             )
           ],

@@ -5,7 +5,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/home_widget.dart';
 import 'package:snacks_app/views/home/orders_screen.dart';
-import 'package:snacks_app/views/home/widgets/modals/card_modal.dart';
+import 'package:snacks_app/views/home/widgets/modals/customer_report/card_report_modal.dart';
 import 'package:snacks_app/views/home/widgets/profile_modal.dart';
 
 class HomeScreen extends StatefulWidget {

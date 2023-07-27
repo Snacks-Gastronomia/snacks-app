@@ -370,9 +370,11 @@ class _ItemScreenState extends State<ItemScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        widget.order.item.title,
-                        style: AppTextStyles.medium(18),
+                      Expanded(
+                        child: Text(
+                          widget.order.item.title,
+                          style: AppTextStyles.medium(18),
+                        ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
