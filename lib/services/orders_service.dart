@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:snacks_app/services/firebase/database.dart';
+import 'package:snacks_app/utils/enums.dart';
 
 class OrdersApiServices {
   final db = FirebaseDataBase();
@@ -22,16 +23,36 @@ class OrdersApiServices {
     await batch.commit();
   }
 
-  Future<dynamic> createItemstoOrder(
+  Future<void> createItemstoOrder(
       List<Map<String, dynamic>> data, String doc_id) async {
     return await db.addOrderDocumentToCollection(
         collection: "orders", subcolletion: "items", data: data, docID: doc_id);
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> getOrdersByUserId(String id) {
-    return FirebaseFirestore.instance
+  Future<dynamic> updateStatus(List<String> ids, OrderStatus status) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    // Create a new write batch
+    WriteBatch batch = firestore.batch();
+
+    // Loop through the orderIds and update the documents in the batch
+    for (String orderId in ids) {
+      DocumentReference orderRef = firestore.collection('orders').doc(orderId);
+      batch.update(orderRef, {'status': status.name});
+    }
+
+    // Commit the batch
+    batch.commit().then((_) {
+      print('Batch update successful!');
+    }).catchError((error) {
+      print('Error updating documents: $error');
+    });
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getOrdersByUserId(String uid) {
+    return firebase
         .collection("orders")
-        .where("user_uid", isEqualTo: auth.currentUser!.uid)
+        .where("user_uid", isEqualTo: uid)
         .snapshots();
   }
 

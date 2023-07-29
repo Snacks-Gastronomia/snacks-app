@@ -8,85 +8,95 @@ import 'package:intl/intl.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/order_model.dart';
+import 'package:snacks_app/models/order_reponse.dart';
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
+import 'package:snacks_app/views/home/widgets/order_card.dart';
 
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60.0),
-          child: Container(
-            padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-            child: Row(
-              children: [
-                Text(
-                  'Meus pedidos',
-                  style: AppTextStyles.medium(20),
-                ),
-              ],
+    return SafeArea(
+      child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(60.0),
+            child: Container(
+              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+              child: Row(
+                children: [
+                  Text(
+                    'Meus pedidos',
+                    style: AppTextStyles.medium(20),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        backgroundColor: Colors.white,
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-          child: StreamBuilder<QuerySnapshot>(
-              stream: BlocProvider.of<CartCubit>(context).fetchOrders(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData ||
-                    snapshot.connectionState == ConnectionState.done) {
-                  List<QueryDocumentSnapshot<Object?>> orders =
-                      List.from(snapshot.data?.docs ?? []);
+          backgroundColor: Colors.white,
+          body: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: context.read<CartCubit>().fetchOrders(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData ||
+                      snapshot.connectionState == ConnectionState.done) {
+                    List<OrderResponse> orders = (snapshot.data?.docs ?? [])
+                        .map((e) => OrderResponse.fromFirebase(e))
+                        .toList();
 
-                  return ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: orders.length,
-                      shrinkWrap: true,
-                      itemBuilder: (_, index) {
-                        var item = orders[index];
-                        Timestamp date = item["created_at"];
-                        String time = DateFormat("HH:mm").format(date.toDate());
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: CardOrderWidget(
-                              leading:
-                                  item["isDelivery"] ? null : item["table"],
-                              address: item["receive_order"] == "address"
-                                  ? item["address"] ?? ""
-                                  : "Irá até o local buscar o pedido",
-                              customer_name: item["customer_name"] ?? "",
-                              order_code: item["part_code"] ?? "",
-                              change: item["need_change"]
-                                  ? item["money_change"]
-                                  : "",
-                              status: item["status"],
-                              isDelivery: item["isDelivery"],
-                              time: time,
-                              total: double.parse(item["value"].toString()),
-                              method: item["payment_method"],
-                              items: item["items"]),
-                        );
-                      });
-                }
-                return const Center(
-                  child: SizedBox(
-                      height: 60,
-                      width: 60,
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                        backgroundColor: Colors.black12,
-                      )),
-                );
-              }),
-        ));
+                    var groupedOrders = OrderResponse.groupOrdersByCode(orders);
+
+                    return ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: groupedOrders.length,
+                        shrinkWrap: true,
+                        itemBuilder: (_, index) {
+                          var order = groupedOrders[index];
+                          // var item = orders[index];
+                          // Timestamp date = item["created_at"];
+                          // String time =
+                          //     DateFormat("HH:mm").format(date.toDate());
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: OrderCardWidget(orders: order["orders"]),
+                            // CardOrderWidget(
+                            //     leading:
+                            //         item["isDelivery"] ? null : item["table"],
+                            //     address: item["receive_order"] == "address"
+                            //         ? item["address"] ?? ""
+                            //         : "Irá até o local buscar o pedido",
+                            //     customer_name: item["customer_name"] ?? "",
+                            //     order_code: item["part_code"] ?? "",
+                            //     change: item["need_change"]
+                            //         ? item["money_change"]
+                            //         : "",
+                            //     status: item["status"],
+                            //     isDelivery: item["isDelivery"],
+                            //     time: time,
+                            //     total: double.parse(item["value"].toString()),
+                            //     method: item["payment_method"],
+                            //     items: item["items"]),
+                          );
+                        });
+                  }
+                  return const Center(
+                    child: SizedBox(
+                        height: 60,
+                        width: 60,
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          backgroundColor: Colors.black12,
+                        )),
+                  );
+                }),
+          )),
+    );
   }
 }
 
-class CardOrderWidget extends StatelessWidget {
+class CardOrderWidget1 extends StatelessWidget {
   final bool isDelivery;
   final String? leading;
   final String status;
@@ -99,7 +109,7 @@ class CardOrderWidget extends StatelessWidget {
   final String time;
   final List items;
 
-  const CardOrderWidget({
+  const CardOrderWidget1({
     Key? key,
     this.isDelivery = false,
     required this.leading,

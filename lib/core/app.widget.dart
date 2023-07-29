@@ -70,8 +70,8 @@ class AppWidget extends StatelessWidget {
 
       String remoteVersion = firebaseRemoteConfigService.getAppVersionJson();
 
-      // return remoteVersion == packageInfo.version;
-      return true;
+      return remoteVersion == packageInfo.version;
+      // return true;
     }
 
     //0 equal //-1 lesser // 1 greater
@@ -116,6 +116,7 @@ class AppWidget extends StatelessWidget {
           .collection("days")
           .doc((time.weekday).toString())
           .get();
+
       bool isDayActive = doc.data()?["active"];
       var startTime = transformTime(doc.data()?["start"]);
       var endTime = transformTime(doc.data()?["end"]);
@@ -209,14 +210,14 @@ class AppWidget extends StatelessWidget {
                     textTheme: GoogleFonts.poppinsTextTheme(
                         Theme.of(context).textTheme)),
                 title: "Snacks App",
-                // initialRoute: AppRoutes.address,
-                initialRoute: current_version
-                    ? data!["restaurant_available"]
-                        ? auth.currentUser != null
-                            ? AppRoutes.home
-                            : AppRoutes.start
-                        : AppRoutes.closedRestaurant
-                    : AppRoutes.newVersionAvailable,
+                initialRoute: AppRoutes.orders,
+                // initialRoute: current_version
+                //     ? data!["restaurant_available"]
+                //         ? auth.currentUser != null
+                //             ? AppRoutes.home
+                //             : AppRoutes.start
+                //         : AppRoutes.closedRestaurant
+                //     : AppRoutes.newVersionAvailable,
                 routes: {
                   AppRoutes.start: (context) => StartScreen(),
                   AppRoutes.otp: (context) => const OtpScreen(),

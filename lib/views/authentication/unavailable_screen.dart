@@ -14,15 +14,35 @@ class UnavailableScreen extends StatelessWidget {
       var time = DateTime.now();
       var ref =
           fire.collection("snacks_config").doc("work_time").collection("days");
+      DocumentSnapshot<Object?> current_doc =
+          await ref.doc(time.weekday.toString()).get();
+
       var doc = await ref
           .where("active", isEqualTo: true)
           .limit(1)
-          .startAfterDocument(await ref.doc(time.weekday.toString()).get())
+          .startAfterDocument(current_doc)
           .get();
-      // DateTime start = DateFormat("HH:mm").parse(doc.data()?["start"]);
-      // DateTime end = DateFormat("HH:mm").parse(doc.data()?["end"]);
 
-      return doc.docs.length != 0 ? doc.docs[0] : null;
+      return doc.docs[0];
+    }
+
+    String getDayString(int opens_at) {
+      final dt_weekdays = DateFormat(null, "pt_BR").dateSymbols.WEEKDAYS;
+      final today = DateTime.now().weekday;
+
+      List<String> weekdays = List.from(dt_weekdays);
+      weekdays.add(dt_weekdays[0]);
+
+      var last_day = today == 7;
+
+      bool isTomorrow = last_day ? opens_at == 1 : opens_at == today + 1;
+
+      var day_string = opens_at == today
+          ? "hoje"
+          : isTomorrow
+              ? "amanhã"
+              : weekdays[opens_at];
+      return day_string;
     }
 
     return SafeArea(
@@ -56,15 +76,10 @@ class UnavailableScreen extends StatelessWidget {
                     future: getTomorrowTime(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        print(snapshot.data.id);
                         var day = int.parse(snapshot.data.id.toString());
-                        var day_string = day == DateTime.now().weekday - 1
-                            ? "hoje"
-                            : day == DateTime.now().weekday + 1
-                                ? "amanhã"
-                                : DateFormat(null, "pt_BR")
-                                    .dateSymbols
-                                    .WEEKDAYS[(day)];
+
+                        var day_string = getDayString(day);
+
                         return Text(
                             'Abre $day_string às ${snapshot.data.data()["start"]}h.',
                             textAlign: TextAlign.center,

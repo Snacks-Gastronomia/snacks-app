@@ -10,12 +10,14 @@ class OrderModel {
   List<dynamic> extras;
   String status;
   dynamic option_selected;
+  double value;
   OrderModel(
       {required this.item,
       this.amount = 1,
       this.status = "",
       required this.observations,
       required this.option_selected,
+      this.value = 0.0,
       this.extras = const []}) {
     status = OrderStatus.waiting_payment.name;
   }

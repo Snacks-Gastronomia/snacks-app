@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:snacks_app/models/item_model.dart';
 
 import 'package:snacks_app/models/order_model.dart';
@@ -35,7 +36,9 @@ class CartCubit extends Cubit<CartState> {
   //final storage = const FlutterSecureStorage();
   final storage = AppStorage.initStorage;
 
-  CartCubit() : super(CartState.initial());
+  CartCubit() : super(CartState.initial()) {
+    auth.signInAnonymously();
+  }
 
   void addToCart(OrderModel newOrder) {
     if (hasItem(newOrder.item.id!)) {
@@ -163,6 +166,8 @@ class CartCubit extends Cubit<CartState> {
     final dataStorage = await getStorage;
     bool isDelivery = !(auth.currentUser?.isAnonymous ?? true);
 
+    var delivery = await fetchDeliveryConfig();
+
     var status = method == "Cartão snacks" || isDelivery
         ? OrderStatus.ready_to_start.name
         : OrderStatus.waiting_payment.name;
@@ -176,7 +181,6 @@ class CartCubit extends Cubit<CartState> {
     });
     DataOrder dataTotal = DataOrder(done: [], orders: []);
     // ignore: iterable_contains_unrelated_type
-
     String order_code = generateOrderCode();
 
     for (var e in state.cart) {
@@ -193,14 +197,15 @@ class CartCubit extends Cubit<CartState> {
         dataTotal.done = [...dataTotal.done, e.item.restaurant_id];
         dataTotal.orders.add({
           "items": [e.toMap()],
-          "user_uid": auth.currentUser?.uid ?? "",
+          "user_uid": auth.currentUser?.uid,
           "payment_method": method,
           "phone_number": auth.currentUser?.phoneNumber,
           "rfid": rfid,
-          "value": e.getTotalValue + (isDelivery ? 7 : 0),
+          "value": e.getTotalValue + (isDelivery ? state.delivery_value : 0),
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
+          "delivery_value": isDelivery ? state.delivery_value : 0,
           "code": order_code,
           "customer_name": auth.currentUser?.displayName,
           "part_code": order_code.split("-")[0],
@@ -247,9 +252,10 @@ class CartCubit extends Cubit<CartState> {
     return randomNumber;
   }
 
-  Stream<QuerySnapshot> fetchOrders() {
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchOrders() {
     if (auth.currentUser != null) {
-      return repository.fetchOrdersByUserId(auth.currentUser!.uid);
+      // return repository.fetchOrdersByUserId(auth.currentUser!.uid);
+      return repository.fetchOrdersByUserId("jaTjsvdG0Wg1LKM8UZm92apOppH3");
     }
 
     return const Stream.empty();
@@ -280,5 +286,9 @@ class CartCubit extends Cubit<CartState> {
         delivery_disable: !value.docs[0].data()["active"],
         delivery_value:
             double.tryParse(value.docs[0].data()["value"].toString())));
+  }
+
+  void cancelOrder(List<String?> docs) async {
+    await repository.updateStatus(docs, OrderStatus.canceled);
   }
 }
