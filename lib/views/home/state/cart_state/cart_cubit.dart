@@ -254,8 +254,8 @@ class CartCubit extends Cubit<CartState> {
 
   Stream<QuerySnapshot<Map<String, dynamic>>> fetchOrders() {
     if (auth.currentUser != null) {
-      // return repository.fetchOrdersByUserId(auth.currentUser!.uid);
-      return repository.fetchOrdersByUserId("jaTjsvdG0Wg1LKM8UZm92apOppH3");
+      return repository.fetchOrdersByUserId(auth.currentUser!.uid);
+      // return repository.fetchOrdersByUserId("jaTjsvdG0Wg1LKM8UZm92apOppH3");
     }
 
     return const Stream.empty();
