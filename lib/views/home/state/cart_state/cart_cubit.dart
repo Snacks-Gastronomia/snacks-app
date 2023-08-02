@@ -140,7 +140,8 @@ class CartCubit extends Cubit<CartState> {
         accessibility: KeychainAccessibility.first_unlock,
       ));
 
-  void makeOrder(String method, {String? rfid = "", String change = ""}) async {
+  Future<void> makeOrder(String method,
+      {String? rfid = "", String change = ""}) async {
     final notification = AppNotification();
     var data = await generateDataObject(method, change, rfid);
 

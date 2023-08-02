@@ -10,6 +10,7 @@ class AppModal {
     bool dimisible = true,
   }) =>
       showMaterialModalBottomSheet(
+        // useRootNavigator: false,
         bounce: true,
         isDismissible: dimisible,
         context: context,
@@ -30,6 +31,7 @@ class AppModal {
           bool drag = true}) =>
       showCupertinoModalBottomSheet(
         context: context,
+        // useRootNavigator: false,
         bounce: true,
         enableDrag: drag,
         expand: expand,

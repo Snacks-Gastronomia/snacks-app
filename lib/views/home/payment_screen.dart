@@ -34,6 +34,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final storage = AppStorage();
 
   final modal = AppModal();
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
 
   @override
   void dispose() {
@@ -41,18 +42,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
     super.dispose();
   }
 
-  void action(context, method, {card}) async {
+  void action(method, {card}) async {
+    final navigator = Navigator.of(context);
     String description = "";
     String change = "";
 
     if (method == "Dinheiro") {
       var res = await modal.showModalBottomSheet(
-          context: context,
+          context: _globalKey.currentContext,
           drag: false,
           content: const MoneyChangeOptionModal());
       if (res) {
         await modal.showModalBottomSheet(
-            context: context,
+            context: _globalKey.currentContext,
             drag: false,
             content: MoneyChangeValue(
               onSubmit: (value) {
@@ -80,31 +82,36 @@ class _PaymentScreenState extends State<PaymentScreen> {
       address = await storage.getDataStorage("address");
 
       if (address == "null") {
-        Navigator.pushNamed(context, AppRoutes.address,
-            arguments: {"backToScreen": true});
+        navigator
+            .pushNamed(AppRoutes.address, arguments: {"backToScreen": true});
       } else {
-        sendOrder(context, method, change, card, description);
+        sendOrder(method, change, card, description);
       }
     } else {
-      sendOrder(context, method, change, card, description);
+      sendOrder(method, change, card, description, withName: true);
     }
   }
 
-  sendOrder(context, method, change, card, description) async {
-    await modal.showModalBottomSheet(
-        context: context, drag: false, content: CustomerNameModal());
-    BlocProvider.of<CartCubit>(context)
-        .makeOrder(method, change: change, rfid: card);
+  sendOrder(method, change, card, description, {bool withName = false}) async {
+    var cubit = BlocProvider.of<CartCubit>(context);
+
+    if (withName) {
+      await modal.showModalBottomSheet(
+          context: _globalKey.currentContext,
+          drag: false,
+          content: CustomerNameModal());
+    }
+
+    cubit.makeOrder(method, change: change, rfid: card);
+
     await modal.showIOSModalBottomSheet(
-        context: context,
+        context: _globalKey.currentContext,
         drag: false,
         content: SuccessScreen(
             feedback: true,
             title: "Pedido realizado!",
             backButton: true,
             description: description));
-    Navigator.pushNamedAndRemoveUntil(
-        context, AppRoutes.home, ModalRoute.withName(AppRoutes.start));
   }
 
   @override
@@ -142,6 +149,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                 ),
                 body: Padding(
+                    key: _globalKey,
                     padding: const EdgeInsets.all(25.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,7 +172,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           // height: 41,
                         ),
                         GestureDetector(
-                          onTap: () => action(context, "Cartão de crédito"),
+                          onTap: () => action("Cartão de crédito"),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: const Color(0xffF7F8F9),
@@ -191,7 +199,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           height: 15,
                         ),
                         GestureDetector(
-                          onTap: () => action(context, "Cartão de débito"),
+                          onTap: () => action("Cartão de débito"),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: const Color(0xffF7F8F9),
@@ -218,7 +226,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           height: 15,
                         ),
                         GestureDetector(
-                          onTap: () => action(context, "Dinheiro"),
+                          onTap: () => action("Dinheiro"),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: const Color(0xffF7F8F9),
@@ -245,7 +253,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           height: 15,
                         ),
                         GestureDetector(
-                          onTap: () => action(context, "Pix"),
+                          onTap: () => action("Pix"),
                           child: Container(
                             decoration: BoxDecoration(
                                 color: const Color(0xffF7F8F9),
@@ -314,7 +322,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                       symbol: r"R$ ")
                                                   .format(result),
                                               action: () => action(
-                                                  context, "Cartão snacks",
+                                                  "Cartão snacks",
                                                   card: card_code));
                                         }));
                                   } catch (e) {

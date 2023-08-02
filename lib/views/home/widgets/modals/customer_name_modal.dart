@@ -50,11 +50,14 @@ class CustomerNameModal extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 final nav = Navigator.of(context);
-                await context
-                    .read<HomeCubit>()
-                    .setCustomerName(controller.text);
 
-                nav.pop();
+                if (controller.text.isNotEmpty) {
+                  await context
+                      .read<HomeCubit>()
+                      .setCustomerName(controller.text);
+
+                  nav.pop();
+                }
               },
               style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
