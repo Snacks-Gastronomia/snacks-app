@@ -84,6 +84,8 @@ class CardDetailsModal extends StatelessWidget {
                 Navigator.pop(context);
                 context.read<CardCubit>().clear();
               },
+              style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(double.maxFinite, 40)),
               child: Text(
                 'Fechar',
                 style: AppTextStyles.regular(16, color: Colors.black),

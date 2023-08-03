@@ -105,6 +105,7 @@ class AuthApiServices {
   Future<User?> otpValidation(String verificationID, String pin) async {
     try {
       final user = await fbauth.verifyCode(verificationID, pin);
+      print("firebase user");
       print(user);
       return user;
     } catch (e) {

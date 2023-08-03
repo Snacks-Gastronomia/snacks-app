@@ -34,7 +34,7 @@ class _OtpScreenState extends State<OtpScreen> {
     // TODO: implement dispose
     focusNode.dispose();
     textController.dispose();
-
+    _scaffoldKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -56,7 +56,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => Navigator.pop(
+                            _scaffoldKey.currentContext ?? context),
                         style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
@@ -107,8 +108,10 @@ class _OtpScreenState extends State<OtpScreen> {
                     controller: textController,
                     focusNode: focusNode,
                     onCompleted: (pin) async {
-                      final navigator = Navigator.of(context);
-                      var result = await BlocProvider.of<AuthCubit>(context)
+                      final navigator =
+                          Navigator.of(_scaffoldKey.currentContext ?? context);
+                      var result = await BlocProvider.of<AuthCubit>(
+                              _scaffoldKey.currentContext ?? context)
                           .otpVerification(pin);
 
                       if (result != null) {
@@ -135,7 +138,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (res) {
                           // ignore: use_build_context_synchronously
                           toast.showToast(
-                              context: context,
+                              context: _scaffoldKey.currentContext ?? context,
                               content: "Código enviado!",
                               type: ToastType.info);
                         }
@@ -156,7 +159,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                   Center(
                     child: TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () =>
+                          Navigator.pop(_scaffoldKey.currentContext ?? context),
                       child: Text(
                         'Enviar para outro número',
                         style: AppTextStyles.semiBold(15,

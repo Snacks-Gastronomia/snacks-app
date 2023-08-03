@@ -211,7 +211,9 @@ class MyCartScreen extends StatelessWidget {
                                   ),
                                   CustomSubmitButton(
                                       onPressedAction: () => auth.currentUser !=
-                                              null
+                                                  null &&
+                                              !(auth.currentUser!.isAnonymous &&
+                                                  snapshot.address.isNotEmpty)
                                           ? Navigator.pushNamed(
                                               context, AppRoutes.payment)
                                           : Navigator.pushNamedAndRemoveUntil(
@@ -221,23 +223,6 @@ class MyCartScreen extends StatelessWidget {
                                       label: "Continuar",
                                       loading_label: "",
                                       loading: false)
-                                  // ElevatedButton(
-                                  //   onPressed: () {},
-                                  //   style: ElevatedButton.styleFrom(
-                                  //       shape: RoundedRectangleBorder(
-                                  //           borderRadius:
-                                  //               BorderRadius.circular(15)),
-                                  //       backgroundColor: Colors.black,
-                                  //       tapTargetSize:
-                                  //           MaterialTapTargetSize.shrinkWrap,
-                                  //       fixedSize:
-                                  //           const Size(double.maxFinite, 59)),
-                                  //   child: Text(
-                                  //     'Continuar',
-                                  //     style: AppTextStyles.regular(16,
-                                  //         color: Colors.white),
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                             ),

@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final auth = FirebaseAuth.instance;
-
+  final key = GlobalKey();
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
 
@@ -28,10 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        key: key,
         backgroundColor: Colors.white,
-        body: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
-        ),
+        body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
         extendBody: true,
         bottomNavigationBar: Container(
           // margin: const EdgeInsets.fromLTRB(20, 0, 15, 15),
@@ -90,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         // auth.signOut();
                         AppModal().showModalBottomSheet(
                           withPadding: false,
-                          context: context,
+                          context: key.currentContext ?? context,
                           content: ProfileModal(),
                         );
                       }),

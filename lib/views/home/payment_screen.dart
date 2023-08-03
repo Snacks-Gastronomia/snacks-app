@@ -279,110 +279,106 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         const SizedBox(
                           height: 15,
                         ),
-                        if (auth.currentUser?.isAnonymous != null &&
-                            auth.currentUser!.isAnonymous)
-                          GestureDetector(
-                            onTap: () async {
-                              var cubit = context.read<CartCubit>();
-                              // var navigator
-                              double orderValue = cubit.state.total;
-                              dynamic dataStorage = cubit.getStorage;
-                              final card_code = await Navigator.pushNamed(
-                                  context, AppRoutes.scanCard);
+                        GestureDetector(
+                          onTap: () async {
+                            var cubit = context.read<CartCubit>();
+                            // var navigator
+                            double orderValue = cubit.state.total;
+                            dynamic dataStorage = cubit.getStorage;
+                            final card_code = await Navigator.pushNamed(
+                                context, AppRoutes.scanCard);
 
-                              cubit.changeStatus(AppStatus.loading);
-                              var card = await beerpassService
-                                  .getCard(card_code.toString());
+                            cubit.changeStatus(AppStatus.loading);
+                            var card = await beerpassService
+                                .getCard(card_code.toString());
 
-                              if (card != null) {
-                                double cardBudget =
-                                    double.parse(card["saldo"].toString());
+                            if (card != null) {
+                              double cardBudget =
+                                  double.parse(card["saldo"].toString());
 
-                                if (orderValue <= cardBudget - 5) {
-                                  double result = cardBudget - orderValue;
-                                  try {
-                                    await beerpassService.payWithSnacksCard(
-                                        card_code.toString(), orderValue);
+                              if (orderValue <= cardBudget - 5) {
+                                double result = cardBudget - orderValue;
+                                try {
+                                  await beerpassService.payWithSnacksCard(
+                                      card_code.toString(), orderValue);
 
-                                    // action(context, "Cartão snacks");
-                                    cubit.changeStatus(AppStatus.loaded);
-                                    // ignore: use_build_context_synchronously
-                                    modal.showModalBottomSheet(
-                                        context: context,
-                                        content: Builder(builder: (context) {
-                                          return PaymentSuccessContent(
-                                              customer: card["nome"],
-                                              order_value:
-                                                  NumberFormat.currency(
-                                                          locale: "pt",
-                                                          symbol: r"R$ ")
-                                                      .format(orderValue),
-                                              rest_value: NumberFormat.currency(
-                                                      locale: "pt",
-                                                      symbol: r"R$ ")
-                                                  .format(result),
-                                              action: () => action(
-                                                  "Cartão snacks",
-                                                  card: card_code));
-                                        }));
-                                  } catch (e) {
-                                    print(e);
-                                  }
-                                } else {
+                                  // action(context, "Cartão snacks");
+                                  cubit.changeStatus(AppStatus.loaded);
                                   // ignore: use_build_context_synchronously
                                   modal.showModalBottomSheet(
                                       context: context,
-                                      content: PaymentFailedContent(
-                                        value: NumberFormat.currency(
-                                                locale: "pt", symbol: r"R$ ")
-                                            .format(cardBudget),
-                                      ));
+                                      content: Builder(builder: (context) {
+                                        return PaymentSuccessContent(
+                                            customer: card["nome"],
+                                            order_value: NumberFormat.currency(
+                                                    locale: "pt",
+                                                    symbol: r"R$ ")
+                                                .format(orderValue),
+                                            rest_value: NumberFormat.currency(
+                                                    locale: "pt",
+                                                    symbol: r"R$ ")
+                                                .format(result),
+                                            action: () => action(
+                                                "Cartão snacks",
+                                                card: card_code));
+                                      }));
+                                } catch (e) {
+                                  print(e);
                                 }
                               } else {
                                 // ignore: use_build_context_synchronously
                                 modal.showModalBottomSheet(
                                     context: context,
-                                    content: const PaymentFailedContent(
-                                      readError: true,
-                                      value: "",
+                                    content: PaymentFailedContent(
+                                      value: NumberFormat.currency(
+                                              locale: "pt", symbol: r"R$ ")
+                                          .format(cardBudget),
                                     ));
                               }
-                              cubit.changeStatus(AppStatus.loaded);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(8)),
-                              padding: const EdgeInsets.all(15),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        AppImages.snacks_logo,
-                                        color: Colors.white,
-                                        width: 30,
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        'Cartão snacks',
-                                        style: AppTextStyles.medium(14,
-                                            color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward,
-                                    color: Colors.white,
-                                  )
-                                ],
-                              ),
+                            } else {
+                              // ignore: use_build_context_synchronously
+                              modal.showModalBottomSheet(
+                                  context: context,
+                                  content: const PaymentFailedContent(
+                                    readError: true,
+                                    value: "",
+                                  ));
+                            }
+                            cubit.changeStatus(AppStatus.loaded);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      AppImages.snacks_logo,
+                                      color: Colors.white,
+                                      width: 30,
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      'Cartão snacks',
+                                      style: AppTextStyles.medium(14,
+                                          color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                const Icon(
+                                  Icons.arrow_forward,
+                                  color: Colors.white,
+                                )
+                              ],
                             ),
                           ),
+                        ),
                       ],
                     )),
               ));

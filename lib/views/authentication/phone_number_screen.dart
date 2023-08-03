@@ -22,26 +22,9 @@ class PhoneNumberScreen extends StatelessWidget {
       final navigator = Navigator.of(context);
       context.read<AuthCubit>().changeStatus(AppStatus.loading);
       if (context.read<AuthCubit>().validateNumber) {
-        // await sendPhoneCodeOtp();
-        // final navigator = Navigator.of(context);
-        // String res =
-        //     await context.read<AuthCubit>().sendOTPValidation();
-        // if (res.isNotEmpty)
-
         await FirebaseAuth.instance.verifyPhoneNumber(
             phoneNumber: "+55 ${context.read<AuthCubit>().state.phone}",
-            verificationCompleted: (PhoneAuthCredential credential) async {
-              // await FirebaseAuth.instance
-              //     .signInWithCredential(credential)
-              //     .then((value) async {
-              //   if (value.user != null) {
-              //     // Navigator.pushAndRemoveUntil(
-              //     //     context,
-              //     //     MaterialPageRoute(builder: (context) => Home()),
-              //     //     (route) => false);
-              //   }
-              // });
-            },
+            verificationCompleted: (PhoneAuthCredential credential) async {},
             verificationFailed: (FirebaseAuthException e) {
               print("Não foi possível enviar o código! Tente novamente.");
               print(e.code + e.message.toString());
@@ -91,20 +74,6 @@ class PhoneNumberScreen extends StatelessWidget {
                 loading_label: "Enviando",
                 loading: state.status == AppStatus.loading);
           }),
-          // ElevatedButton(
-          //   onPressed: () async {
-          //     await sendPhoneCodeOtp();
-          //   },
-          //   style: ElevatedButton.styleFrom(
-          //       shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(15)),
-          //       primary: Colors.black,
-          //       fixedSize: const Size(double.maxFinite, 59)),
-          //   child: Text(
-          //     'Continuar',
-          //     style: AppTextStyles.regular(16, color: Colors.white),
-          //   ),
-          // ),
         ),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(70.0),

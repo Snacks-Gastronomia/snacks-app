@@ -5,6 +5,7 @@ class CartState implements Equatable {
   final String payment_method;
   final int table_code;
   final String receive_order;
+  final String address;
   final double delivery_value;
   final bool delivery_disable;
 
@@ -15,6 +16,7 @@ class CartState implements Equatable {
 
   CartState({
     required this.receive_order,
+    required this.address,
     required this.cart,
     required this.payment_method,
     required this.delivery_value,
@@ -35,6 +37,7 @@ class CartState implements Equatable {
         status: AppStatus.initial,
         total: 0,
         error: "",
+        address: "",
         receive_order: "address",
         temp_observation: "",
       );
@@ -50,10 +53,12 @@ class CartState implements Equatable {
     AppStatus? status,
     String? error,
     String? temp_observation,
+    String? address,
   }) {
     return CartState(
       cart: cart ?? this.cart,
       delivery_value: delivery_value ?? this.delivery_value,
+      address: address ?? this.address,
       payment_method: payment_method ?? this.payment_method,
       receive_order: receive_order ?? this.receive_order,
       delivery_disable: delivery_disable ?? this.delivery_disable,

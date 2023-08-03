@@ -108,7 +108,6 @@ class AddAddressScreen extends StatelessWidget {
                     value: state.street_address,
                     onChanged:
                         BlocProvider.of<AuthCubit>(context).changeStreet),
-
                 const SizedBox(
                   height: 20,
                 ),
@@ -119,7 +118,6 @@ class AddAddressScreen extends StatelessWidget {
                     value: state.district_address,
                     onChanged:
                         BlocProvider.of<AuthCubit>(context).changeDistrict),
-
                 const SizedBox(
                   height: 20,
                 ),
@@ -130,7 +128,6 @@ class AddAddressScreen extends StatelessWidget {
                     value: state.number_address,
                     onChanged:
                         BlocProvider.of<AuthCubit>(context).changeNumber),
-
                 const SizedBox(
                   height: 20,
                 ),
@@ -141,92 +138,6 @@ class AddAddressScreen extends StatelessWidget {
                     value: state.obs_address,
                     onChanged:
                         BlocProvider.of<AuthCubit>(context).changeObservations),
-
-                // BlocBuilder<AuthCubit, AuthState>(builder: (context, snapshot) {
-                //   if (snapshot.status == AppStatus.editing) {
-                //     searchFocus.requestFocus();
-                //   }
-                //   return CustomAutoComplete(
-                //       hintText: 'Endereço e número',
-                //       focus: searchFocus,
-                //       itemBuilder: (BuildContext context, dynamic option) =>
-                //           ListTile(
-                //             // leading: Icon(Icons.location_on),
-                //             title: Text(
-                //               option.text,
-                //               style: AppTextStyles.bold(18),
-                //             ),
-                //             subtitle: Text(option.place_name,
-                //                 style: AppTextStyles.light(16)),
-                //           ),
-                //       suggestionsCallback: (pattern) async {
-                //         return await context
-                //             .read<AuthCubit>()
-                //             .fecthAddress(pattern);
-                //         // return await getAddresses(pattern);
-                //       },
-                //       searchController: context
-                //           .read<AuthCubit>()
-                //           .state
-                //           .address_input_controller,
-                //       key: UniqueKey(),
-                //       onSelected: (value) {
-                //         var street = value.place_name.split(",")[0];
-                //         var _address =
-                //             value.place_name.replaceFirst("$street,", "");
-                //         print(value);
-                //         var address = AddressType(
-                //             street: value.text,
-                //             address: value.place_name,
-                //             complete: value.place_name);
-
-                //         context.read<AuthCubit>().changeAddress(address);
-                //       });
-                // }),
-                // const SizedBox(
-                //   height: 30,
-                // ),
-                // BlocBuilder<AuthCubit, AuthState>(
-                //     buildWhen: (previous, current) =>
-                //         previous.address != current.address,
-                //     builder: (context, snap) {
-                //       if (snap.address.address.isNotEmpty) {
-                //         return AddressCard(
-                //             address: context.read<AuthCubit>().state.address,
-                //             onEditPressed: () =>
-                //                 BlocProvider.of<AuthCubit>(context)
-                //                     .updateAddressFromScreen());
-                //       } else {
-                //         return const SizedBox();
-                //       }
-                //     }),
-                // const Spacer(),
-                // Center(
-                //   child: TextButton.icon(
-                //       onPressed: () async {
-                //         AddressType address =
-                //             await BlocProvider.of<AuthCubit>(context)
-                //                 .getCurrentAddress();
-
-                //         // ignore: use_build_context_synchronously
-                //         modal.showModalBottomSheet(
-                //           context: context,
-                //           content: ConfirmAddressModal(
-                //               address: address.complete,
-                //               onSubmit: () {
-                //                 context.read<AuthCubit>().changeAddress(address);
-                //                 Navigator.pop(context);
-                //               }),
-                //         );
-                //       },
-                //       icon: const Icon(Icons.gps_fixed_rounded,
-                //           color: Color(0xff35C2C1)),
-                //       label: Text(
-                //         "Usar minha localização atual",
-                //         style: AppTextStyles.semiBold(15,
-                //             color: const Color(0xff35C2C1)),
-                //       )),
-                // ),
               ],
             ),
           ),

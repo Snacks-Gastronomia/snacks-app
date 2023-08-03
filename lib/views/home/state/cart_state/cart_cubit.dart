@@ -36,9 +36,7 @@ class CartCubit extends Cubit<CartState> {
   //final storage = const FlutterSecureStorage();
   final storage = AppStorage.initStorage;
 
-  CartCubit() : super(CartState.initial()) {
-    auth.signInAnonymously();
-  }
+  CartCubit() : super(CartState.initial());
 
   void addToCart(OrderModel newOrder) {
     if (hasItem(newOrder.item.id!)) {
@@ -165,7 +163,7 @@ class CartCubit extends Cubit<CartState> {
   Future<List<Map<String, dynamic>>> generateDataObject(
       method, change, rfid) async {
     final dataStorage = await getStorage;
-    bool isDelivery = !(auth.currentUser?.isAnonymous ?? true);
+    bool isDelivery = !(auth.currentUser?.isAnonymous ?? false);
 
     var delivery = await fetchDeliveryConfig();
 
@@ -279,11 +277,14 @@ class CartCubit extends Cubit<CartState> {
   Future<void> fetchDeliveryConfig() async {
     final value = await repository.fetchDeliveryConfig();
 
+    final address = await storage.read(key: "address");
+
     emit(state.copyWith(
         receive_order: value.docs[0].data()["active"] &&
                 !(auth.currentUser?.isAnonymous ?? true)
             ? "address"
             : "local",
+        address: address ?? "",
         delivery_disable: !value.docs[0].data()["active"],
         delivery_value:
             double.tryParse(value.docs[0].data()["value"].toString())));

@@ -21,6 +21,7 @@ class OrderCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var order = orders[0];
     String time = DateFormat("HH:mm").format(order.createdAt);
+
     bool isDelivered = orders
         .map((e) => e.status == OrderStatus.delivered.name)
         .toList()
@@ -30,11 +31,13 @@ class OrderCardWidget extends StatelessWidget {
         orders.map((e) => e.value).reduce((value, element) => value + element);
     var total = NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(sum);
 
-    OrderStatus orderStatus = isDelivered
-        ? OrderStatus.delivered
-        : order.status == OrderStatus.waiting_payment.name
-            ? OrderStatus.waiting_payment
-            : OrderStatus.order_in_progress;
+    OrderStatus orderStatus = order.status == OrderStatus.canceled.name
+        ? OrderStatus.canceled
+        : isDelivered
+            ? OrderStatus.delivered
+            : order.status == OrderStatus.waiting_payment.name
+                ? OrderStatus.waiting_payment
+                : OrderStatus.order_in_progress;
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -168,11 +171,15 @@ class OrderCardWidget extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  isDelivered
-                      ? const Icon(
-                          Icons.check_circle_rounded,
+                  isDelivered || orderStatus == OrderStatus.canceled
+                      ? Icon(
+                          orderStatus == OrderStatus.canceled
+                              ? Icons.close_rounded
+                              : Icons.check_circle_rounded,
                           size: 20,
-                          color: Colors.black,
+                          color: orderStatus == OrderStatus.canceled
+                              ? Colors.red
+                              : Colors.black,
                         )
                       : SizedBox(
                           height: 25,

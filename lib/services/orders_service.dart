@@ -29,14 +29,14 @@ class OrdersApiServices {
         collection: "orders", subcolletion: "items", data: data, docID: doc_id);
   }
 
-  Future<dynamic> updateStatus(List<String> ids, OrderStatus status) async {
+  Future<dynamic> updateStatus(List<String?> ids, OrderStatus status) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     // Create a new write batch
     WriteBatch batch = firestore.batch();
 
     // Loop through the orderIds and update the documents in the batch
-    for (String orderId in ids) {
+    for (String? orderId in ids) {
       DocumentReference orderRef = firestore.collection('orders').doc(orderId);
       batch.update(orderRef, {'status': status.name});
     }

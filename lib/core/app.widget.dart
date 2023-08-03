@@ -52,6 +52,7 @@ class AppWidget extends StatelessWidget {
           final token = await session.validate();
           if (!token) {
             auth.signOut();
+            print("sign out......");
           }
         } catch (e) {
           toast.showToast(

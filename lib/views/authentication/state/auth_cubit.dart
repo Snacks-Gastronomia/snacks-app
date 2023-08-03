@@ -21,13 +21,13 @@ class AuthCubit extends Cubit<AuthState> {
   otpVerification(String value) async {
     emit(state.copyWith(status: AppStatus.loading));
     var user = await repository.otpVerification(state.verificationID, value);
-    print(user);
-    if (user != null) {
-      emit(state.copyWith(status: AppStatus.loaded));
-    }
-    emit(state.copyWith(status: AppStatus.error));
 
-    print(state);
+    emit(state.copyWith(status: AppStatus.loaded));
+    if (user == null) {
+      emit(state.copyWith(status: AppStatus.error));
+    }
+    print(user);
+    print(auth.currentUser);
     return user;
   }
 
@@ -137,7 +137,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   String get convertAddressToString =>
-      '${state.street_address}, ${state.number_address}, ${state.district_address} - ${state.obs_address}';
+      '${state.street_address}, ${state.number_address}, ${state.district_address}${state.obs_address.isNotEmpty ? " - ${state.obs_address}" : ""}';
   void convertAddressStringToObject(String str) {
     var split = str.split(", ");
     emit(state.copyWith(

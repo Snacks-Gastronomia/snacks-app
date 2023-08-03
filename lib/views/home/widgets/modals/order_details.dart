@@ -36,7 +36,18 @@ class OrderDetailsContent extends StatelessWidget {
         .map((e) => e.id)
         .toList();
 
-    bool allowCancel = allowCancelOrders.isNotEmpty;
+    List<String?> all = orders.map((e) => e.id).toList();
+
+    List<String?> allowCancelOrdersDelivery = orders
+        .where((e) => (ord.isDelivery
+            ? e.status != OrderStatus.ready_to_start.name
+            : false))
+        .toList()
+        .map((e) => e.id)
+        .toList();
+
+    bool allowCancel =
+        allowCancelOrders.isNotEmpty || allowCancelOrdersDelivery.isEmpty;
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Column(
@@ -106,13 +117,15 @@ class OrderDetailsContent extends StatelessWidget {
           ),
           if (allowCancel)
             TextButton(
-              onPressed: () =>
-                  context.read<CartCubit>().cancelOrder(allowCancelOrders),
+              onPressed: () => context
+                  .read<CartCubit>()
+                  .cancelOrder(ord.isDelivery ? all : allowCancelOrders),
               style: ElevatedButton.styleFrom(
                   fixedSize: const Size(double.maxFinite, 59)),
               child: Text(
                 'Cancelar pedido',
-                style: AppTextStyles.regular(16, color: Color(0xffE20808)),
+                style:
+                    AppTextStyles.regular(16, color: const Color(0xffE20808)),
               ),
             ),
           ElevatedButton(

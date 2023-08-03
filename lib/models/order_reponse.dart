@@ -157,7 +157,7 @@ class OrderResponse {
       receiveOrder: map['receiveOrder'],
       address: map['address'] ?? "",
       moneyChange: map['money_change'] ?? "",
-      deliveryValue: map['delivery_alue'] ?? "",
+      deliveryValue: map['delivery_value'] ?? "",
     );
   }
   factory OrderResponse.fromFirebase(
@@ -191,7 +191,7 @@ class OrderResponse {
       receiveOrder: map['receive_order'],
       address: map['address'],
       moneyChange: map['money_change'] ?? "",
-      deliveryValue: map['delivery_alue'] ?? 0.0,
+      deliveryValue: map['delivery_value'] ?? 0.0,
     );
   }
 

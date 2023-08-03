@@ -36,20 +36,15 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   void initState() {
     controller = ScrollController();
     context.read<HomeCubit>().fetchItems();
+    print(auth.currentUser);
     controller.addListener(
       () {
         var cart = context.read<CartCubit>().emptyCart();
 
         if (controller.offset > 60 && !cart) {
           context.read<HomeCubit>().changeButtonDone(true);
-          // setState(() {
-          //   button = true;
-          // });
         } else {
           context.read<HomeCubit>().changeButtonDone(false);
-          // setState(() {
-          //   button = false;
-          // });
         }
       },
     );
