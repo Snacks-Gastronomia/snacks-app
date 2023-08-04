@@ -25,7 +25,8 @@ class AppStorage {
   }
 
   Future<void> updateStorage(String key, String value) async {
-    await deleteStorage(key);
+    //await deleteStorage(key);
+
     return await init.write(key: key, value: value);
   }
 

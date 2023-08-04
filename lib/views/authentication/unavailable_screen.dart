@@ -20,7 +20,7 @@ class UnavailableScreen extends StatelessWidget {
       var doc = await ref
           .where("active", isEqualTo: true)
           .limit(1)
-          .startAfterDocument(current_doc)
+          .startAtDocument(current_doc)
           .get();
 
       return doc.docs[0];

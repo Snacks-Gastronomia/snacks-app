@@ -9,19 +9,41 @@ import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
+import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/storage.dart';
+import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/widgets/cart_item.dart';
 import 'package:snacks_app/views/review/review_screen.dart';
 
-class MyCartScreen extends StatelessWidget {
+class MyCartScreen extends StatefulWidget {
   MyCartScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyCartScreen> createState() => _MyCartScreenState();
+}
+
+class _MyCartScreenState extends State<MyCartScreen> {
   final auth = FirebaseAuth.instance;
+
   final storage = AppStorage();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
     context.read<CartCubit>().fetchDeliveryConfig();
+  }
+
+  @override
+  void didUpdateWidget(covariant MyCartScreen oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    context.read<CartCubit>().fetchDeliveryConfig();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: BlocBuilder<CartCubit, CartState>(
         builder: (context, state) {
@@ -85,38 +107,43 @@ class MyCartScreen extends StatelessWidget {
                                         .read<CartCubit>()
                                         .updateReceiveOrderMethod(value),
                                   ),
-                                  FutureBuilder(
-                                      future: storage.getDataStorage("address"),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.data == "" ||
-                                            snapshot.data == null) {
-                                          context
-                                              .read<CartCubit>()
-                                              .updateReceiveOrderMethod(
-                                                  "local");
-                                          return TextButton(
-                                            onPressed: () =>
+                                  BlocBuilder<CartCubit, CartState>(
+                                    builder: (context, state) {
+                                      return state.address.isNotEmpty
+                                          ? CustomRadioButtonSelect(
+                                              text:
+                                                  'Entregar no endereço: ${state.address}',
+                                              selected: state.receive_order,
+                                              value: "address",
+                                              disable: state.delivery_disable,
+                                              onChange: (value) => context
+                                                  .read<CartCubit>()
+                                                  .updateReceiveOrderMethod(
+                                                      value),
+                                            )
+                                          : TextButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<AuthCubit>()
+                                                    .changeStatus(
+                                                        AppStatus.editing);
+
                                                 Navigator.pushNamed(
-                                                    context, AppRoutes.address),
-                                            child: Text(
-                                              'Adicionar endereço',
-                                              style: AppTextStyles.medium(12),
-                                            ),
-                                          );
-                                        } else {
-                                          return CustomRadioButtonSelect(
-                                            text:
-                                                'Entregar no endereço: ${snapshot.data}',
-                                            selected: state.receive_order,
-                                            value: "address",
-                                            disable: state.delivery_disable,
-                                            onChange: (value) => context
-                                                .read<CartCubit>()
-                                                .updateReceiveOrderMethod(
-                                                    value),
-                                          );
-                                        }
-                                      })
+                                                    context, AppRoutes.address,
+                                                    arguments: {
+                                                      "backToScreen": true
+                                                    }).then((value) => context
+                                                    .read<CartCubit>()
+                                                    .fetchDeliveryConfig());
+                                              },
+                                              child: Text(
+                                                'Adicionar endereço',
+                                                style: AppTextStyles.medium(12,
+                                                    color: Colors.blue),
+                                              ),
+                                            );
+                                    },
+                                  )
                                 ],
                               ),
                             Container(

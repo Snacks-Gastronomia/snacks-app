@@ -31,13 +31,35 @@ class OrderCardWidget extends StatelessWidget {
         orders.map((e) => e.value).reduce((value, element) => value + element);
     var total = NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(sum);
 
-    OrderStatus orderStatus = order.status == OrderStatus.canceled.name
-        ? OrderStatus.canceled
-        : isDelivered
-            ? OrderStatus.delivered
-            : order.status == OrderStatus.waiting_payment.name
-                ? OrderStatus.waiting_payment
-                : OrderStatus.order_in_progress;
+    Widget statusIcon = SizedBox(
+        height: 25,
+        width: 25,
+        child: SignalRippleWidget(
+          count: 2,
+          color: OrderStatus.values.byName(order.status).getColor,
+        ));
+
+    OrderStatus orderStatus = OrderStatus.order_in_progress;
+
+    if (order.status == OrderStatus.canceled.name) {
+      statusIcon = const Icon(
+        Icons.close_rounded,
+        size: 20,
+        color: Colors.red,
+      );
+      orderStatus = OrderStatus.canceled;
+    } else if (order.status == OrderStatus.delivered.name) {
+      statusIcon = const Icon(
+        Icons.check_circle_rounded,
+        size: 20,
+        color: Colors.black,
+      );
+      orderStatus = OrderStatus.delivered;
+    } else if (order.status == OrderStatus.waiting_delivery.name) {
+      orderStatus = OrderStatus.waiting_payment;
+    } else {
+      orderStatus = OrderStatus.order_in_progress;
+    }
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -169,34 +191,20 @@ class OrderCardWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  isDelivered || orderStatus == OrderStatus.canceled
-                      ? Icon(
-                          orderStatus == OrderStatus.canceled
-                              ? Icons.close_rounded
-                              : Icons.check_circle_rounded,
-                          size: 20,
-                          color: orderStatus == OrderStatus.canceled
-                              ? Colors.red
-                              : Colors.black,
-                        )
-                      : SizedBox(
-                          height: 25,
-                          width: 25,
-                          child: SignalRippleWidget(
-                            count: 2,
-                            color: OrderStatus.values
-                                .byName(order.status)
-                                .getColor,
-                          )),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Text(orderStatus.displayEnum,
-                      style: AppTextStyles.regular(14,
-                          color: const Color(0xff979797))),
-                ],
+              Expanded(
+                child: Row(
+                  children: [
+                    statusIcon,
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Flexible(
+                      child: Text(orderStatus.displayEnum,
+                          style: AppTextStyles.regular(14,
+                              color: const Color(0xff979797))),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(
                   height: 35,

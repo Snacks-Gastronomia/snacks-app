@@ -165,8 +165,6 @@ class CartCubit extends Cubit<CartState> {
     final dataStorage = await getStorage;
     bool isDelivery = !(auth.currentUser?.isAnonymous ?? false);
 
-    var delivery = await fetchDeliveryConfig();
-
     var status = method == "Cartão snacks" || isDelivery
         ? OrderStatus.ready_to_start.name
         : OrderStatus.waiting_payment.name;
@@ -278,12 +276,13 @@ class CartCubit extends Cubit<CartState> {
     final value = await repository.fetchDeliveryConfig();
 
     final address = await storage.read(key: "address");
-
+    final receive = value.docs[0].data()["active"] &&
+            !(auth.currentUser?.isAnonymous ?? true) &&
+            (address != null && address.isNotEmpty)
+        ? "address"
+        : "local";
     emit(state.copyWith(
-        receive_order: value.docs[0].data()["active"] &&
-                !(auth.currentUser?.isAnonymous ?? true)
-            ? "address"
-            : "local",
+        receive_order: receive,
         address: address ?? "",
         delivery_disable: !value.docs[0].data()["active"],
         delivery_value:

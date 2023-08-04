@@ -108,6 +108,7 @@ class AppWidget extends StatelessWidget {
     Future<Map<String, dynamic>> verifyRestaurantStatus() async {
       await initializeDateFormatting("pt_BR");
 
+//7 - sunday
       var time = DateTime.now();
       var now = TimeOfDay.fromDateTime(time);
 
@@ -170,7 +171,8 @@ class AppWidget extends StatelessWidget {
       var rightVersion = await validateAppVersion();
 
       return {
-        "restaurant_available": isDayActive && dayValid,
+        // "restaurant_available": isDayActive && dayValid,
+        "restaurant_available": true,
         "right_app_version": rightVersion,
       };
     }

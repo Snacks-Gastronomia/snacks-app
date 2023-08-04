@@ -36,8 +36,10 @@ class AddAddressScreen extends StatelessWidget {
                         state.street_address.isNotEmpty &&
                         state.number_address.isNotEmpty) {
                       if (state.status == AppStatus.editing) {
-                        context.read<AuthCubit>().updateAddressFromDatabase();
-                        navigator.pop();
+                        context
+                            .read<AuthCubit>()
+                            .updateAddressFromDatabase()
+                            .then((value) => navigator.pop());
                       } else {
                         context.read<AuthCubit>().saveUser();
                         if (arguments.isNotEmpty && arguments["backToScreen"]) {

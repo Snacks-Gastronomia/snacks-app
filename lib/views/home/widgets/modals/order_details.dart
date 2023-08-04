@@ -65,7 +65,7 @@ class OrderDetailsContent extends StatelessWidget {
           for (int i = 0; i < OrderStatus.values.length; i++)
             ListOrderByStatus(orders: orders, status: OrderStatus.values[i]),
           const SizedBox(
-            height: 10,
+            height: 15,
           ),
           const Divider(),
           Row(
@@ -194,6 +194,9 @@ class ListOrderByStatus extends StatelessWidget {
                           color: const Color(0xff979797))),
                 ],
               ),
+              const SizedBox(
+                height: 10,
+              ),
               ListView.separated(
                   padding: const EdgeInsets.only(top: 10),
                   separatorBuilder: (context, index) =>
@@ -208,10 +211,10 @@ class ListOrderByStatus extends StatelessWidget {
                         title: "${item.amount} ${item.item.title}",
                         option: item.optionSelected.title,
                         extras: item.extras!.isNotEmpty
-                            ? item.extras!
-                                .reduce((value, element) =>
-                                    value["title"] + element["title"])
-                                .join(", ")
+                            ? item.extras!.length > 1
+                                ? item.extras!.reduce((value, element) =>
+                                    value["title"] + ", " + element["title"])
+                                : item.extras![0]["title"]
                             : "",
                         value: item.amount * item.optionSelected.value,
                         image: item.item.imageUrl,
@@ -265,20 +268,25 @@ class ItemWidget extends StatelessWidget {
                         height: 42, width: 42, fit: BoxFit.cover),
               ),
               const SizedBox(width: 7),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$title ${option != title ? "- ${option.trim()}" : ""} ${extras.isNotEmpty ? '+ ($extras)' : ''}',
-                    style: AppTextStyles.light(12),
-                  ),
-                  Text(
-                    restaurant,
-                    style: AppTextStyles.light(10,
-                        color: Colors.black.withOpacity(0.3)),
-                  ),
-                ],
-              )
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$title ${option != title ? "- ${option.trim()}" : ""} ${extras.isNotEmpty ? '+ ($extras)' : ''}',
+                      style: AppTextStyles.light(12),
+                      overflow: TextOverflow.visible,
+                    ),
+                    Text(
+                      restaurant,
+                      style: AppTextStyles.light(10,
+                          color: Colors.black.withOpacity(0.3)),
+                      overflow: TextOverflow.visible,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
             ],
           ),
         ),

@@ -155,7 +155,7 @@ class AuthCubit extends Cubit<AuthState> {
     final session = AppSession();
     changeStatus(AppStatus.loaded);
     if (response != null) {
-      repository.storageAddress(response["address"]);
+      repository.storageAddress(response["address"] ?? "");
       await session.create();
       return true;
     }
@@ -206,10 +206,17 @@ class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(status: AppStatus.editing));
   }
 
-  void updateAddressFromDatabase() {
+  Future<void> updateAddressFromDatabase() async {
     var address = convertAddressToString;
-    repository.updateAddress(auth.currentUser!.uid, address);
-    _localStorage.updateStorage("address", address);
+
+    await Future.wait([
+      repository.updateAddress(auth.currentUser!.uid, address),
+      _localStorage.updateStorage("address", address)
+    ]);
+
+    changeStatus(AppStatus.loaded);
+
+    return;
   }
 
   Future<Iterable<dynamic>> fecthAddress(String query) async {

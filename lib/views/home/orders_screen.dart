@@ -54,30 +54,9 @@ class OrdersScreen extends StatelessWidget {
                         shrinkWrap: true,
                         itemBuilder: (_, index) {
                           var order = groupedOrders[index];
-                          // var item = orders[index];
-                          // Timestamp date = item["created_at"];
-                          // String time =
-                          //     DateFormat("HH:mm").format(date.toDate());
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 10),
                             child: OrderCardWidget(orders: order["orders"]),
-                            // CardOrderWidget(
-                            //     leading:
-                            //         item["isDelivery"] ? null : item["table"],
-                            //     address: item["receive_order"] == "address"
-                            //         ? item["address"] ?? ""
-                            //         : "Irá até o local buscar o pedido",
-                            //     customer_name: item["customer_name"] ?? "",
-                            //     order_code: item["part_code"] ?? "",
-                            //     change: item["need_change"]
-                            //         ? item["money_change"]
-                            //         : "",
-                            //     status: item["status"],
-                            //     isDelivery: item["isDelivery"],
-                            //     time: time,
-                            //     total: double.parse(item["value"].toString()),
-                            //     method: item["payment_method"],
-                            //     items: item["items"]),
                           );
                         });
                   }
