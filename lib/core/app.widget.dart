@@ -171,8 +171,7 @@ class AppWidget extends StatelessWidget {
       var rightVersion = await validateAppVersion();
 
       return {
-        // "restaurant_available": isDayActive && dayValid,
-        "restaurant_available": true,
+        "restaurant_available": isDayActive && dayValid,
         "right_app_version": rightVersion,
       };
     }
