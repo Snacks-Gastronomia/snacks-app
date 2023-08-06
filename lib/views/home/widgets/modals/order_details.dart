@@ -46,8 +46,8 @@ class OrderDetailsContent extends StatelessWidget {
         .map((e) => e.id)
         .toList();
 
-    bool allowCancel =
-        allowCancelOrders.isNotEmpty || allowCancelOrdersDelivery.isEmpty;
+    bool allowCancel = allowCancelOrders.isNotEmpty ||
+        (ord.isDelivery && allowCancelOrdersDelivery.isEmpty);
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
       child: Column(
@@ -117,9 +117,12 @@ class OrderDetailsContent extends StatelessWidget {
           ),
           if (allowCancel)
             TextButton(
-              onPressed: () => context
-                  .read<CartCubit>()
-                  .cancelOrder(ord.isDelivery ? all : allowCancelOrders),
+              onPressed: () async {
+                await context
+                    .read<CartCubit>()
+                    .cancelOrder(ord.isDelivery ? all : allowCancelOrders)
+                    .then((value) => Navigator.pop(context));
+              },
               style: ElevatedButton.styleFrom(
                   fixedSize: const Size(double.maxFinite, 59)),
               child: Text(

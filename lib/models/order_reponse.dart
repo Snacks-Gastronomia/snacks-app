@@ -191,7 +191,7 @@ class OrderResponse {
       receiveOrder: map['receive_order'],
       address: map['address'],
       moneyChange: map['money_change'] ?? "",
-      deliveryValue: map['delivery_value'] ?? 0.0,
+      deliveryValue: map['delivery_value'].toDouble() ?? 0.0,
     );
   }
 

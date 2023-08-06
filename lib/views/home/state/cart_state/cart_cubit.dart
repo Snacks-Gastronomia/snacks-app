@@ -176,6 +176,8 @@ class CartCubit extends Cubit<CartState> {
         restaurants.add(e.item.restaurant_id);
       }
     });
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
     DataOrder dataTotal = DataOrder(done: [], orders: []);
     // ignore: iterable_contains_unrelated_type
     String order_code = generateOrderCode();
@@ -198,17 +200,19 @@ class CartCubit extends Cubit<CartState> {
           "payment_method": method,
           "phone_number": auth.currentUser?.phoneNumber,
           "rfid": rfid,
-          "value": e.getTotalValue + (isDelivery ? state.delivery_value : 0),
+          "value": (e.getTotalValue + (isDelivery ? state.delivery_value : 0))
+              .toDouble(),
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
-          "delivery_value": isDelivery ? state.delivery_value : 0,
+          "delivery_value": (isDelivery ? state.delivery_value : 0).toDouble(),
           "code": order_code,
           "customer_name": auth.currentUser?.displayName,
           "part_code": order_code.split("-")[0],
           "status": status,
           "receive_order": state.receive_order,
           "need_change": change.toString().isNotEmpty,
+          "_app_version": version,
           if (change.toString().isNotEmpty) "money_change": change,
           "created_at": FieldValue.serverTimestamp(),
           if (isDelivery)
@@ -289,7 +293,8 @@ class CartCubit extends Cubit<CartState> {
             double.tryParse(value.docs[0].data()["value"].toString())));
   }
 
-  void cancelOrder(List<String?> docs) async {
-    await repository.updateStatus(docs, OrderStatus.canceled);
+  Future<void> cancelOrder(List<String?> docs) async {
+    print(docs);
+    return await repository.updateStatus(docs, OrderStatus.canceled);
   }
 }
