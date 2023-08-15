@@ -71,8 +71,20 @@ class AppWidget extends StatelessWidget {
 
       String remoteVersion = firebaseRemoteConfigService.getAppVersionJson();
 
-      return remoteVersion == packageInfo.version;
+      return double.parse(packageInfo.version) >= double.parse(remoteVersion);
       // return true;
+    }
+
+    Future<bool> reviewInProgress() async {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      final firebaseRemoteConfigService = FirebaseRemoteConfigService(
+        firebaseRemoteConfig: FirebaseRemoteConfig.instance,
+      );
+      await firebaseRemoteConfigService.init();
+
+      bool inReview = firebaseRemoteConfigService.getReviewInProgress();
+
+      return inReview;
     }
 
     //0 equal //-1 lesser // 1 greater
@@ -168,11 +180,12 @@ class AppWidget extends StatelessWidget {
       }
 
       validateAccess();
-      var rightVersion = await validateAppVersion();
-
+      bool rightVersion = await validateAppVersion();
+      bool review = await reviewInProgress();
       return {
         "restaurant_available": isDayActive && dayValid,
         "right_app_version": rightVersion,
+        "in_review": review && rightVersion
       };
     }
 
@@ -202,8 +215,23 @@ class AppWidget extends StatelessWidget {
           future: verifyRestaurantStatus(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              var data = snapshot.data;
-              bool current_version = data?["right_app_version"];
+              var data = snapshot.data ?? {};
+              bool current_version = data["right_app_version"];
+              bool restaurant_available = data["restaurant_available"];
+              bool in_review = data["in_review"];
+
+              String startAppRoute =
+                  auth.currentUser != null ? AppRoutes.home : AppRoutes.start;
+
+              if (!in_review) {
+                if (!current_version) {
+                  startAppRoute = AppRoutes.newVersionAvailable;
+                }
+                if (!restaurant_available) {
+                  startAppRoute = AppRoutes.closedRestaurant;
+                }
+              }
+
               return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
@@ -213,13 +241,7 @@ class AppWidget extends StatelessWidget {
                         Theme.of(context).textTheme)),
                 title: "Snacks App",
                 // initialRoute: AppRoutes.orders,
-                initialRoute: current_version
-                    ? data!["restaurant_available"]
-                        ? auth.currentUser != null
-                            ? AppRoutes.home
-                            : AppRoutes.start
-                        : AppRoutes.closedRestaurant
-                    : AppRoutes.newVersionAvailable,
+                initialRoute: startAppRoute,
                 routes: {
                   AppRoutes.start: (context) => StartScreen(),
                   AppRoutes.otp: (context) => const OtpScreen(),
