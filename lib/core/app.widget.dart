@@ -218,7 +218,7 @@ class AppWidget extends StatelessWidget {
                         ? auth.currentUser != null
                             ? AppRoutes.home
                             : AppRoutes.start
-                        : AppRoutes.closedRestaurant
+                        : AppRoutes.start
                     : AppRoutes.newVersionAvailable,
                 routes: {
                   AppRoutes.start: (context) => StartScreen(),
