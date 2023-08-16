@@ -32,4 +32,5 @@ class FirebaseRemoteConfigService {
 
   String getAppVersionJson() => firebaseRemoteConfig.getString(
       Platform.isAndroid ? 'app_version_android' : 'app_version_ios');
+  bool getReviewInProgress() => firebaseRemoteConfig.getBool('app_in_review');
 }
