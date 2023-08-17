@@ -222,6 +222,7 @@ class CartCubit extends Cubit<CartState> {
         });
       }
     }
+    print(dataTotal.orders);
     return dataTotal.orders;
   }
 
