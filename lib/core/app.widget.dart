@@ -71,8 +71,9 @@ class AppWidget extends StatelessWidget {
 
       String remoteVersion = firebaseRemoteConfigService.getAppVersionJson();
 
-      // return double.parse(packageInfo.version) >= double.parse(remoteVersion);
-      return true;
+      return double.parse(packageInfo.version.replaceAll('.', '')) >=
+          double.parse(remoteVersion.replaceAll('.', ''));
+      // return true;
     }
 
     Future<bool> reviewInProgress() async {
