@@ -64,15 +64,20 @@ class CardDetailsModal extends StatelessWidget {
                       var nav = Navigator.of(context);
                       var cubit = context.read<CardCubit>();
                       await Navigator.pushNamed(context, AppRoutes.scanCard)
-                          .then((code) async =>
-                              await cubit.readCard(code, context).then((value) {
-                                nav.pop();
-                                AppModal().showIOSModalBottomSheet(
-                                  drag: false,
-                                  context: context,
-                                  content: const CustomerReportScreen(),
-                                );
-                              }));
+                          .then((code) async {
+                        if (code != null) {
+                          await cubit.readCard(code, context).then((value) {
+                            nav.pop();
+                            if (value) {
+                              AppModal().showIOSModalBottomSheet(
+                                drag: false,
+                                context: context,
+                                content: const CustomerReportScreen(),
+                              );
+                            }
+                          });
+                        }
+                      });
                     },
                     label: "Ler cartão",
                     loading_label: "Escaneando",
