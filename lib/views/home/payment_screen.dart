@@ -117,6 +117,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 description: description));
       }
     }
+    if (auth.currentUser?.displayName != '') {
+      cubit.makeOrder(method, change: change, rfid: card);
+      modal.showIOSModalBottomSheet(
+          context: _globalKey.currentContext,
+          drag: false,
+          content: SuccessScreen(
+              feedback: true,
+              title: "Pedido realizado!",
+              backButton: true,
+              description: description));
+    }
   }
 
   @override
