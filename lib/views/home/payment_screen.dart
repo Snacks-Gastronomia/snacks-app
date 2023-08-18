@@ -96,22 +96,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
     var cubit = BlocProvider.of<CartCubit>(context);
 
     if (withName) {
+      var customerName = '';
       await modal.showModalBottomSheet(
           context: _globalKey.currentContext,
           drag: false,
-          content: CustomerNameModal());
+          content: CustomerNameModal(
+            onNameEntered: (name) {
+              customerName = name ?? "";
+            },
+          ));
+      if (customerName != '') {
+        cubit.makeOrder(method, change: change, rfid: card);
+        modal.showIOSModalBottomSheet(
+            context: _globalKey.currentContext,
+            drag: false,
+            content: SuccessScreen(
+                feedback: true,
+                title: "Pedido realizado!",
+                backButton: true,
+                description: description));
+      }
     }
-
-    cubit.makeOrder(method, change: change, rfid: card);
-
-    await modal.showIOSModalBottomSheet(
-        context: _globalKey.currentContext,
-        drag: false,
-        content: SuccessScreen(
-            feedback: true,
-            title: "Pedido realizado!",
-            backButton: true,
-            description: description));
   }
 
   @override

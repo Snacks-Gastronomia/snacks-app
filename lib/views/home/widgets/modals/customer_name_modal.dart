@@ -1,11 +1,19 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 
 class CustomerNameModal extends StatelessWidget {
-  CustomerNameModal({super.key});
+  CustomerNameModal({
+    Key? key,
+    required this.onNameEntered,
+  }) : super(key: key);
+
+  final Function(String?) onNameEntered;
   final controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Builder(builder: (context) {
@@ -52,6 +60,7 @@ class CustomerNameModal extends StatelessWidget {
                 final nav = Navigator.of(context);
 
                 if (controller.text.isNotEmpty) {
+                  onNameEntered(controller.text);
                   await context
                       .read<HomeCubit>()
                       .setCustomerName(controller.text);

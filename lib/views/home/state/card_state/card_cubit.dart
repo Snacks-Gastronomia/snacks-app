@@ -12,7 +12,7 @@ class CardCubit extends Cubit<CardState> {
   final toast = AppToast();
   CardCubit() : super(CardState.initial());
 
-  Future<void> readCard(rfid, context) async {
+  Future<bool> readCard(rfid, context) async {
     emit(state.copyWith(status: AppStatus.loading));
     toast.init(context: context);
     if (rfid == null || rfid == "") {
@@ -31,6 +31,7 @@ class CardCubit extends Cubit<CardState> {
           nome: res["nome"],
           value: double.parse(res["saldo"].toString()),
         ));
+        return true;
       } else {
         emit(state.copyWith(status: AppStatus.loaded, hasData: false));
 
@@ -40,6 +41,7 @@ class CardCubit extends Cubit<CardState> {
             type: ToastType.info);
       }
     }
+    return false;
   }
 
   changeStatus(AppStatus status) {
