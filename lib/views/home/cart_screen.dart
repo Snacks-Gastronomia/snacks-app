@@ -238,10 +238,9 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                   ),
                                   CustomSubmitButton(
                                       onPressedAction: () => auth.currentUser !=
-                                              null
-                                          //     &&
-                                          // !(auth.currentUser!.isAnonymous &&
-                                          //     snapshot.address.isNotEmpty)
+                                                  null &&
+                                              !(auth.currentUser!.isAnonymous &&
+                                                  snapshot.address.isNotEmpty)
                                           ? Navigator.pushNamed(
                                               context, AppRoutes.payment)
                                           : Navigator.pushNamedAndRemoveUntil(
