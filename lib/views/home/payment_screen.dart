@@ -52,9 +52,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
           context: _globalKey.currentContext,
           drag: false,
           content: const MoneyChangeOptionModal());
-      if (res == null) {
-        return null;
-      }
       if (res) {
         await modal.showModalBottomSheet(
             context: _globalKey.currentContext,
@@ -108,8 +105,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
               customerName = name ?? "";
             },
           ));
-      if (customerName == '') {
-        return null;
+      if (customerName != '') {
+        cubit.makeOrder(method, change: change, rfid: card);
+        modal.showIOSModalBottomSheet(
+            context: _globalKey.currentContext,
+            drag: false,
+            content: SuccessScreen(
+                feedback: true,
+                title: "Pedido realizado!",
+                backButton: true,
+                description: description));
       }
     }
     if (auth.currentUser?.displayName != '') {

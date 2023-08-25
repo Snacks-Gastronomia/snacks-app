@@ -225,6 +225,7 @@ class CartCubit extends Cubit<CartState> {
       dataTotal.orders[0]["value"] += state.delivery_value;
     }
 
+
     return dataTotal.orders;
   }
 
