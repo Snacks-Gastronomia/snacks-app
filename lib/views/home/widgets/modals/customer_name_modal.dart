@@ -3,28 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:snacks_app/core/app.text.dart';
-import 'package:snacks_app/utils/enums.dart';
-import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 
-import '../../../../components/custom_submit_button.dart';
-
-class CustomerNameModal extends StatefulWidget {
+class CustomerNameModal extends StatelessWidget {
   CustomerNameModal({
     Key? key,
     required this.onNameEntered,
   }) : super(key: key);
 
   final Function(String?) onNameEntered;
-
-  @override
-  State<CustomerNameModal> createState() => _CustomerNameModalState();
-}
-
-class _CustomerNameModalState extends State<CustomerNameModal> {
   final controller = TextEditingController();
-
-  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -67,24 +55,28 @@ class _CustomerNameModalState extends State<CustomerNameModal> {
               ),
             ),
             const SizedBox(height: 30),
-            CustomSubmitButton(
-              onPressedAction: () async {
+            ElevatedButton(
+              onPressed: () async {
                 final nav = Navigator.of(context);
 
                 if (controller.text.isNotEmpty) {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  widget.onNameEntered(controller.text);
+                  onNameEntered(controller.text);
                   await context
                       .read<HomeCubit>()
                       .setCustomerName(controller.text);
+
                   nav.pop();
                 }
               },
-              label: "Enviar pedido",
-              loading_label: "Enviando",
-              loading: _isLoading,
+              style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  backgroundColor: Colors.black,
+                  fixedSize: const Size(double.maxFinite, 59)),
+              child: Text(
+                'Enviar pedido',
+                style: AppTextStyles.regular(16, color: Colors.white),
+              ),
             ),
           ],
         ),
