@@ -172,7 +172,7 @@ class CartCubit extends Cubit<CartState> {
     List<String> restaurants = [];
 
     state.cart.map((e) {
-      if (!restaurants.contains(e.item.restaurant_id)) {
+      if (restaurants.contains(e.item.restaurant_id)) {
         restaurants.add(e.item.restaurant_id);
       }
     });
@@ -200,8 +200,7 @@ class CartCubit extends Cubit<CartState> {
           "payment_method": method,
           "phone_number": auth.currentUser?.phoneNumber,
           "rfid": rfid,
-          "value": (e.getTotalValue + (isDelivery ? state.delivery_value : 0))
-              .toDouble(),
+          "value": e.getTotalValue,
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
@@ -222,7 +221,11 @@ class CartCubit extends Cubit<CartState> {
         });
       }
     }
-    print(dataTotal.orders);
+    if (isDelivery) {
+      dataTotal.orders[0]["value"] += state.delivery_value;
+    }
+
+
     return dataTotal.orders;
   }
 
