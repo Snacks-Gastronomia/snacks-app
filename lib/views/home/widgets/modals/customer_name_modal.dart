@@ -3,16 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:snacks_app/core/app.text.dart';
+import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 
-class CustomerNameModal extends StatelessWidget {
+import '../../../../components/custom_submit_button.dart';
+
+class CustomerNameModal extends StatefulWidget {
   CustomerNameModal({
     Key? key,
     required this.onNameEntered,
   }) : super(key: key);
 
   final Function(String?) onNameEntered;
+
+  @override
+  State<CustomerNameModal> createState() => _CustomerNameModalState();
+}
+
+class _CustomerNameModalState extends State<CustomerNameModal> {
   final controller = TextEditingController();
+
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,28 +67,24 @@ class CustomerNameModal extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () async {
+            CustomSubmitButton(
+              onPressedAction: () async {
                 final nav = Navigator.of(context);
 
                 if (controller.text.isNotEmpty) {
-                  onNameEntered(controller.text);
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  widget.onNameEntered(controller.text);
                   await context
                       .read<HomeCubit>()
                       .setCustomerName(controller.text);
-
                   nav.pop();
                 }
               },
-              style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  backgroundColor: Colors.black,
-                  fixedSize: const Size(double.maxFinite, 59)),
-              child: Text(
-                'Enviar pedido',
-                style: AppTextStyles.regular(16, color: Colors.white),
-              ),
+              label: "Enviar pedido",
+              loading_label: "Enviando",
+              loading: _isLoading,
             ),
           ],
         ),
