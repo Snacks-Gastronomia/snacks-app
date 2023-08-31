@@ -8,18 +8,24 @@ import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/services/firebase/custom_token_auth.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/utils/modal.dart';
+import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
 import 'package:snacks_app/views/authentication/state/auth_state.dart';
 import 'package:snacks_app/views/splash/loading_screen.dart';
 
+import '../home/widgets/modals/content_payment_failed.dart';
+
 class StartScreen extends StatelessWidget {
   StartScreen({Key? key}) : super(key: key);
   final auth = FirebaseCustomTokenAuth();
+  final toast = AppToast();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+        toast.init(context: context);
         return LoadingPage(
           loading: state.status == AppStatus.loading,
           text: "Bem vindo ao snacks",
@@ -57,6 +63,15 @@ class StartScreen extends StatelessWidget {
                                 navigator.pushNamedAndRemoveUntil(
                                     AppRoutes.home, (route) => false);
                                 cubit.changeStatus(AppStatus.loaded);
+                              } else {
+                                debugPrint('Failed to scan Barcode');
+                                cubit.changeStatus(AppStatus.loaded);
+                                // ignore: use_build_context_synchronously
+                                toast.showToast(
+                                    context: context,
+                                    content:
+                                        "Verifique sua conexão com a internet.",
+                                    type: ToastType.error);
                               }
                             } else {
                               cubit.changeStatus(AppStatus.loaded);
