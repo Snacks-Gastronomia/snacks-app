@@ -229,7 +229,8 @@ class AppWidget extends StatelessWidget {
                   startAppRoute = AppRoutes.newVersionAvailable;
                 }
                 if (!restaurant_available) {
-                  startAppRoute = AppRoutes.closedRestaurant;
+                  // startAppRoute = AppRoutes.closedRestaurant;
+                  startAppRoute = AppRoutes.start;
                 }
               }
 
