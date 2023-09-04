@@ -7,7 +7,9 @@ import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/order_reponse.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
+import 'package:snacks_app/views/home/widgets/modals/cancel_order.dart';
 import 'package:snacks_app/views/home/widgets/signal_ripple_animation.dart';
 
 class OrderDetailsContent extends StatelessWidget {
@@ -118,10 +120,16 @@ class OrderDetailsContent extends StatelessWidget {
           if (allowCancel)
             TextButton(
               onPressed: () async {
-                await context
-                    .read<CartCubit>()
-                    .cancelOrder(ord.isDelivery ? all : allowCancelOrders)
-                    .then((value) => Navigator.pop(context));
+                bool res = await AppModal().showModalBottomSheet(
+                    context: context,
+                    content: CancelOrder(partCode: ord.partCode));
+                if (res) {
+                  // ignore: use_build_context_synchronously
+                  context
+                      .read<CartCubit>()
+                      .cancelOrder(ord.isDelivery ? all : allowCancelOrders)
+                      .then((value) => Navigator.pop(context));
+                }
               },
               style: ElevatedButton.styleFrom(
                   fixedSize: const Size(double.maxFinite, 59)),
