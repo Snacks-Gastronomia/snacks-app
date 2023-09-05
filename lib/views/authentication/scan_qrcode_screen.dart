@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
-import 'package:snacks_app/services/firebase/custom_token_auth.dart';
 import 'package:snacks_app/utils/corner_border.dart';
+import 'package:snacks_app/views/authentication/widgets/custom_text_button.dart';
 
 class ScanQrCodeScreen extends StatefulWidget {
   const ScanQrCodeScreen({Key? key}) : super(key: key);
@@ -139,6 +137,9 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                   "assets/icons/snacks.svg",
                   color: Colors.white.withOpacity(.20),
                 ),
+              ),
+              CustomTextButton(
+                route: AppRoutes.phoneAuth,
               )
             ],
           ),
