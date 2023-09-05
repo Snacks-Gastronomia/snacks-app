@@ -96,8 +96,8 @@ class _MyCartScreenState extends State<MyCartScreen> {
                             ? state.delivery_value
                             : 0);
                         double total = subTotal + delivery;
-                        bool isDelivery = false;
-                        // (auth.currentUser?.phoneNumber != null);
+                        bool isDelivery =
+                            (auth.currentUser?.phoneNumber != null);
 
                         return Column(
                           mainAxisSize: MainAxisSize.min,
@@ -248,7 +248,8 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                         var cubit = context.read<AuthCubit>();
                                         var permission =
                                             await Permission.camera.request();
-                                        if (permission.isGranted) {
+                                        if (permission.isGranted &&
+                                            !isDelivery) {
                                           final code = await navigator
                                               .pushNamed(AppRoutes.scanQrCode);
                                           cubit.changeStatus(AppStatus.loading);
@@ -287,6 +288,9 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                           } catch (e) {
                                             print(e);
                                           }
+                                        } else if (isDelivery) {
+                                          navigator
+                                              .pushNamed(AppRoutes.payment);
                                         }
                                       },
                                       label: "Continuar",
