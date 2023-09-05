@@ -134,38 +134,28 @@ class _ItemScreenState extends State<ItemScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (auth.currentUser != null) {
-                      AppModal().showModalBottomSheet(
-                        context: context,
-                        content: ModalContentObservation(
-                            action: () {
-                              var order =
-                                  context.read<ItemScreenCubit>().state.order!;
-                              BlocProvider.of<CartCubit>(context)
-                                  .addToCart(order);
-                              Navigator.popUntil(
-                                  context, ModalRoute.withName(AppRoutes.home));
+                    AppModal().showModalBottomSheet(
+                      context: context,
+                      content: ModalContentObservation(
+                          action: () {
+                            var order =
+                                context.read<ItemScreenCubit>().state.order!;
+                            BlocProvider.of<CartCubit>(context)
+                                .addToCart(order);
+                            Navigator.popUntil(
+                                context, ModalRoute.withName(AppRoutes.home));
 
-                              Navigator.pushNamed(context, AppRoutes.cart);
-                            },
-                            value: context
-                                .read<ItemScreenCubit>()
-                                .state
-                                .order!
-                                .observations,
-                            onChanged: context
-                                .read<ItemScreenCubit>()
-                                .observationChanged),
-                      );
-                    } else {
-                      toast.init(context: context);
-                      toast.showToast(
-                          context: context,
-                          content:
-                              "É necessário entrar para fazer o pedido. :)",
-                          type: ToastType.info);
-                      Navigator.pushNamed(context, AppRoutes.start);
-                    }
+                            Navigator.pushNamed(context, AppRoutes.cart);
+                          },
+                          value: context
+                              .read<ItemScreenCubit>()
+                              .state
+                              .order!
+                              .observations,
+                          onChanged: context
+                              .read<ItemScreenCubit>()
+                              .observationChanged),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(

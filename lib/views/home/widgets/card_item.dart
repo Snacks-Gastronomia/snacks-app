@@ -121,22 +121,10 @@ class CardItemWidget extends StatelessWidget {
                   // bool itemAdded = state.cart.contains(order);
                   return IconButton(
                     onPressed: () {
-                      if (auth.currentUser != null) {
-                        context.read<ItemScreenCubit>().insertItem(order, true);
-                        context.read<CartCubit>().hasItem(order.item.id ?? "")
-                            ? context.read<CartCubit>().removeToCart(order)
-                            : context.read<CartCubit>().addToCart(order);
-                      } else {
-                        toast.init(context: context);
-                        toast.showToast(
-                            context: context,
-                            content:
-                                "É necessário entrar para fazer o pedido. :)",
-                            type: ToastType.info);
-
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, AppRoutes.start, (route) => false);
-                      }
+                      context.read<ItemScreenCubit>().insertItem(order, true);
+                      context.read<CartCubit>().hasItem(order.item.id ?? "")
+                          ? context.read<CartCubit>().removeToCart(order)
+                          : context.read<CartCubit>().addToCart(order);
                     },
                     tooltip:
                         context.read<CartCubit>().hasItem(order.item.id ?? "")
