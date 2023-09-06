@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:group_button/group_button.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
@@ -16,6 +17,9 @@ import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/widgets/cart_item.dart';
 import 'package:snacks_app/views/review/review_screen.dart';
 
+import '../../services/firebase/custom_token_auth.dart';
+import '../../utils/toast.dart';
+
 class MyCartScreen extends StatefulWidget {
   MyCartScreen({Key? key}) : super(key: key);
 
@@ -25,6 +29,8 @@ class MyCartScreen extends StatefulWidget {
 
 class _MyCartScreenState extends State<MyCartScreen> {
   final auth = FirebaseAuth.instance;
+  final customAuth = FirebaseCustomTokenAuth();
+  final toast = AppToast();
 
   final storage = AppStorage();
 
@@ -91,7 +97,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                             : 0);
                         double total = subTotal + delivery;
                         bool isDelivery =
-                            !(auth.currentUser?.isAnonymous ?? false);
+                            (auth.currentUser?.phoneNumber != null);
 
                         return Column(
                           mainAxisSize: MainAxisSize.min,
@@ -237,17 +243,55 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                     ),
                                   ),
                                   CustomSubmitButton(
-                                      onPressedAction: () => auth.currentUser !=
-                                              null
-                                          //     &&
-                                          // !(auth.currentUser!.isAnonymous &&
-                                          //     snapshot.address.isNotEmpty)
-                                          ? Navigator.pushNamed(
-                                              context, AppRoutes.payment)
-                                          : Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              AppRoutes.start,
-                                              (route) => false),
+                                      onPressedAction: () async {
+                                        var navigator = Navigator.of(context);
+                                        var cubit = context.read<AuthCubit>();
+                                        var permission =
+                                            await Permission.camera.request();
+                                        if (permission.isGranted &&
+                                            !isDelivery) {
+                                          final code = await navigator
+                                              .pushNamed(AppRoutes.scanQrCode);
+                                          cubit.changeStatus(AppStatus.loading);
+                                          try {
+                                            int? table =
+                                                int.tryParse(code.toString());
+                                            if (table != null &&
+                                                (table >= 1 && table <= 100)) {
+                                              var user =
+                                                  await customAuth.signIn(
+                                                      table: code.toString());
+
+                                              if (user != null) {
+                                                navigator.pushNamed(
+                                                  AppRoutes.payment,
+                                                );
+                                                cubit.changeStatus(
+                                                    AppStatus.loaded);
+                                              } else {
+                                                debugPrint(
+                                                    'Failed to scan Barcode');
+                                                cubit.changeStatus(
+                                                    AppStatus.loaded);
+                                                // ignore: use_build_context_synchronously
+                                                toast.showToast(
+                                                    context: context,
+                                                    content:
+                                                        "Verifique sua conexão com a internet.",
+                                                    type: ToastType.error);
+                                              }
+                                            } else {
+                                              cubit.changeStatus(
+                                                  AppStatus.loaded);
+                                            }
+                                          } catch (e) {
+                                            print(e);
+                                          }
+                                        } else if (isDelivery) {
+                                          navigator
+                                              .pushNamed(AppRoutes.payment);
+                                        }
+                                      },
                                       label: "Continuar",
                                       loading_label: "",
                                       loading: false)

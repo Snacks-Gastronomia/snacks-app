@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
-import 'package:snacks_app/services/firebase/custom_token_auth.dart';
 import 'package:snacks_app/utils/corner_border.dart';
 
 class ScanQrCodeScreen extends StatefulWidget {
@@ -139,7 +136,21 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                   "assets/icons/snacks.svg",
                   color: Colors.white.withOpacity(.20),
                 ),
-              )
+              ),
+              TextButton.icon(
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRoutes.phoneAuth),
+                label: Icon(
+                  Icons.arrow_forward_sharp,
+                  color: Colors.white.withOpacity(0.5),
+                  size: 12,
+                ),
+                icon: Text(
+                  "Ou entre para pedir delivery",
+                  style: AppTextStyles.semiBold(16,
+                      color: Colors.white.withOpacity(0.5)),
+                ),
+              ),
             ],
           ),
         ),
