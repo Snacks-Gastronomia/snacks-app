@@ -4,7 +4,6 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/utils/corner_border.dart';
-import 'package:snacks_app/views/authentication/widgets/custom_text_button.dart';
 
 class ScanQrCodeScreen extends StatefulWidget {
   const ScanQrCodeScreen({Key? key}) : super(key: key);
@@ -138,9 +137,20 @@ class _ScanQrCodeScreenState extends State<ScanQrCodeScreen> {
                   color: Colors.white.withOpacity(.20),
                 ),
               ),
-              CustomTextButton(
-                route: AppRoutes.phoneAuth,
-              )
+              TextButton.icon(
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRoutes.phoneAuth),
+                label: Icon(
+                  Icons.arrow_forward_sharp,
+                  color: Colors.white.withOpacity(0.5),
+                  size: 12,
+                ),
+                icon: Text(
+                  "Ou entre para pedir delivery",
+                  style: AppTextStyles.semiBold(16,
+                      color: Colors.white.withOpacity(0.5)),
+                ),
+              ),
             ],
           ),
         ),

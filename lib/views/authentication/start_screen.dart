@@ -74,20 +74,6 @@ class StartScreen extends StatelessWidget {
                         }
                         return const SizedBox();
                       }),
-                  TextButton.icon(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, AppRoutes.home),
-                    label: const Icon(
-                      Icons.arrow_forward_rounded,
-                      color: Color(0xff35C2C1),
-                      size: 12,
-                    ),
-                    icon: Text(
-                      "Ou veja o cardápio",
-                      style: AppTextStyles.light(12,
-                          color: const Color(0xff35C2C1)),
-                    ),
-                  ),
                 ],
               ),
             ),
