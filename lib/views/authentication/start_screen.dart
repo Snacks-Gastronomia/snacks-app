@@ -47,6 +47,7 @@ class StartScreen extends StatelessWidget {
                   CustomButton(
                       icon: AppImages.utensils,
                       action: () async {
+                        auth.signIn(table: '');
                         var navigator = Navigator.of(context);
                         navigator.pushNamed(AppRoutes.home);
                       },
