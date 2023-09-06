@@ -263,10 +263,9 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                                       table: code.toString());
 
                                               if (user != null) {
-                                                navigator
-                                                    .pushNamedAndRemoveUntil(
-                                                        AppRoutes.payment,
-                                                        (route) => false);
+                                                navigator.pushNamed(
+                                                  AppRoutes.payment,
+                                                );
                                                 cubit.changeStatus(
                                                     AppStatus.loaded);
                                               } else {
