@@ -35,8 +35,8 @@ class SuccessScreen extends StatelessWidget {
                       children: [
                         IconButton(
                             onPressed: () {
-                              Navigator.popUntil(
-                                  context, ModalRoute.withName(AppRoutes.home));
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, AppRoutes.home, (route) => false);
                             },
                             icon: const Icon(
                               Icons.cancel_rounded,

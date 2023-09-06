@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 
 import 'package:snacks_app/core/app.text.dart';
@@ -44,46 +45,16 @@ class StartScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   CustomButton(
-                      icon: Icons.qr_code_scanner_rounded,
+                      icon: AppImages.utensils,
                       action: () async {
+                        auth.auth.signOut();
+                        auth.signIn(table: '');
                         var navigator = Navigator.of(context);
-                        var cubit = context.read<AuthCubit>();
-                        var permission = await Permission.camera.request();
-                        if (permission.isGranted) {
-                          final code =
-                              await navigator.pushNamed(AppRoutes.scanQrCode);
-                          cubit.changeStatus(AppStatus.loading);
-                          try {
-                            int? table = int.tryParse(code.toString());
-                            if (table != null && (table >= 1 && table <= 100)) {
-                              var user =
-                                  await auth.signIn(table: code.toString());
-
-                              if (user != null) {
-                                navigator.pushNamedAndRemoveUntil(
-                                    AppRoutes.home, (route) => false);
-                                cubit.changeStatus(AppStatus.loaded);
-                              } else {
-                                debugPrint('Failed to scan Barcode');
-                                cubit.changeStatus(AppStatus.loaded);
-                                // ignore: use_build_context_synchronously
-                                toast.showToast(
-                                    context: context,
-                                    content:
-                                        "Verifique sua conexão com a internet.",
-                                    type: ToastType.error);
-                              }
-                            } else {
-                              cubit.changeStatus(AppStatus.loaded);
-                            }
-                          } catch (e) {
-                            print(e);
-                          }
-                        }
+                        navigator.pushNamed(AppRoutes.home);
                       },
                       dark: true,
                       title: "Está no snacks?",
-                      description: "Escaneie o QrCode"),
+                      description: "Continue para ver o cardápio"),
                   const SizedBox(
                     height: 15,
                   ),
@@ -105,20 +76,6 @@ class StartScreen extends StatelessWidget {
                         }
                         return const SizedBox();
                       }),
-                  TextButton.icon(
-                    onPressed: () =>
-                        Navigator.pushNamed(context, AppRoutes.home),
-                    label: const Icon(
-                      Icons.arrow_forward_rounded,
-                      color: Color(0xff35C2C1),
-                      size: 12,
-                    ),
-                    icon: Text(
-                      "Ou veja o cardápio",
-                      style: AppTextStyles.light(12,
-                          color: const Color(0xff35C2C1)),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -141,7 +98,7 @@ class CustomButton extends StatelessWidget {
 
   final String title;
   final String description;
-  final IconData icon;
+  final dynamic icon;
   final VoidCallback action;
   final bool dark;
 
@@ -163,11 +120,14 @@ class CustomButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(15)),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 65,
-              color: dark ? Colors.white : Colors.black,
-            ),
+            if (icon is IconData)
+              Icon(
+                icon,
+                size: 65,
+                color: dark ? Colors.white : Colors.black,
+              )
+            else
+              SvgPicture.asset(icon),
             const SizedBox(
               width: 20,
             ),
