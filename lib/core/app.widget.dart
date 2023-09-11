@@ -120,8 +120,8 @@ class AppWidget extends StatelessWidget {
 
     Future<Map<String, dynamic>> verifyRestaurantStatus() async {
       await initializeDateFormatting("pt_BR");
+      auth.signInAnonymously();
 
-//7 - sunday
       var time = DateTime.now();
       var now = TimeOfDay.fromDateTime(time);
 
