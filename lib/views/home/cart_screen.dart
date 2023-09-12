@@ -96,8 +96,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                             ? state.delivery_value
                             : 0);
                         double total = subTotal + delivery;
-                        bool isDelivery =
-                            (auth.currentUser?.phoneNumber != null);
+                        bool isDelivery = (!auth.currentUser!.isAnonymous);
 
                         return Column(
                           mainAxisSize: MainAxisSize.min,
