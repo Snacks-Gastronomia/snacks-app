@@ -284,6 +284,7 @@ class ItemWidget extends StatelessWidget {
                           return SvgPicture.asset(
                             AppImages.snacks,
                             height: 10,
+                            width: 10,
                           );
                         },
                       ),
