@@ -59,6 +59,8 @@ class CardItemWidget extends StatelessWidget {
                           ),
                         )
                       : CachedNetworkImage(
+                          useOldImageOnUrlChange: true,
+                          maxHeightDiskCache: 300,
                           imageUrl: item.image_url!,
                           fit: BoxFit.cover,
                           progressIndicatorBuilder:
