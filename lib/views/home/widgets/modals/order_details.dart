@@ -275,8 +275,18 @@ class ItemWidget extends StatelessWidget {
                           width: 42,
                         ),
                       )
-                    : Image.network(image!,
-                        height: 42, width: 42, fit: BoxFit.cover),
+                    : Image.network(
+                        image!,
+                        height: 42,
+                        width: 42,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return SvgPicture.asset(
+                            AppImages.snacks,
+                            height: 10,
+                          );
+                        },
+                      ),
               ),
               const SizedBox(width: 7),
               Expanded(
