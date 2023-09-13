@@ -206,6 +206,9 @@ class _ItemScreenState extends State<ItemScreen> {
                           fit: BoxFit.cover,
                           width: double.maxFinite,
                           height: MediaQuery.of(context).size.height * 0.5,
+                          errorBuilder: (context, error, stackTrace) {
+                            return SizedBox.shrink();
+                          },
 
                           // height: 200,
                         ),
