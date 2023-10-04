@@ -9,7 +9,11 @@ class CoupomCode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(30.0),
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          top: 30,
+          left: 30,
+          right: 30),
       child: Column(
         children: [
           Text(
