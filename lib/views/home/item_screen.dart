@@ -13,6 +13,7 @@ import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
+import 'package:snacks_app/views/home/widgets/modals/coupom_code.dart';
 import 'package:snacks_app/views/home/widgets/modals/modal_content_obs.dart';
 
 class ItemScreen extends StatefulWidget {
@@ -351,7 +352,10 @@ class _ItemScreenState extends State<ItemScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        AppModal().showModalBottomSheet(
+                            context: context, content: CoupomCode());
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
