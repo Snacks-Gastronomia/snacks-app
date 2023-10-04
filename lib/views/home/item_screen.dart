@@ -350,12 +350,17 @@ class _ItemScreenState extends State<ItemScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Row(
-                  //   children: const [
-                  //     Icon(Icons.star_rounded),
-                  //     Text('4.9'),
-                  //   ],
-                  // ),
+                  TextButton(
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.local_offer),
+                          SizedBox(width: 15),
+                          Text("Adicionar cupom de desconto")
+                        ],
+                      )),
                   const SizedBox(
                     height: 15,
                   ),
@@ -509,7 +514,6 @@ class _ItemScreenState extends State<ItemScreen> {
                             })
                       ],
                     ),
-
                   const SizedBox(
                     height: 50,
                   )
