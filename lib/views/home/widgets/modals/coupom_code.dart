@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.text.dart';
 
 class CoupomCode extends StatelessWidget {
@@ -24,11 +25,31 @@ class CoupomCode extends StatelessWidget {
             height: 30,
           ),
           TextFormField(
+            textAlign: TextAlign.center,
             controller: controllerCode,
+            textCapitalization: TextCapitalization.characters,
+            decoration: const InputDecoration(
+                border: InputBorder.none, hintText: "EX: CUPOM10"),
             style: const TextStyle(
-              fontSize: 30,
-            ),
-          )
+                fontSize: 30, color: Colors.green, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 43,
+          ),
+          CustomSubmitButton(
+              onPressedAction: () {},
+              label: "Aplicar",
+              loading_label: "Carregando",
+              loading: false),
+          const SizedBox(
+            height: 18,
+          ),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.red),
+              ))
         ],
       ),
     );
