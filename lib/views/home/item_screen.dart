@@ -9,9 +9,12 @@ import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/order_model.dart';
+import 'package:snacks_app/services/coupons_service.dart';
 import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
+import 'package:snacks_app/views/home/state/coupon_state/coupon_cubit.dart';
+import 'package:snacks_app/views/home/state/coupon_state/coupon_state.dart';
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 import 'package:snacks_app/views/home/widgets/modals/coupom_code.dart';
 import 'package:snacks_app/views/home/widgets/modals/modal_content_obs.dart';
@@ -30,6 +33,7 @@ class _ItemScreenState extends State<ItemScreen> {
   // bool updateItem = false;
   final auth = FirebaseAuth.instance;
   final toast = AppToast();
+  final service = CouponsService();
   @override
   void initState() {
     super.initState();
@@ -351,20 +355,35 @@ class _ItemScreenState extends State<ItemScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(
-                      onPressed: () {
-                        AppModal().showModalBottomSheet(
-                            context: context, content: CoupomCode());
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.local_offer),
-                          SizedBox(width: 15),
-                          Text("Adicionar cupom de desconto")
-                        ],
-                      )),
+                  BlocBuilder<CouponCubit, CouponState>(
+                      bloc: context.read<CouponCubit>(),
+                      builder: (context, state) {
+                        return TextButton(
+                            onPressed: () {
+                              context
+                                  .read<CouponCubit>()
+                                  .initCubit(widget.order.item.restaurant_id);
+                              AppModal().showModalBottomSheet(
+                                  context: context,
+                                  content: CoupomCode(
+                                    restaurantId:
+                                        widget.order.item.restaurant_id,
+                                  ));
+                            },
+                            child: state is CouponLoaded
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.local_offer),
+                                      const SizedBox(width: 15),
+                                      Text(state.message)
+                                    ],
+                                  )
+                                : const Center(
+                                    child: CircularProgressIndicator()));
+                      }),
                   const SizedBox(
                     height: 15,
                   ),

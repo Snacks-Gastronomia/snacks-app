@@ -19,6 +19,7 @@ import 'package:snacks_app/views/authentication/unavailable_screen.dart';
 import 'package:snacks_app/views/home/orders_screen.dart';
 import 'package:snacks_app/views/home/state/card_state/card_cubit.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
+import 'package:snacks_app/views/home/state/coupon_state/coupon_cubit.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 import 'package:snacks_app/views/home/cart_screen.dart';
@@ -211,6 +212,9 @@ class AppWidget extends StatelessWidget {
         ),
         BlocProvider<CardCubit>(
           create: (context) => CardCubit(),
+        ),
+        BlocProvider<CouponCubit>(
+          create: (context) => CouponCubit(),
         ),
       ],
       key: UniqueKey(),
