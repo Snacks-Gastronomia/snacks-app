@@ -358,31 +358,44 @@ class _ItemScreenState extends State<ItemScreen> {
                   BlocBuilder<CouponCubit, CouponState>(
                       bloc: context.read<CouponCubit>(),
                       builder: (context, state) {
-                        return TextButton(
-                            onPressed: () {
-                              context
-                                  .read<CouponCubit>()
-                                  .initCubit(widget.order.item.restaurant_id);
-                              AppModal().showModalBottomSheet(
-                                  context: context,
-                                  content: CoupomCode(
-                                    restaurantId:
-                                        widget.order.item.restaurant_id,
-                                  ));
-                            },
-                            child: state is CouponLoaded
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      const Icon(Icons.local_offer),
-                                      const SizedBox(width: 15),
-                                      Text(state.message)
-                                    ],
+                        if (state is CouponLoaded) {
+                          return TextButton(
+                              onPressed: () {
+                                AppModal().showModalBottomSheet(
+                                    context: context,
+                                    content: CoupomCode(
+                                      restaurantId:
+                                          widget.order.item.restaurant_id,
+                                    ));
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  state.icon,
+                                  const SizedBox(width: 15),
+                                  Text(
+                                    state.message,
+                                    style: TextStyle(color: state.color),
                                   )
-                                : const Center(
-                                    child: CircularProgressIndicator()));
+                                ],
+                              ));
+                        } else if (state is CouponLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (state is CouponError) {
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.local_offer),
+                              const SizedBox(width: 15),
+                              Text(state.message)
+                            ],
+                          );
+                        }
+                        return const SizedBox.shrink();
                       }),
                   const SizedBox(
                     height: 15,

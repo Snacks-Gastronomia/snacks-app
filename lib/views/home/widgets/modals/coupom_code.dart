@@ -50,8 +50,10 @@ class CoupomCode extends StatelessWidget {
                   height: 43,
                 ),
                 CustomSubmitButton(
-                    onPressedAction: () async {
-                      cubit.addCoupom(controllerCode.text, restaurantId);
+                    onPressedAction: () {
+                      cubit.addCoupom(
+                          controllerCode.text, restaurantId, context);
+                      Navigator.pop(context);
                     },
                     label: "Aplicar",
                     loading_label: "Carregando",
