@@ -147,5 +147,11 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
 
   useCupom() {
     state.couponsList.add(coupomCode);
+    print(state.couponsList);
+  }
+
+  removeCupom(coupomCode) {
+    state.couponsList.remove(coupomCode);
+    print(state.couponsList);
   }
 }

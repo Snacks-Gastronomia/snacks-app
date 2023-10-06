@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
@@ -17,6 +18,7 @@ import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/home/repository/card_repository.dart';
 import 'package:snacks_app/views/home/repository/orders_repository.dart';
+import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 
 part 'cart_state.dart';
 
@@ -105,9 +107,11 @@ class CartCubit extends Cubit<CartState> {
     updateTotalValue();
   }
 
-  void removeToCart(OrderModel order) {
+  void removeToCart(OrderModel order, BuildContext context) {
     final newCart = state.cart;
     newCart.removeWhere((element) => element.item.id == order.item.id);
+
+    BlocProvider.of<ItemScreenCubit>(context).removeCupom(order.coupomCode);
 
     emit(state.copyWith(cart: newCart));
 
@@ -224,7 +228,6 @@ class CartCubit extends Cubit<CartState> {
     if (isDelivery) {
       dataTotal.orders[0]["value"] += state.delivery_value;
     }
-
 
     return dataTotal.orders;
   }

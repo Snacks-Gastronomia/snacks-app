@@ -125,7 +125,9 @@ class CardItemWidget extends StatelessWidget {
                     onPressed: () {
                       context.read<ItemScreenCubit>().insertItem(order, true);
                       context.read<CartCubit>().hasItem(order.item.id ?? "")
-                          ? context.read<CartCubit>().removeToCart(order)
+                          ? context
+                              .read<CartCubit>()
+                              .removeToCart(order, context)
                           : context.read<CartCubit>().addToCart(order);
                     },
                     tooltip:
