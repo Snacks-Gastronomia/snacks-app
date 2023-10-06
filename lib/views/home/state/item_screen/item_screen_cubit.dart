@@ -14,6 +14,7 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
   final service = CouponsService();
   final toast = AppToast();
   String coupomCode = '';
+  CoupomModel coupom = CoupomModel(active: false, code: '', discount: 0);
 
   void incrementAmount() {
     var amount = state.order!.amount + 1;
@@ -98,13 +99,15 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     for (var coupon in couponsList) {
       if (coupon.code == value) {
         couponFound = true;
-        addDiscount(coupon);
+
         coupomCode = coupon.code;
+        coupom = coupon;
 
         break;
       }
     }
     if (couponFound && !state.couponsList.contains(coupomCode)) {
+      addDiscount(coupom);
       // ignore: use_build_context_synchronously
       toast.showToast(
           context: context,
