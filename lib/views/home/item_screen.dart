@@ -13,9 +13,9 @@ import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/utils/modal.dart';
 
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
-import 'package:snacks_app/views/home/state/coupon_state/coupon_cubit.dart';
-import 'package:snacks_app/views/home/state/coupon_state/coupon_state.dart';
+
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
+import 'package:snacks_app/views/home/widgets/coupom_widget.dart';
 import 'package:snacks_app/views/home/widgets/modals/coupom_code.dart';
 import 'package:snacks_app/views/home/widgets/modals/modal_content_obs.dart';
 
@@ -354,26 +354,13 @@ class _ItemScreenState extends State<ItemScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(
-                      onPressed: () {
-                        AppModal().showModalBottomSheet(
-                            context: context,
-                            content: CoupomCode(
-                              context: context,
-                              restaurantId: widget.order.item.restaurant_id,
-                            ));
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.local_offer),
-                          SizedBox(width: 15),
-                          Text(
-                            "Adicionar cupom de desconto",
-                          )
-                        ],
-                      )),
+                  BlocBuilder<ItemScreenCubit, ItemScreenState>(
+                      builder: (context, state) {
+                    return CoupomWidget(
+                      hasCoupom: state.order!.hasCoupom,
+                      restaurantId: widget.order.item.restaurant_id,
+                    );
+                  }),
                   const SizedBox(
                     height: 15,
                   ),

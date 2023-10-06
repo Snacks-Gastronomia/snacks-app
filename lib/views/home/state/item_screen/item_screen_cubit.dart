@@ -93,23 +93,25 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
       String value, String restaurantId, BuildContext context) async {
     var couponsList = await getListCoupons(restaurantId);
     double discount = 0;
+    bool couponFound = false;
     for (var coupon in couponsList) {
       if (coupon.code == value) {
         discount = coupon.discount.toDouble();
-        // ignore: use_build_context_synchronously
-        toast.showToast(
-            context: context,
-            content: "Cupom adicionado",
-            type: ToastType.success);
+        couponFound = true;
         addDiscount(discount);
-      } else {
-        // ignore: use_build_context_synchronously
-        toast.showToast(
-          context: context,
-          content: "Cupom inválido",
-          type: ToastType.error,
-        );
+        break;
       }
+    }
+    if (couponFound) {
+      // ignore: use_build_context_synchronously
+      toast.showToast(
+          context: context,
+          content: "Cupom adicionado",
+          type: ToastType.success);
+    } else {
+      // ignore: use_build_context_synchronously
+      toast.showToast(
+          context: context, content: "Cupom inválido", type: ToastType.error);
     }
   }
 
@@ -117,6 +119,7 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     // double itemValue = state.order!.getTotalValue;
     // double totalWithDiscount = itemValue - (itemValue * (value / 100));
 
-    emit(state.copyWith(order: state.order!.copyWith(discount: value)));
+    emit(state.copyWith(
+        order: state.order!.copyWith(discount: value, hasCoupom: true)));
   }
 }

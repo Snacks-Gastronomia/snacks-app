@@ -27,7 +27,7 @@ class CoupomCode extends StatelessWidget {
 
     return BlocBuilder<ItemScreenCubit, ItemScreenState>(
         bloc: cubit,
-        builder: (context, snapshot) {
+        builder: (context, state) {
           return Padding(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,

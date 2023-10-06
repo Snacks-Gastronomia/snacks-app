@@ -13,6 +13,7 @@ class OrderModel {
   dynamic option_selected;
   double value;
   double discount;
+  bool hasCoupom;
   OrderModel(
       {required this.item,
       this.amount = 1,
@@ -21,6 +22,7 @@ class OrderModel {
       required this.option_selected,
       this.value = 0.0,
       this.discount = 0.0,
+      this.hasCoupom = false,
       this.extras = const []}) {
     status = OrderStatus.waiting_payment.name;
   }
@@ -32,7 +34,8 @@ class OrderModel {
       String? status,
       dynamic option_selected,
       List<dynamic>? extras,
-      double? discount}) {
+      double? discount,
+      bool? hasCoupom}) {
     return OrderModel(
       item: item ?? this.item,
       amount: amount ?? this.amount,
@@ -40,6 +43,7 @@ class OrderModel {
       extras: extras ?? this.extras,
       option_selected: option_selected ?? this.option_selected,
       discount: discount ?? this.discount,
+      hasCoupom: hasCoupom ?? this.hasCoupom,
       // status: status ?? this.status,
     );
   }
