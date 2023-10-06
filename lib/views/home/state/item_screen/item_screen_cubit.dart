@@ -13,6 +13,7 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
 
   final service = CouponsService();
   final toast = AppToast();
+  String coupomCode = '';
 
   void incrementAmount() {
     var amount = state.order!.amount + 1;
@@ -98,19 +99,35 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
       if (coupon.code == value) {
         couponFound = true;
         addDiscount(coupon);
+        coupomCode = coupon.code;
+
         break;
       }
     }
-    if (couponFound) {
+    if (couponFound && !state.couponsList.contains(coupomCode)) {
       // ignore: use_build_context_synchronously
       toast.showToast(
           context: context,
           content: "Cupom adicionado",
           type: ToastType.success);
+
+      print(state.couponsList);
+    } else if (couponFound && state.couponsList.contains(coupomCode)) {
+      // ignore: use_build_context_synchronously
+      toast.showToast(
+          context: context,
+          content: "Esse cupom já foi usado",
+          type: ToastType.info);
+
+      print(state.couponsList);
     } else {
       // ignore: use_build_context_synchronously
       toast.showToast(
-          context: context, content: "Cupom inválido", type: ToastType.error);
+        context: context,
+        content: "Cupom inválido",
+        type: ToastType.error,
+      );
+      print(state.couponsList);
     }
   }
 
@@ -123,5 +140,9 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
             discount: coupom.discount.toDouble(),
             hasCoupom: true,
             coupomCode: coupom.code)));
+  }
+
+  useCupom() {
+    state.couponsList.add(coupomCode);
   }
 }

@@ -144,6 +144,9 @@ class _ItemScreenState extends State<ItemScreen> {
                           action: () {
                             var order =
                                 context.read<ItemScreenCubit>().state.order!;
+
+                            BlocProvider.of<ItemScreenCubit>(context)
+                                .useCupom();
                             BlocProvider.of<CartCubit>(context)
                                 .addToCart(order);
                             Navigator.popUntil(
