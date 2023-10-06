@@ -92,13 +92,12 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
   Future<void> addCoupom(
       String value, String restaurantId, BuildContext context) async {
     var couponsList = await getListCoupons(restaurantId);
-    double discount = 0;
+
     bool couponFound = false;
     for (var coupon in couponsList) {
       if (coupon.code == value) {
-        discount = coupon.discount.toDouble();
         couponFound = true;
-        addDiscount(discount);
+        addDiscount(coupon);
         break;
       }
     }
@@ -115,11 +114,14 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     }
   }
 
-  addDiscount(value) {
+  addDiscount(CoupomModel coupom) {
     // double itemValue = state.order!.getTotalValue;
     // double totalWithDiscount = itemValue - (itemValue * (value / 100));
 
     emit(state.copyWith(
-        order: state.order!.copyWith(discount: value, hasCoupom: true)));
+        order: state.order!.copyWith(
+            discount: coupom.discount.toDouble(),
+            hasCoupom: true,
+            coupomCode: coupom.code)));
   }
 }

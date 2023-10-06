@@ -5,9 +5,13 @@ import 'package:snacks_app/views/home/widgets/modals/coupom_code.dart';
 
 class CoupomWidget extends StatelessWidget {
   const CoupomWidget(
-      {super.key, required this.hasCoupom, required this.restaurantId});
+      {super.key,
+      required this.hasCoupom,
+      required this.restaurantId,
+      required this.coupomCode});
   final bool hasCoupom;
   final String restaurantId;
+  final String coupomCode;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,7 @@ class CoupomWidget extends StatelessWidget {
           ),
           const SizedBox(width: 15),
           Text(
-            "Cupom adicionado",
+            "$coupomCode adicionado",
             style: TextStyle(color: AppColors.highlight),
           )
         ],

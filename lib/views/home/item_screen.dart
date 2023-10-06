@@ -359,6 +359,7 @@ class _ItemScreenState extends State<ItemScreen> {
                     return CoupomWidget(
                       hasCoupom: state.order!.hasCoupom,
                       restaurantId: widget.order.item.restaurant_id,
+                      coupomCode: state.order!.coupomCode,
                     );
                   }),
                   const SizedBox(
