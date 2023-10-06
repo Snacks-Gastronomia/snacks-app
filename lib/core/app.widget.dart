@@ -213,9 +213,6 @@ class AppWidget extends StatelessWidget {
         BlocProvider<CardCubit>(
           create: (context) => CardCubit(),
         ),
-        BlocProvider<CouponCubit>(
-          create: (context) => CouponCubit(),
-        ),
       ],
       key: UniqueKey(),
       child: FutureBuilder<Map<String, dynamic>>(

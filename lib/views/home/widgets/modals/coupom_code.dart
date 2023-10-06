@@ -5,26 +5,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/services/coupons_service.dart';
-import 'package:snacks_app/views/home/state/coupon_state/coupon_cubit.dart';
-import 'package:snacks_app/views/home/state/coupon_state/coupon_state.dart';
+
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 
 class CoupomCode extends StatelessWidget {
   CoupomCode({
     Key? key,
     required this.restaurantId,
+    required this.context,
   }) : super(key: key);
   final String restaurantId;
+  final BuildContext context;
 
   final service = CouponsService();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
     TextEditingController controllerCode = TextEditingController();
 
-    final cubit = context.read<CouponCubit>();
+    final cubit = context.read<ItemScreenCubit>();
 
-    return BlocBuilder<CouponCubit, CouponState>(
+    return BlocBuilder<ItemScreenCubit, ItemScreenState>(
         bloc: cubit,
         builder: (context, snapshot) {
           return Padding(
@@ -58,11 +59,9 @@ class CoupomCode extends StatelessWidget {
                 ),
                 CustomSubmitButton(
                     onPressedAction: () async {
-                      double discount = await cubit.addCoupom(
+                      cubit.addCoupom(
                           controllerCode.text, restaurantId, context);
-                      context
-                          .read<ItemScreenCubit>()
-                          .addCupomDiscount(discount);
+
                       Navigator.pop(context);
                     },
                     label: "Aplicar",

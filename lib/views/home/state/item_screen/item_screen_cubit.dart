@@ -1,11 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:snacks_app/models/coupom_model.dart';
 import 'package:snacks_app/models/order_model.dart';
+import 'package:snacks_app/services/coupons_service.dart';
+import 'package:snacks_app/utils/toast.dart';
 
 part 'item_screen_state.dart';
 
 class ItemScreenCubit extends Cubit<ItemScreenState> {
   ItemScreenCubit() : super(ItemScreenState.initial());
+
+  final service = CouponsService();
+  final toast = AppToast();
 
   void incrementAmount() {
     var amount = state.order!.amount + 1;
@@ -77,11 +84,39 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
         state.order!.amount;
   }
 
-  addCupomDiscount(value) {
-    double itemValue = state.order!.item.value;
-    double totalWithDiscount = itemValue - (itemValue * (value / 100));
-    emit(state.copyWith(
-        order: state.order!.copyWith(
-            item: state.order!.item.copyWith(value: totalWithDiscount))));
+  Future<List<CoupomModel>> getListCoupons(restaurantId) async {
+    var couponsList = await service.getCoupons(restaurantId);
+    return couponsList;
+  }
+
+  Future<void> addCoupom(
+      String value, String restaurantId, BuildContext context) async {
+    var couponsList = await getListCoupons(restaurantId);
+    double discount = 0;
+    for (var coupon in couponsList) {
+      if (coupon.code == value) {
+        discount = coupon.discount.toDouble();
+        // ignore: use_build_context_synchronously
+        toast.showToast(
+            context: context,
+            content: "Cupom adicionado",
+            type: ToastType.success);
+        addDiscount(discount);
+      } else {
+        // ignore: use_build_context_synchronously
+        toast.showToast(
+          context: context,
+          content: "Cupom inválido",
+          type: ToastType.error,
+        );
+      }
+    }
+  }
+
+  addDiscount(value) {
+    // double itemValue = state.order!.getTotalValue;
+    // double totalWithDiscount = itemValue - (itemValue * (value / 100));
+
+    emit(state.copyWith(order: state.order!.copyWith(discount: value)));
   }
 }

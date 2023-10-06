@@ -211,7 +211,7 @@ class _ItemScreenState extends State<ItemScreen> {
                           width: double.maxFinite,
                           height: MediaQuery.of(context).size.height * 0.5,
                           errorBuilder: (context, error, stackTrace) {
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           },
 
                           // height: 200,
@@ -354,61 +354,26 @@ class _ItemScreenState extends State<ItemScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BlocBuilder<CouponCubit, CouponState>(
-                      builder: (context, state) {
-                    if (state is CouponLoaded) {
-                      return TextButton(
-                          onPressed: () {
-                            AppModal().showModalBottomSheet(
-                                context: context,
-                                content: CoupomCode(
-                                  restaurantId: widget.order.item.restaurant_id,
-                                ));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              state.icon,
-                              const SizedBox(width: 15),
-                              Text(
-                                state.message,
-                                style: TextStyle(color: state.color),
-                              )
-                            ],
-                          ));
-                    } else if (state is CouponSucess) {
-                      return Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            state.icon,
-                            const SizedBox(width: 15),
-                            Text(
-                              state.message,
-                              style: TextStyle(color: state.color),
-                            )
-                          ],
-                        ),
-                      );
-                    } else if (state is CouponLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (state is CouponError) {
-                      Row(
+                  TextButton(
+                      onPressed: () {
+                        AppModal().showModalBottomSheet(
+                            context: context,
+                            content: CoupomCode(
+                              context: context,
+                              restaurantId: widget.order.item.restaurant_id,
+                            ));
+                      },
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.local_offer),
-                          const SizedBox(width: 15),
-                          Text(state.message)
+                        children: const [
+                          Icon(Icons.local_offer),
+                          SizedBox(width: 15),
+                          Text(
+                            "Adicionar cupom de desconto",
+                          )
                         ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
+                      )),
                   const SizedBox(
                     height: 15,
                   ),
