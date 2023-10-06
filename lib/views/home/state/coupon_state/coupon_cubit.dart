@@ -8,27 +8,32 @@ import 'package:snacks_app/views/home/state/coupon_state/coupon_state.dart';
 class CouponCubit extends Cubit<CouponState> {
   final service = CouponsService();
   final toast = AppToast();
-  List<CoupomModel> couponsList = [];
 
-  CouponCubit() : super(CouponLoaded.primary());
+  CouponCubit() : super(CouponLoaded.style());
 
-  Future<void> addCoupom(
+  Future<List<CoupomModel>> getListCoupons(restaurantId) async {
+    var couponsList = await service.getCoupons(restaurantId);
+    return couponsList;
+  }
+
+  Future<double> addCoupom(
       String value, String restaurantId, BuildContext context) async {
     emit(CouponLoading());
-    couponsList = await service.getCoupons(restaurantId);
+
+    var couponsList = await getListCoupons(restaurantId);
+    double discount = 0;
     for (var coupon in couponsList) {
       if (coupon.code == value) {
-        emit(CouponLoaded(
-            message: "Cupom Adicionado",
-            icon: const Icon(Icons.check),
-            color: const Color(0xFF09B44D)));
+        emit(CouponSucess.style(coupon.code));
+        discount = coupon.discount.toDouble();
         // ignore: use_build_context_synchronously
         toast.showToast(
             context: context,
             content: "Cupom adicionado",
             type: ToastType.success);
+        return discount;
       } else {
-        emit(CouponLoaded.primary());
+        emit(CouponLoaded.style());
         // ignore: use_build_context_synchronously
         toast.showToast(
           context: context,
@@ -37,5 +42,6 @@ class CouponCubit extends Cubit<CouponState> {
         );
       }
     }
+    return discount;
   }
 }

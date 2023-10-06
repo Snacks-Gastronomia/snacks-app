@@ -1,14 +1,21 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/services/coupons_service.dart';
 import 'package:snacks_app/views/home/state/coupon_state/coupon_cubit.dart';
 import 'package:snacks_app/views/home/state/coupon_state/coupon_state.dart';
+import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 
 class CoupomCode extends StatelessWidget {
-  CoupomCode({super.key, required this.restaurantId});
+  CoupomCode({
+    Key? key,
+    required this.restaurantId,
+  }) : super(key: key);
   final String restaurantId;
+
   final service = CouponsService();
 
   @override
@@ -50,9 +57,12 @@ class CoupomCode extends StatelessWidget {
                   height: 43,
                 ),
                 CustomSubmitButton(
-                    onPressedAction: () {
-                      cubit.addCoupom(
+                    onPressedAction: () async {
+                      double discount = await cubit.addCoupom(
                           controllerCode.text, restaurantId, context);
+                      context
+                          .read<ItemScreenCubit>()
+                          .addCupomDiscount(discount);
                       Navigator.pop(context);
                     },
                     label: "Aplicar",

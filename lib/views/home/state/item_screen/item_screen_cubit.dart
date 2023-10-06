@@ -76,4 +76,12 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
             state.order?.option_selected["value"].toString() ?? "0") *
         state.order!.amount;
   }
+
+  addCupomDiscount(value) {
+    double itemValue = state.order!.item.value;
+    double totalWithDiscount = itemValue - (itemValue * (value / 100));
+    emit(state.copyWith(
+        order: state.order!.copyWith(
+            item: state.order!.item.copyWith(value: totalWithDiscount))));
+  }
 }
