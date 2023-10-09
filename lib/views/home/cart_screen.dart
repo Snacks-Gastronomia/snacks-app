@@ -450,9 +450,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                       .state
                                       .order!
                                       .coupomCode;
-                                  context
-                                      .read<CartCubit>()
-                                      .removeToCart(order, coupomCode);
+                                  context.read<CartCubit>().removeToCart(order);
                                 },
                               ),
                             ),

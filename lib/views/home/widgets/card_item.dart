@@ -123,16 +123,9 @@ class CardItemWidget extends StatelessWidget {
                   // bool itemAdded = state.cart.contains(order);
                   return IconButton(
                     onPressed: () {
-                      var coupomCode = context
-                          .read<ItemScreenCubit>()
-                          .state
-                          .order!
-                          .coupomCode;
                       context.read<ItemScreenCubit>().insertItem(order, true);
                       context.read<CartCubit>().hasItem(order.item.id ?? "")
-                          ? context
-                              .read<CartCubit>()
-                              .removeToCart(order, coupomCode)
+                          ? context.read<CartCubit>().removeToCart(order)
                           : context.read<CartCubit>().addToCart(order, '');
                     },
                     tooltip:
