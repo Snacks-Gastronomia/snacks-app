@@ -40,7 +40,7 @@ class CartCubit extends Cubit<CartState> {
 
   CartCubit() : super(CartState.initial());
 
-  void addToCart(OrderModel newOrder) {
+  void addToCart(OrderModel newOrder, String coupomCode) {
     if (hasItem(newOrder.item.id!)) {
       var ord = getOrderByItemId(newOrder.item.id!);
       if (ord != null) {
@@ -52,6 +52,7 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(cart: newCart));
     }
     updateTotalValue();
+    useCupom(coupomCode);
     emit(state.copyWith(temp_observation: ""));
   }
 
@@ -107,11 +108,11 @@ class CartCubit extends Cubit<CartState> {
     updateTotalValue();
   }
 
-  void removeToCart(OrderModel order, BuildContext context) {
+  void removeToCart(OrderModel order, String coupomCode) {
     final newCart = state.cart;
     newCart.removeWhere((element) => element.item.id == order.item.id);
 
-    BlocProvider.of<ItemScreenCubit>(context).removeCupom(order.coupomCode);
+    removeCupom(coupomCode);
 
     emit(state.copyWith(cart: newCart));
 
@@ -303,5 +304,17 @@ class CartCubit extends Cubit<CartState> {
   Future<void> cancelOrder(List<String?> docs) async {
     print(docs);
     return await repository.updateStatus(docs, OrderStatus.canceled);
+  }
+
+  void useCupom(String coupomCode) {
+    if (coupomCode.isNotEmpty) {
+      state.couponsList.add(coupomCode);
+      print(state.couponsList);
+    }
+  }
+
+  void removeCupom(String coupomCode) {
+    state.couponsList.remove(coupomCode);
+    print(state.couponsList);
   }
 }

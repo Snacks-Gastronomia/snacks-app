@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/services/coupons_service.dart';
+import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 
@@ -28,6 +29,8 @@ class CoupomCode extends StatelessWidget {
     return BlocBuilder<ItemScreenCubit, ItemScreenState>(
         bloc: cubit,
         builder: (context, state) {
+          List<String> couponsUsedList =
+              context.read<CartCubit>().state.couponsList;
           return Padding(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -59,8 +62,8 @@ class CoupomCode extends StatelessWidget {
                 ),
                 CustomSubmitButton(
                     onPressedAction: () async {
-                      cubit.addCoupom(
-                          controllerCode.text, restaurantId, context);
+                      cubit.addCoupom(controllerCode.text, restaurantId,
+                          context, couponsUsedList);
 
                       Navigator.pop(context);
                     },

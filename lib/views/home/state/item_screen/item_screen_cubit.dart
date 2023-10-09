@@ -1,10 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:snacks_app/models/coupom_model.dart';
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/services/coupons_service.dart';
 import 'package:snacks_app/utils/toast.dart';
+import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 
 part 'item_screen_state.dart';
 
@@ -91,8 +93,8 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     return couponsList;
   }
 
-  Future<void> addCoupom(
-      String value, String restaurantId, BuildContext context) async {
+  Future<void> addCoupom(String value, String restaurantId,
+      BuildContext context, List couponsUsedList) async {
     var couponsList = await getListCoupons(restaurantId);
 
     bool couponFound = false;
@@ -106,7 +108,7 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
         break;
       }
     }
-    if (couponFound && !state.couponsList.contains(coupomCode)) {
+    if (couponFound && !couponsUsedList.contains(coupomCode)) {
       addDiscount(coupom);
       // ignore: use_build_context_synchronously
       toast.showToast(
@@ -115,7 +117,7 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
           type: ToastType.success);
 
       print(state.couponsList);
-    } else if (couponFound && state.couponsList.contains(coupomCode)) {
+    } else if (couponFound && couponsUsedList.contains(coupomCode)) {
       // ignore: use_build_context_synchronously
       toast.showToast(
           context: context,
@@ -143,15 +145,5 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
             discount: coupom.discount.toDouble(),
             hasCoupom: true,
             coupomCode: coupom.code)));
-  }
-
-  useCupom() {
-    state.couponsList.add(coupomCode);
-    print(state.couponsList);
-  }
-
-  removeCupom(coupomCode) {
-    state.couponsList.remove(coupomCode);
-    print(state.couponsList);
   }
 }

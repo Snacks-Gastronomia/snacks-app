@@ -445,9 +445,14 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                     .read<CartCubit>()
                                     .incrementItem(order.item.id!),
                                 onDelete: () {
+                                  var coupomCode = context
+                                      .read<ItemScreenCubit>()
+                                      .state
+                                      .order!
+                                      .coupomCode;
                                   context
                                       .read<CartCubit>()
-                                      .removeToCart(order, context);
+                                      .removeToCart(order, coupomCode);
                                 },
                               ),
                             ),
