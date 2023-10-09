@@ -163,7 +163,8 @@ class CartCubit extends Cubit<CartState> {
   Future<List<Map<String, dynamic>>> generateDataObject(
       method, change, rfid) async {
     final dataStorage = await getStorage;
-    bool isDelivery = !(auth.currentUser?.isAnonymous ?? false);
+    bool isDelivery =
+        (!auth.currentUser!.isAnonymous && state.receive_order != "local");
 
     var status = method == "Cartão snacks" || isDelivery
         ? OrderStatus.ready_to_start.name
@@ -224,7 +225,6 @@ class CartCubit extends Cubit<CartState> {
     if (isDelivery) {
       dataTotal.orders[0]["value"] += state.delivery_value;
     }
-
 
     return dataTotal.orders;
   }
