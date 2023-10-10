@@ -108,7 +108,7 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
         break;
       }
     }
-    if (couponFound && !couponsUsedList.contains(coupomCode)) {
+    if (couponFound && !couponsUsedList.contains(coupomCode) && coupom.active) {
       addDiscount(coupom);
       // ignore: use_build_context_synchronously
       toast.showToast(
