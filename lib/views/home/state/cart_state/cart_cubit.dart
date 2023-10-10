@@ -108,11 +108,11 @@ class CartCubit extends Cubit<CartState> {
     updateTotalValue();
   }
 
-  void removeToCart(OrderModel order, String coupomCode) {
+  void removeToCart(OrderModel order) {
     final newCart = state.cart;
     newCart.removeWhere((element) => element.item.id == order.item.id);
 
-    removeCupom(coupomCode);
+    removeCupom(order.coupomCode);
 
     emit(state.copyWith(cart: newCart));
 
