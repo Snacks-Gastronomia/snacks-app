@@ -151,7 +151,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                 .coupomCode;
 
                             BlocProvider.of<CartCubit>(context)
-                                .addToCart(order, coupomCode);
+                                .addToCart(order);
                             Navigator.popUntil(
                                 context, ModalRoute.withName(AppRoutes.home));
 

@@ -120,13 +120,15 @@ class CardItemWidget extends StatelessWidget {
               // height: 50,
               child: BlocBuilder<CartCubit, CartState>(
                 builder: (context, state) {
-                  // bool itemAdded = state.cart.contains(order);
+                  var coupomCode = context.read<ItemScreenCubit>().coupomCode;
                   return IconButton(
                     onPressed: () {
                       context.read<ItemScreenCubit>().insertItem(order, true);
                       context.read<CartCubit>().hasItem(order.item.id ?? "")
-                          ? context.read<CartCubit>().removeToCart(order)
-                          : context.read<CartCubit>().addToCart(order, '');
+                          ? context
+                              .read<CartCubit>()
+                              .removeToCart(order, coupomCode)
+                          : context.read<CartCubit>().addToCart(order);
                     },
                     tooltip:
                         context.read<CartCubit>().hasItem(order.item.id ?? "")
