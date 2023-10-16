@@ -99,12 +99,30 @@ class CardItemWidget extends StatelessWidget {
                                 color: AppColors.highlight),
                             overflow: TextOverflow.ellipsis,
                             softWrap: true),
-                        Text(
-                          NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                              .format(double.parse(
-                                  item.options[0]["value"].toString())),
-                          style: AppTextStyles.regular(15,
-                              color: Colors.grey.shade500),
+                        Row(
+                          children: [
+                            Text(
+                              NumberFormat.currency(
+                                      locale: "pt", symbol: r"R$ ")
+                                  .format(item.finalValue),
+                              style: AppTextStyles.medium(14,
+                                  color: Colors.grey.shade500),
+                            ),
+                            if (item.value != item.finalValue)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                child: Text(
+                                  NumberFormat.currency(
+                                          locale: "pt", symbol: r"R$ ")
+                                      .format(item.value),
+                                  style: TextStyle(
+                                      color: Colors.grey.shade400,
+                                      fontSize: 12,
+                                      decoration: TextDecoration.lineThrough),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),

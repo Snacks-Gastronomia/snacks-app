@@ -9,6 +9,8 @@ class Item {
   final String title;
   final String? description;
   final double value;
+  final double? discount;
+  final double finalValue;
   final int time;
   final int? limit_extra_options;
   final int num_served;
@@ -28,6 +30,7 @@ class Item {
     this.description,
     this.limit_extra_options,
     required this.value,
+    this.discount,
     required this.num_served,
     required this.time,
     required this.restaurant_id,
@@ -39,13 +42,14 @@ class Item {
     this.ingredients = const [],
     this.extras = const [],
     this.options = const [],
-  });
+  }) : finalValue = value * (1 - ((discount ?? 0) / 100));
 
   Item copyWith({
     String? id,
     String? title,
     String? description,
     double? value,
+    double? discount,
     int? time,
     int? limit_extra_options,
     int? num_served,
@@ -65,6 +69,7 @@ class Item {
       description: description ?? this.description,
       limit_extra_options: limit_extra_options ?? this.limit_extra_options,
       value: value ?? this.value,
+      discount: discount ?? this.discount,
       restaurant_id: restaurant_id ?? this.restaurant_id,
       restaurant_name: restaurant_name ?? this.restaurant_name,
       num_served: num_served ?? this.num_served,
@@ -85,6 +90,7 @@ class Item {
       'title': title,
       'description': description,
       'value': value,
+      'discount': discount,
       'restaurant_id': restaurant_id,
       'limit_extra_options': limit_extra_options,
       'restaurant_name': restaurant_name,
@@ -107,6 +113,7 @@ class Item {
         title: "",
         description: "",
         value: 0,
+        discount: 0,
         restaurant_id: "",
         restaurant_name: "",
         time: 0);
@@ -120,6 +127,7 @@ class Item {
       time: map['time'] ?? 0,
       description: map['description'] ?? '',
       value: map['value']?.toDouble() ?? 0.0,
+      discount: map['discount']?.toDouble() ?? 0.0,
       restaurant_id: map['restaurant_id'] ?? '',
       restaurant_name: map['restaurant_name'] ?? '',
       category: map['category'],
@@ -138,7 +146,7 @@ class Item {
 
   @override
   String toString() {
-    return 'Item(id: $id, title: $title, description: $description, value: $value, restaurant_id: $restaurant_id, category: $category, measure: $measure, image_url: $image_url, ingredients: $ingredients)';
+    return 'Item(id: $id, title: $title, description: $description, value: $value, discount: $discount, restaurant_id: $restaurant_id, category: $category, measure: $measure, image_url: $image_url, ingredients: $ingredients)';
   }
 
   @override
