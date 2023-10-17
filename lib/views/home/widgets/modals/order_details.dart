@@ -227,7 +227,9 @@ class ListOrderByStatus extends StatelessWidget {
                                     value["title"] + ", " + element["title"])
                                 : item.extras![0]["title"]
                             : "",
-                        value: item.amount * item.optionSelected.value,
+                        value: (item.amount *
+                            (item.optionSelected.value *
+                                (1 - (item.item.discount! / 100)))),
                         image: item.item.imageUrl,
                         restaurant: item.item.restaurantName);
                   }),

@@ -257,6 +257,7 @@ class ItemDetails {
   String? category;
   String title;
   double value;
+  double? discount;
   String restaurantName;
 
   ItemDetails({
@@ -271,6 +272,7 @@ class ItemDetails {
     this.category,
     required this.title,
     required this.value,
+    this.discount,
     required this.restaurantName,
   });
 
@@ -287,6 +289,7 @@ class ItemDetails {
       category: json['category'],
       title: json['title'] ?? '',
       value: json['value'] ?? 0.0,
+      discount: json['value'] ?? 0.0,
       restaurantName: json['restaurant_name'] ?? '',
     );
   }
@@ -304,6 +307,7 @@ class ItemDetails {
       'category': category,
       'title': title,
       'value': value,
+      'discount': discount,
       'restaurant_name': restaurantName,
     };
   }
@@ -321,6 +325,7 @@ class ItemDetails {
       category: map['category'],
       title: map['title'] ?? '',
       value: map['value']?.toDouble() ?? 0.0,
+      discount: map['discount']?.toDouble() ?? 0.0,
       restaurantName: map['restaurant_name'] ?? '',
     );
   }
