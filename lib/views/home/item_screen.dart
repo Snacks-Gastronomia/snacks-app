@@ -60,6 +60,7 @@ class _ItemScreenState extends State<ItemScreen> {
                   return ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
+                        var discount = widget.order.item.discount!;
                         var option = widget.order.item.options[index];
                         bool selected =
                             state.order?.option_selected["id"] == option["id"];
@@ -93,7 +94,8 @@ class _ItemScreenState extends State<ItemScreen> {
                                   NumberFormat.currency(
                                           locale: "pt", symbol: r"R$ ")
                                       .format(double.tryParse(
-                                          option["value"].toString())),
+                                              option["value"].toString())! *
+                                          (1 - discount / 100)),
                                   style: AppTextStyles.medium(10,
                                       color: selected
                                           ? Colors.white38
