@@ -119,10 +119,12 @@ class CartItemWidget extends StatelessWidget {
                       ),
                       Text(
                         NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                            .format((double.parse(order.option_selected["value"]
-                                        .toString()) *
-                                    order.amount) +
-                                extras_value),
+                            .format(((double.parse(order
+                                            .option_selected["value"]
+                                            .toString()) *
+                                        order.amount) +
+                                    extras_value) *
+                                (1 - (order.item.discount! / 100))),
                         style:
                             AppTextStyles.regular(14, color: Color(0xff09B44D)),
                       ),

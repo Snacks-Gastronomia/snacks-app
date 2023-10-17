@@ -104,9 +104,11 @@ class CardItemWidget extends StatelessWidget {
                             Text(
                               NumberFormat.currency(
                                       locale: "pt", symbol: r"R$ ")
-                                  .format(item.finalValue),
-                              style: AppTextStyles.medium(14,
-                                  color: Colors.grey.shade500),
+                                  .format(((double.parse(order
+                                              .option_selected["value"]
+                                              .toString()) *
+                                          order.amount)) *
+                                      (1 - (order.item.discount! / 100))),
                             ),
                             if (item.value != item.finalValue)
                               Padding(
@@ -115,7 +117,8 @@ class CardItemWidget extends StatelessWidget {
                                 child: Text(
                                   NumberFormat.currency(
                                           locale: "pt", symbol: r"R$ ")
-                                      .format(item.value),
+                                      .format(double.parse(
+                                          item.options[0]["value"])),
                                   style: TextStyle(
                                       color: Colors.grey.shade400,
                                       fontSize: 12,
