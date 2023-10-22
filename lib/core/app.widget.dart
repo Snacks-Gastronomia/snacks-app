@@ -120,8 +120,8 @@ class AppWidget extends StatelessWidget {
 
     Future<Map<String, dynamic>> verifyRestaurantStatus() async {
       await initializeDateFormatting("pt_BR");
+      await auth.signInAnonymously();
 
-//7 - sunday
       var time = DateTime.now();
       var now = TimeOfDay.fromDateTime(time);
 
@@ -131,6 +131,8 @@ class AppWidget extends StatelessWidget {
           .collection("days")
           .doc((time.weekday).toString())
           .get();
+
+      print("doc: ${doc.data()}");
 
       bool isDayActive = doc.data()?["active"];
       var startTime = transformTime(doc.data()?["start"]);
@@ -222,15 +224,16 @@ class AppWidget extends StatelessWidget {
               bool in_review = data["in_review"];
 
               String startAppRoute =
-                  auth.currentUser != null ? AppRoutes.home : AppRoutes.start;
+                  // auth.currentUser != null ? AppRoutes.home :
+                  AppRoutes.start;
 
               if (!in_review) {
                 if (!current_version) {
                   startAppRoute = AppRoutes.newVersionAvailable;
                 }
                 if (!restaurant_available) {
-                  // startAppRoute = AppRoutes.closedRestaurant;
-                  startAppRoute = AppRoutes.start;
+                  startAppRoute = AppRoutes.closedRestaurant;
+                  // startAppRoute = AppRoutes.start;
                 }
               }
 

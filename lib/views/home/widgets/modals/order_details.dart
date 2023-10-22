@@ -227,7 +227,9 @@ class ListOrderByStatus extends StatelessWidget {
                                     value["title"] + ", " + element["title"])
                                 : item.extras![0]["title"]
                             : "",
-                        value: item.amount * item.optionSelected.value,
+                        value: (item.amount *
+                            (item.optionSelected.value *
+                                (1 - (item.item.discount! / 100)))),
                         image: item.item.imageUrl,
                         restaurant: item.item.restaurantName);
                   }),
@@ -275,8 +277,19 @@ class ItemWidget extends StatelessWidget {
                           width: 42,
                         ),
                       )
-                    : Image.network(image!,
-                        height: 42, width: 42, fit: BoxFit.cover),
+                    : Image.network(
+                        image!,
+                        height: 42,
+                        width: 42,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return SvgPicture.asset(
+                            AppImages.snacks,
+                            height: 10,
+                            width: 10,
+                          );
+                        },
+                      ),
               ),
               const SizedBox(width: 7),
               Expanded(

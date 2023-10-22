@@ -59,6 +59,8 @@ class CardItemWidget extends StatelessWidget {
                           ),
                         )
                       : CachedNetworkImage(
+                          useOldImageOnUrlChange: true,
+                          maxHeightDiskCache: 300,
                           imageUrl: item.image_url!,
                           fit: BoxFit.cover,
                           progressIndicatorBuilder:
@@ -97,12 +99,33 @@ class CardItemWidget extends StatelessWidget {
                                 color: AppColors.highlight),
                             overflow: TextOverflow.ellipsis,
                             softWrap: true),
-                        Text(
-                          NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                              .format(double.parse(
-                                  item.options[0]["value"].toString())),
-                          style: AppTextStyles.regular(15,
-                              color: Colors.grey.shade500),
+                        Row(
+                          children: [
+                            Text(
+                              NumberFormat.currency(
+                                      locale: "pt", symbol: r"R$ ")
+                                  .format(((double.parse(order
+                                              .option_selected["value"]
+                                              .toString()) *
+                                          order.amount)) *
+                                      (1 - (order.item.discount! / 100))),
+                            ),
+                            if (item.value != item.finalValue)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                child: Text(
+                                  NumberFormat.currency(
+                                          locale: "pt", symbol: r"R$ ")
+                                      .format(double.parse(
+                                          item.options[0]["value"])),
+                                  style: TextStyle(
+                                      color: Colors.grey.shade400,
+                                      fontSize: 12,
+                                      decoration: TextDecoration.lineThrough),
+                                ),
+                              ),
+                          ],
                         ),
                       ],
                     ),

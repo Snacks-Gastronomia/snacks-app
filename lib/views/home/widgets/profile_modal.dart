@@ -120,9 +120,10 @@ class ProfileModal extends StatelessWidget {
               Center(
                 child: TextButton.icon(
                   onPressed: () async {
-                    await auth.signOut().then((value) =>
-                        Navigator.pushReplacementNamed(
-                            context, AppRoutes.start));
+                    await auth.signOut().then((value) async {
+                      await auth.signInAnonymously();
+                      Navigator.pushReplacementNamed(context, AppRoutes.start);
+                    });
                   },
                   icon: const Icon(
                     Icons.power_settings_new_rounded,

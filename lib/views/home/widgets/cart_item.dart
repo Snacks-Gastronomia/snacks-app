@@ -66,8 +66,20 @@ class CartItemWidget extends StatelessWidget {
                                   width: 70,
                                 ),
                               )
-                            : Image.network(order.item.image_url!,
-                                height: 60, width: 60, fit: BoxFit.cover),
+                            : Image.network(
+                                order.item.image_url!,
+                                height: 60,
+                                width: 60,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return SvgPicture.asset(
+                                    AppImages.snacks,
+                                    color: Colors.grey.shade400,
+                                    // fit: BoxFit.,
+                                    width: 70,
+                                  );
+                                },
+                              ),
                         Positioned(
                           bottom: 0,
                           child: Container(
@@ -107,10 +119,12 @@ class CartItemWidget extends StatelessWidget {
                       ),
                       Text(
                         NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                            .format((double.parse(order.option_selected["value"]
-                                        .toString()) *
-                                    order.amount) +
-                                extras_value),
+                            .format(((double.parse(order
+                                            .option_selected["value"]
+                                            .toString()) *
+                                        order.amount) +
+                                    extras_value) *
+                                (1 - (order.item.discount! / 100))),
                         style:
                             AppTextStyles.regular(14, color: Color(0xff09B44D)),
                       ),

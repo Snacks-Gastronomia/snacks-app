@@ -101,12 +101,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
     if (withName) {
       var customerName = '';
       await modal.showModalBottomSheet(
+          dimisible: false,
           context: _globalKey.currentContext,
           drag: false,
-          content: CustomerNameModal(
-            onNameEntered: (name) {
-              customerName = name ?? "";
+          content: WillPopScope(
+            onWillPop: () async {
+              return false;
             },
+            child: CustomerNameModal(
+              onNameEntered: (name) {
+                customerName = name ?? "";
+              },
+            ),
           ));
       if (customerName == '') {
         return null;
@@ -317,21 +323,29 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   cubit.changeStatus(AppStatus.loaded);
                                   // ignore: use_build_context_synchronously
                                   modal.showModalBottomSheet(
+                                      dimisible: false,
+                                      drag: false,
                                       context: context,
                                       content: Builder(builder: (context) {
-                                        return PaymentSuccessContent(
-                                            customer: card["nome"],
-                                            order_value: NumberFormat.currency(
-                                                    locale: "pt",
-                                                    symbol: r"R$ ")
-                                                .format(orderValue),
-                                            rest_value: NumberFormat.currency(
-                                                    locale: "pt",
-                                                    symbol: r"R$ ")
-                                                .format(result),
-                                            action: () => action(
-                                                "Cartão snacks",
-                                                card: card_code));
+                                        return WillPopScope(
+                                          onWillPop: () async {
+                                            return false;
+                                          },
+                                          child: PaymentSuccessContent(
+                                              customer: card["nome"],
+                                              order_value:
+                                                  NumberFormat.currency(
+                                                          locale: "pt",
+                                                          symbol: r"R$ ")
+                                                      .format(orderValue),
+                                              rest_value: NumberFormat.currency(
+                                                      locale: "pt",
+                                                      symbol: r"R$ ")
+                                                  .format(result),
+                                              action: () => action(
+                                                  "Cartão snacks",
+                                                  card: card_code)),
+                                        );
                                       }));
                                 } catch (e) {
                                   print(e);

@@ -56,7 +56,9 @@ class OrderModel {
             .map((e) => double.parse(e["value"].toString()))
             .reduce((value, element) => value + element)
         : 0;
-    return (double.parse(option_selected["value"].toString()) + extra) * amount;
+    return ((double.parse(option_selected["value"].toString()) + extra) *
+        amount *
+        (1 - (item.discount! / 100)));
   }
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
