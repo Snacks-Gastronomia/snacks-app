@@ -1,11 +1,22 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:snacks_app/models/coupom_model.dart';
 import 'package:snacks_app/models/order_model.dart';
+import 'package:snacks_app/services/coupons_service.dart';
+import 'package:snacks_app/utils/toast.dart';
+import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 
 part 'item_screen_state.dart';
 
 class ItemScreenCubit extends Cubit<ItemScreenState> {
   ItemScreenCubit() : super(ItemScreenState.initial());
+
+  final service = CouponsService();
+  final toast = AppToast();
+  String coupomCode = '';
+  CoupomModel coupom = CoupomModel(active: false, code: '', discount: 0);
 
   void incrementAmount() {
     var amount = state.order!.amount + 1;
@@ -75,5 +86,64 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     return double.parse(
             state.order?.option_selected["value"].toString() ?? "0") *
         state.order!.amount;
+  }
+
+  Future<List<CoupomModel>> getListCoupons(restaurantId) async {
+    var couponsList = await service.getCoupons(restaurantId);
+    return couponsList;
+  }
+
+  Future<void> addCoupom(String value, String restaurantId,
+      BuildContext context, List couponsUsedList) async {
+    var couponsList = await getListCoupons(restaurantId);
+
+    bool couponFound = false;
+    for (var coupon in couponsList) {
+      if (coupon.code == value) {
+        couponFound = true;
+
+        coupomCode = coupon.code;
+        coupom = coupon;
+
+        break;
+      }
+    }
+    if (couponFound && !couponsUsedList.contains(coupomCode) && coupom.active) {
+      addDiscount(coupom);
+      // ignore: use_build_context_synchronously
+      toast.showToast(
+          context: context,
+          content: "Cupom adicionado",
+          type: ToastType.success);
+
+      print(state.couponsList);
+    } else if (couponFound && couponsUsedList.contains(coupomCode)) {
+      // ignore: use_build_context_synchronously
+      toast.showToast(
+          context: context,
+          content: "Esse cupom já foi usado",
+          type: ToastType.info);
+
+      print(state.couponsList);
+    } else {
+      // ignore: use_build_context_synchronously
+      toast.showToast(
+        context: context,
+        content: "Cupom inválido",
+        type: ToastType.error,
+      );
+      print(state.couponsList);
+    }
+  }
+
+  addDiscount(CoupomModel coupom) {
+    // double itemValue = state.order!.getTotalValue;
+    // double totalWithDiscount = itemValue - (itemValue * (value / 100));
+
+    emit(state.copyWith(
+        order: state.order!.copyWith(
+            discount: coupom.discount.toDouble(),
+            hasCoupom: true,
+            coupomCode: coupom.code)));
   }
 }

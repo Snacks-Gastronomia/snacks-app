@@ -14,6 +14,7 @@ import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
+import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 import 'package:snacks_app/views/home/widgets/cart_item.dart';
 import 'package:snacks_app/views/review/review_screen.dart';
 

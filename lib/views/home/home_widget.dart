@@ -17,6 +17,7 @@ import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/item_screen.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
+import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 import 'package:snacks_app/views/home/widgets/card_item.dart';
 import 'package:snacks_app/views/home/widgets/skeletons.dart';
 

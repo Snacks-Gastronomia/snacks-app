@@ -9,16 +9,20 @@ import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/order_model.dart';
+
 import 'package:snacks_app/utils/modal.dart';
-import 'package:snacks_app/utils/toast.dart';
+
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
+
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
+import 'package:snacks_app/views/home/widgets/coupom_widget.dart';
+import 'package:snacks_app/views/home/widgets/modals/coupom_code.dart';
 import 'package:snacks_app/views/home/widgets/modals/modal_content_obs.dart';
 
 class ItemScreen extends StatefulWidget {
-  ItemScreen({Key? key, required this.order}) : super(key: key);
+  const ItemScreen({Key? key, required this.order}) : super(key: key);
 
-  OrderModel order;
+  final OrderModel order;
 
   @override
   State<ItemScreen> createState() => _ItemScreenState();
@@ -28,7 +32,7 @@ class _ItemScreenState extends State<ItemScreen> {
   // late int amount;
   // bool updateItem = false;
   final auth = FirebaseAuth.instance;
-  final toast = AppToast();
+
   @override
   void initState() {
     super.initState();
@@ -140,6 +144,12 @@ class _ItemScreenState extends State<ItemScreen> {
                           action: () {
                             var order =
                                 context.read<ItemScreenCubit>().state.order!;
+                            var coupomCode = context
+                                .read<ItemScreenCubit>()
+                                .state
+                                .order!
+                                .coupomCode;
+
                             BlocProvider.of<CartCubit>(context)
                                 .addToCart(order);
                             Navigator.popUntil(
@@ -207,7 +217,7 @@ class _ItemScreenState extends State<ItemScreen> {
                           width: double.maxFinite,
                           height: MediaQuery.of(context).size.height * 0.5,
                           errorBuilder: (context, error, stackTrace) {
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           },
 
                           // height: 200,
@@ -350,12 +360,14 @@ class _ItemScreenState extends State<ItemScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Row(
-                  //   children: const [
-                  //     Icon(Icons.star_rounded),
-                  //     Text('4.9'),
-                  //   ],
-                  // ),
+                  BlocBuilder<ItemScreenCubit, ItemScreenState>(
+                      builder: (context, state) {
+                    return CoupomWidget(
+                      hasCoupom: state.order!.hasCoupom,
+                      restaurantId: widget.order.item.restaurant_id,
+                      coupomCode: state.order!.coupomCode,
+                    );
+                  }),
                   const SizedBox(
                     height: 15,
                   ),
@@ -509,7 +521,6 @@ class _ItemScreenState extends State<ItemScreen> {
                             })
                       ],
                     ),
-
                   const SizedBox(
                     height: 50,
                   )

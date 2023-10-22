@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:snacks_app/models/coupom_model.dart';
 import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/utils/enums.dart';
 
@@ -11,6 +12,9 @@ class OrderModel {
   String status;
   dynamic option_selected;
   double value;
+  double discount;
+  bool hasCoupom;
+  String coupomCode;
   OrderModel(
       {required this.item,
       this.amount = 1,
@@ -18,24 +22,32 @@ class OrderModel {
       required this.observations,
       required this.option_selected,
       this.value = 0.0,
+      this.discount = 0.0,
+      this.hasCoupom = false,
+      this.coupomCode = '',
       this.extras = const []}) {
     status = OrderStatus.waiting_payment.name;
   }
 
-  OrderModel copyWith({
-    Item? item,
-    int? amount,
-    String? observations,
-    String? status,
-    dynamic option_selected,
-    List<dynamic>? extras,
-  }) {
+  OrderModel copyWith(
+      {Item? item,
+      int? amount,
+      String? observations,
+      String? status,
+      dynamic option_selected,
+      List<dynamic>? extras,
+      double? discount,
+      bool? hasCoupom,
+      String? coupomCode}) {
     return OrderModel(
       item: item ?? this.item,
       amount: amount ?? this.amount,
       observations: observations ?? this.observations,
       extras: extras ?? this.extras,
       option_selected: option_selected ?? this.option_selected,
+      discount: discount ?? this.discount,
+      hasCoupom: hasCoupom ?? this.hasCoupom,
+      coupomCode: coupomCode ?? this.coupomCode,
       // status: status ?? this.status,
     );
   }
@@ -56,7 +68,10 @@ class OrderModel {
             .map((e) => double.parse(e["value"].toString()))
             .reduce((value, element) => value + element)
         : 0;
-    return (double.parse(option_selected["value"].toString()) + extra) * amount;
+    var total =
+        (double.parse(option_selected["value"].toString()) + extra) * amount;
+    var result = total - (total * (discount / 100));
+    return result;
   }
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {

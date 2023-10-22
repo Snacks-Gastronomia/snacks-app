@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
@@ -17,6 +18,7 @@ import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/home/repository/card_repository.dart';
 import 'package:snacks_app/views/home/repository/orders_repository.dart';
+import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 
 part 'cart_state.dart';
 
@@ -50,6 +52,7 @@ class CartCubit extends Cubit<CartState> {
       emit(state.copyWith(cart: newCart));
     }
     updateTotalValue();
+    useCupom(newOrder.coupomCode);
     emit(state.copyWith(temp_observation: ""));
   }
 
@@ -108,6 +111,8 @@ class CartCubit extends Cubit<CartState> {
   void removeToCart(OrderModel order) {
     final newCart = state.cart;
     newCart.removeWhere((element) => element.item.id == order.item.id);
+
+    removeCupom(order.coupomCode);
 
     emit(state.copyWith(cart: newCart));
 
@@ -225,7 +230,6 @@ class CartCubit extends Cubit<CartState> {
       dataTotal.orders[0]["value"] += state.delivery_value;
     }
 
-
     return dataTotal.orders;
   }
 
@@ -300,5 +304,17 @@ class CartCubit extends Cubit<CartState> {
   Future<void> cancelOrder(List<String?> docs) async {
     print(docs);
     return await repository.updateStatus(docs, OrderStatus.canceled);
+  }
+
+  void useCupom(String coupomCode) {
+    if (coupomCode.isNotEmpty) {
+      state.couponsList.add(coupomCode);
+      print(state.couponsList);
+    }
+  }
+
+  void removeCupom(String coupomCode) {
+    state.couponsList.remove(coupomCode);
+    print(state.couponsList);
   }
 }

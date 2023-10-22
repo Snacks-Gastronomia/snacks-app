@@ -120,7 +120,6 @@ class CardItemWidget extends StatelessWidget {
               // height: 50,
               child: BlocBuilder<CartCubit, CartState>(
                 builder: (context, state) {
-                  // bool itemAdded = state.cart.contains(order);
                   return IconButton(
                     onPressed: () {
                       context.read<ItemScreenCubit>().insertItem(order, true);

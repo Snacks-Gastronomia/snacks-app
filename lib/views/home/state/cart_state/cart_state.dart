@@ -8,6 +8,7 @@ class CartState implements Equatable {
   final String address;
   final double delivery_value;
   final bool delivery_disable;
+  final List<String> couponsList;
 
   final double total;
   final AppStatus status;
@@ -26,35 +27,36 @@ class CartState implements Equatable {
     required this.status,
     this.error,
     required this.temp_observation,
+    required this.couponsList,
   });
 
   factory CartState.initial() => CartState(
-        payment_method: "",
-        table_code: 0,
-        delivery_value: 0,
-        delivery_disable: false,
-        cart: [],
-        status: AppStatus.initial,
-        total: 0,
-        error: "",
-        address: "",
-        receive_order: "address",
-        temp_observation: "",
-      );
+      payment_method: "",
+      table_code: 0,
+      delivery_value: 0,
+      delivery_disable: false,
+      cart: [],
+      status: AppStatus.initial,
+      total: 0,
+      error: "",
+      address: "",
+      receive_order: "address",
+      temp_observation: "",
+      couponsList: []);
 
-  CartState copyWith({
-    List<OrderModel>? cart,
-    String? payment_method,
-    String? receive_order,
-    bool? delivery_disable,
-    int? table_code,
-    double? total,
-    double? delivery_value,
-    AppStatus? status,
-    String? error,
-    String? temp_observation,
-    String? address,
-  }) {
+  CartState copyWith(
+      {List<OrderModel>? cart,
+      String? payment_method,
+      String? receive_order,
+      bool? delivery_disable,
+      int? table_code,
+      double? total,
+      double? delivery_value,
+      AppStatus? status,
+      String? error,
+      String? temp_observation,
+      String? address,
+      List<String>? couponsList}) {
     return CartState(
       cart: cart ?? this.cart,
       delivery_value: delivery_value ?? this.delivery_value,
@@ -67,6 +69,7 @@ class CartState implements Equatable {
       status: status ?? this.status,
       error: error ?? this.error,
       temp_observation: temp_observation ?? this.temp_observation,
+      couponsList: couponsList ?? this.couponsList,
     );
   }
 
