@@ -20,8 +20,11 @@ import 'package:snacks_app/views/home/widgets/modals/money_change_value.dart';
 import 'package:snacks_app/views/splash/loading_screen.dart';
 import 'package:snacks_app/views/success/success_screen.dart';
 
+import 'widgets/modals/topay_modal.dart';
+
 class PaymentScreen extends StatefulWidget {
-  PaymentScreen({Key? key}) : super(key: key);
+  const PaymentScreen({Key? key, this.dividevalue}) : super(key: key);
+  final bool? dividevalue;
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -302,10 +305,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             // var navigator
                             double orderValue = cubit.state.total;
                             dynamic dataStorage = cubit.getStorage;
+
+                            final String? toPay =
+                                await modal.showModalBottomSheet(
+                                    drag: false,
+                                    dimisible: false,
+                                    context: context,
+                                    content: TopayModal());
+
                             final card_code = await Navigator.pushNamed(
                                 context, AppRoutes.scanCard);
 
                             cubit.changeStatus(AppStatus.loading);
+
                             var card = await beerpassService
                                 .getCard(card_code.toString());
 
@@ -404,6 +416,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ),
                           ),
                         ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        if (widget.dividevalue == true)
+                          SizedBox(
+                            width: double.maxFinite,
+                            height: 59,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  NumberFormat.currency(
+                                          locale: "pt", symbol: r"Total: R$ ")
+                                      .format(state.total),
+                                  style: AppTextStyles.semiBold(22),
+                                ),
+                                Text(
+                                  NumberFormat.currency(
+                                          locale: "pt", symbol: r"Pago: R$ ")
+                                      .format(state.paid),
+                                  style: AppTextStyles.regular(16),
+                                ),
+                              ],
+                            ),
+                          )
                       ],
                     )),
               ));
