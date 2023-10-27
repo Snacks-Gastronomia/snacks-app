@@ -122,7 +122,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       }
     }
     if (auth.currentUser?.displayName != '') {
-      cubit.makeOrder(method, change: change, rfid: card);
+      debugPrint('foi pago: ${cubit.state.paid}');
+      cubit.makeOrder(method, cubit.state.paid, change: change, rfid: card);
       cubit.cleanPaid();
       modal.showIOSModalBottomSheet(
           context: _globalKey.currentContext,

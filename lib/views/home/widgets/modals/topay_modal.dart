@@ -53,8 +53,9 @@ class TopayModal extends StatelessWidget {
                     backgroundColor: Colors.black,
                     fixedSize: const Size(double.maxFinite, 59)),
                 onPressed: () => controller.text.isNotEmpty &&
-                        double.parse(controller.text) <= maxValue
-                    ? navigator.pop(controller.text)
+                        double.parse(controller.text.replaceAll(",", '.')) <=
+                            maxValue
+                    ? navigator.pop(controller.text.replaceAll(",", '.'))
                     : null,
                 child: const Text('Pagar')),
             const SizedBox(
