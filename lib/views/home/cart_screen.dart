@@ -266,14 +266,12 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                                       table: code.toString());
 
                                               if (user != null) {
-                                                // mudar rota para abrir o modal de dividir com amigos
+                                                // ignore: use_build_context_synchronously
                                                 modal.showModalBottomSheet(
                                                     context: context,
                                                     content:
                                                         const DivideValueModal());
-                                                // navigator.pushNamed(
-                                                //   AppRoutes.payment,
-                                                // );
+
                                                 cubit.changeStatus(
                                                     AppStatus.loaded);
                                               } else {

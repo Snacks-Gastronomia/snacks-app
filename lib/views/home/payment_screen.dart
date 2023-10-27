@@ -123,6 +123,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
     if (auth.currentUser?.displayName != '') {
       cubit.makeOrder(method, change: change, rfid: card);
+      cubit.cleanPaid();
       modal.showIOSModalBottomSheet(
           context: _globalKey.currentContext,
           drag: false,
@@ -303,16 +304,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           onTap: () async {
                             var cubit = context.read<CartCubit>();
                             // var navigator
-                            double orderValue = cubit.state.total;
-                            dynamic dataStorage = cubit.getStorage;
 
-                            final String? toPay =
-                                await modal.showModalBottomSheet(
+                            final String? toPay = widget.dividevalue == true
+                                ? await modal.showModalBottomSheet(
                                     drag: false,
                                     dimisible: false,
                                     context: context,
-                                    content: TopayModal());
+                                    content: TopayModal(
+                                      maxValue: state.total - state.paid,
+                                    ))
+                                : null;
 
+                            cubit.valueTopay(double.parse(toPay ?? "0"));
+
+                            // ignore: use_build_context_synchronously, non_constant_identifier_names
                             final card_code = await Navigator.pushNamed(
                                 context, AppRoutes.scanCard);
 
@@ -320,6 +325,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                             var card = await beerpassService
                                 .getCard(card_code.toString());
+
+                            double orderValue = cubit.state.paid > 0
+                                ? cubit.state.paid
+                                : cubit.state.total;
 
                             if (card != null) {
                               double cardBudget =
@@ -332,6 +341,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       card_code.toString(), orderValue);
 
                                   // action(context, "Cartão snacks");
+
                                   cubit.changeStatus(AppStatus.loaded);
                                   // ignore: use_build_context_synchronously
                                   modal.showModalBottomSheet(
@@ -354,9 +364,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                       locale: "pt",
                                                       symbol: r"R$ ")
                                                   .format(result),
-                                              action: () => action(
-                                                  "Cartão snacks",
-                                                  card: card_code)),
+                                              action: () =>
+                                                  orderValue == state.total
+                                                      ? action("Cartão snacks",
+                                                          card: card_code)
+                                                      : null),
                                         );
                                       }));
                                 } catch (e) {

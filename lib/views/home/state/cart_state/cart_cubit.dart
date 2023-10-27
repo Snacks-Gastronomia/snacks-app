@@ -318,4 +318,13 @@ class CartCubit extends Cubit<CartState> {
     state.couponsList.remove(coupomCode);
     print(state.couponsList);
   }
+
+  void valueTopay(double valueTopay) {
+    var paid = state.paid;
+    emit(state.copyWith(paid: paid + valueTopay));
+  }
+
+  void cleanPaid() {
+    emit(state.copyWith(paid: 0));
+  }
 }

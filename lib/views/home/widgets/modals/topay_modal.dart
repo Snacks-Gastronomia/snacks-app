@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:snacks_app/core/app.text.dart';
 
 class TopayModal extends StatelessWidget {
-  TopayModal({super.key});
+  TopayModal({super.key, required this.maxValue});
+  final double maxValue;
 
   final TextEditingController controller = TextEditingController();
 
@@ -51,7 +52,8 @@ class TopayModal extends StatelessWidget {
                         borderRadius: BorderRadius.circular(15)),
                     backgroundColor: Colors.black,
                     fixedSize: const Size(double.maxFinite, 59)),
-                onPressed: () => controller.text.isNotEmpty
+                onPressed: () => controller.text.isNotEmpty &&
+                        double.parse(controller.text) <= maxValue
                     ? navigator.pop(controller.text)
                     : null,
                 child: const Text('Pagar')),

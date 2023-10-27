@@ -40,7 +40,10 @@ class DivideValueModal extends StatelessWidget {
                         dividevalue: true,
                       )));
             },
-            child: const Text('Sim')),
+            child: const Text(
+              'Sim',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            )),
         const SizedBox(
           height: 10,
         ),
@@ -52,7 +55,7 @@ class DivideValueModal extends StatelessWidget {
             },
             child: Text(
               'Não',
-              style: AppTextStyles.bold(14),
+              style: AppTextStyles.bold(16),
             ))
       ]),
     );
