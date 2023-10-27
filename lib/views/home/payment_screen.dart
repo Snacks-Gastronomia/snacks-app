@@ -316,8 +316,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     ))
                                 : null;
 
-                            cubit.valueTopay(double.parse(toPay ?? "0"));
-
                             // ignore: use_build_context_synchronously, non_constant_identifier_names
                             final card_code = await Navigator.pushNamed(
                                 context, AppRoutes.scanCard);
@@ -327,9 +325,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             var card = await beerpassService
                                 .getCard(card_code.toString());
 
-                            double orderValue = cubit.state.paid > 0
-                                ? cubit.state.paid
-                                : cubit.state.total;
+                            var valueTopay = double.parse(toPay ?? "0");
+
+                            double orderValue =
+                                valueTopay > 0 ? valueTopay : cubit.state.total;
 
                             if (card != null) {
                               double cardBudget =
@@ -342,6 +341,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       card_code.toString(), orderValue);
 
                                   // action(context, "Cartão snacks");
+                                  cubit.valueTopay(double.parse(toPay ?? "0"));
 
                                   cubit.changeStatus(AppStatus.loaded);
                                   // ignore: use_build_context_synchronously
