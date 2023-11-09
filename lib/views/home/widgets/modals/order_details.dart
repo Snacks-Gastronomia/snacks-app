@@ -1,9 +1,10 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:snacks_app/core/app.images.dart';
 
+import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/order_reponse.dart';
 import 'package:snacks_app/utils/enums.dart';
@@ -221,6 +222,7 @@ class ListOrderByStatus extends StatelessWidget {
                     return ItemWidget(
                         title: "${item.amount} ${item.item.title}",
                         option: item.optionSelected.title,
+                        observations: item.observations,
                         extras: item.extras!.isNotEmpty
                             ? item.extras!.length > 1
                                 ? item.extras!.reduce((value, element) =>
@@ -242,80 +244,97 @@ class ItemWidget extends StatelessWidget {
     Key? key,
     required this.title,
     required this.option,
+    required this.observations,
+    required this.image,
     required this.extras,
     required this.value,
     required this.restaurant,
-    required this.image,
   }) : super(key: key);
 
   final String title;
   final String option;
+  final String? observations;
   final String? image;
   final String extras;
   final double value;
   final String restaurant;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Row(
-            children: [
-              Container(
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: const Color(0xffF6F6F6),
-                ),
-                child: image == null || image!.isEmpty
-                    ? Center(
-                        child: SvgPicture.asset(
-                          AppImages.snacks,
-                          width: 42,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Container(
+                    clipBehavior: Clip.hardEdge,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: const Color(0xffF6F6F6),
+                    ),
+                    child: image == null || image!.isEmpty
+                        ? Center(
+                            child: SvgPicture.asset(
+                              AppImages.snacks,
+                              width: 42,
+                            ),
+                          )
+                        : Image.network(
+                            image!,
+                            height: 42,
+                            width: 42,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return SvgPicture.asset(
+                                AppImages.snacks,
+                                height: 10,
+                                width: 10,
+                              );
+                            },
+                          ),
+                  ),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$title ${option != title ? "- ${option.trim()}" : ""} ${extras.isNotEmpty ? '+ ($extras)' : ''}',
+                          style: AppTextStyles.light(12),
+                          overflow: TextOverflow.visible,
                         ),
-                      )
-                    : Image.network(
-                        image!,
-                        height: 42,
-                        width: 42,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return SvgPicture.asset(
-                            AppImages.snacks,
-                            height: 10,
-                            width: 10,
-                          );
-                        },
-                      ),
-              ),
-              const SizedBox(width: 7),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$title ${option != title ? "- ${option.trim()}" : ""} ${extras.isNotEmpty ? '+ ($extras)' : ''}',
-                      style: AppTextStyles.light(12),
-                      overflow: TextOverflow.visible,
+                        Text(
+                          restaurant,
+                          style: AppTextStyles.light(10,
+                              color: Colors.black.withOpacity(0.3)),
+                          overflow: TextOverflow.visible,
+                        ),
+                      ],
                     ),
-                    Text(
-                      restaurant,
-                      style: AppTextStyles.light(10,
-                          color: Colors.black.withOpacity(0.3)),
-                      overflow: TextOverflow.visible,
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 10),
+                ],
               ),
-              const SizedBox(width: 10),
-            ],
-          ),
+            ),
+            Text(
+              NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(value),
+              style: AppTextStyles.medium(12),
+            )
+          ],
         ),
-        Text(
-          NumberFormat.currency(locale: "pt", symbol: r"R$ ").format(value),
-          style: AppTextStyles.medium(12),
-        )
+        if (observations!.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: Text(
+              'Observações: $observations',
+              style:
+                  AppTextStyles.light(11, color: Colors.black.withOpacity(0.5)),
+              overflow: TextOverflow.visible,
+            ),
+          ),
       ],
     );
   }
