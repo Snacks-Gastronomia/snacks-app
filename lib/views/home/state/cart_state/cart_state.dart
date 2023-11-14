@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'cart_cubit.dart';
 
 class CartState implements Equatable {
@@ -11,23 +12,25 @@ class CartState implements Equatable {
   final List<String> couponsList;
 
   final double total;
+  final double paid;
   final AppStatus status;
   final String? error;
   final String temp_observation;
 
   CartState({
-    required this.receive_order,
-    required this.address,
     required this.cart,
     required this.payment_method,
+    required this.table_code,
+    required this.receive_order,
+    required this.address,
     required this.delivery_value,
     required this.delivery_disable,
-    required this.table_code,
+    required this.couponsList,
     required this.total,
+    required this.paid,
     required this.status,
     this.error,
     required this.temp_observation,
-    required this.couponsList,
   });
 
   factory CartState.initial() => CartState(
@@ -38,6 +41,7 @@ class CartState implements Equatable {
       cart: [],
       status: AppStatus.initial,
       total: 0,
+      paid: 0,
       error: "",
       address: "",
       receive_order: "address",
@@ -51,6 +55,7 @@ class CartState implements Equatable {
       bool? delivery_disable,
       int? table_code,
       double? total,
+      double? paid,
       double? delivery_value,
       AppStatus? status,
       String? error,
@@ -66,6 +71,7 @@ class CartState implements Equatable {
       delivery_disable: delivery_disable ?? this.delivery_disable,
       table_code: table_code ?? this.table_code,
       total: total ?? this.total,
+      paid: paid ?? this.paid,
       status: status ?? this.status,
       error: error ?? this.error,
       temp_observation: temp_observation ?? this.temp_observation,

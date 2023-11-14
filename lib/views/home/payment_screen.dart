@@ -20,8 +20,11 @@ import 'package:snacks_app/views/home/widgets/modals/money_change_value.dart';
 import 'package:snacks_app/views/splash/loading_screen.dart';
 import 'package:snacks_app/views/success/success_screen.dart';
 
+import 'widgets/modals/topay_modal.dart';
+
 class PaymentScreen extends StatefulWidget {
-  PaymentScreen({Key? key}) : super(key: key);
+  const PaymentScreen({Key? key, this.dividevalue}) : super(key: key);
+  final bool? dividevalue;
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -119,7 +122,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
       }
     }
     if (auth.currentUser?.displayName != '') {
-      cubit.makeOrder(method, change: change, rfid: card);
+      debugPrint('foi pago: ${cubit.state.paid}');
+      cubit.makeOrder(method, cubit.state.paid, change: change, rfid: card);
+      cubit.cleanPaid();
       modal.showIOSModalBottomSheet(
           context: _globalKey.currentContext,
           drag: false,
@@ -300,14 +305,33 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           onTap: () async {
                             var cubit = context.read<CartCubit>();
                             // var navigator
-                            double orderValue = cubit.state.total;
-                            dynamic dataStorage = cubit.getStorage;
-                            final card_code = await Navigator.pushNamed(
-                                context, AppRoutes.scanCard);
+
+                            final String? toPay = widget.dividevalue == true
+                                ? await modal.showModalBottomSheet(
+                                    drag: false,
+                                    dimisible: false,
+                                    context: context,
+                                    content: TopayModal(
+                                      maxValue: state.total - state.paid,
+                                    ))
+                                : null;
+
+                            final card_code = toPay != null
+                                ? await Navigator.pushNamed(
+                                    context, AppRoutes.scanCard)
+                                : null;
 
                             cubit.changeStatus(AppStatus.loading);
-                            var card = await beerpassService
-                                .getCard(card_code.toString());
+
+                            var card = card_code != null
+                                ? await beerpassService
+                                    .getCard(card_code.toString())
+                                : null;
+
+                            var valueTopay = double.parse(toPay ?? "0");
+
+                            double orderValue =
+                                valueTopay > 0 ? valueTopay : cubit.state.total;
 
                             if (card != null) {
                               double cardBudget =
@@ -320,6 +344,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       card_code.toString(), orderValue);
 
                                   // action(context, "Cartão snacks");
+                                  cubit.valueTopay(double.parse(toPay ?? "0"));
+
                                   cubit.changeStatus(AppStatus.loaded);
                                   // ignore: use_build_context_synchronously
                                   modal.showModalBottomSheet(
@@ -342,9 +368,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                       locale: "pt",
                                                       symbol: r"R$ ")
                                                   .format(result),
-                                              action: () => action(
-                                                  "Cartão snacks",
-                                                  card: card_code)),
+                                              action: () =>
+                                                  orderValue == state.total
+                                                      ? action("Cartão snacks",
+                                                          card: card_code)
+                                                      : null),
                                         );
                                       }));
                                 } catch (e) {
@@ -404,6 +432,31 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ),
                           ),
                         ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        if (widget.dividevalue == true)
+                          SizedBox(
+                            width: double.maxFinite,
+                            height: 59,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  NumberFormat.currency(
+                                          locale: "pt", symbol: r"Total: R$ ")
+                                      .format(state.total),
+                                  style: AppTextStyles.semiBold(22),
+                                ),
+                                Text(
+                                  NumberFormat.currency(
+                                          locale: "pt", symbol: r"Pago: R$ ")
+                                      .format(state.paid),
+                                  style: AppTextStyles.regular(16),
+                                ),
+                              ],
+                            ),
+                          )
                       ],
                     )),
               ));

@@ -143,10 +143,10 @@ class CartCubit extends Cubit<CartState> {
         accessibility: KeychainAccessibility.first_unlock,
       ));
 
-  Future<void> makeOrder(String method,
+  Future<void> makeOrder(String method, double paid,
       {String? rfid = "", String change = ""}) async {
     final notification = AppNotification();
-    var data = await generateDataObject(method, change, rfid);
+    var data = await generateDataObject(method, paid, change, rfid);
 
     await repository.createOrder(data);
 
@@ -166,7 +166,7 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<List<Map<String, dynamic>>> generateDataObject(
-      method, change, rfid) async {
+      method, paid, change, rfid) async {
     final dataStorage = await getStorage;
     bool isDelivery =
         (!auth.currentUser!.isAnonymous && state.receive_order != "local");
@@ -207,6 +207,8 @@ class CartCubit extends Cubit<CartState> {
           "phone_number": auth.currentUser?.phoneNumber,
           "rfid": rfid,
           "value": e.getTotalValue,
+          "discount": e.discount,
+          "paid": paid,
           "restaurant": e.item.restaurant_id,
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
@@ -317,5 +319,14 @@ class CartCubit extends Cubit<CartState> {
   void removeCupom(String coupomCode) {
     state.couponsList.remove(coupomCode);
     print(state.couponsList);
+  }
+
+  void valueTopay(double valueTopay) {
+    var paid = state.paid;
+    emit(state.copyWith(paid: paid + valueTopay));
+  }
+
+  void cleanPaid() {
+    emit(state.copyWith(paid: 0));
   }
 }

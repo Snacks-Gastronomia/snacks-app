@@ -11,11 +11,13 @@ import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/authentication/state/auth_cubit.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 import 'package:snacks_app/views/home/widgets/cart_item.dart';
+import 'package:snacks_app/views/home/widgets/modals/divide_value_modal.dart';
 import 'package:snacks_app/views/review/review_screen.dart';
 
 import '../../services/firebase/custom_token_auth.dart';
@@ -32,6 +34,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
   final auth = FirebaseAuth.instance;
   final customAuth = FirebaseCustomTokenAuth();
   final toast = AppToast();
+  final modal = AppModal();
 
   final storage = AppStorage();
 
@@ -265,9 +268,12 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                                       table: code.toString());
 
                                               if (user != null) {
-                                                navigator.pushNamed(
-                                                  AppRoutes.payment,
-                                                );
+                                                // ignore: use_build_context_synchronously
+                                                modal.showModalBottomSheet(
+                                                    context: context,
+                                                    content:
+                                                        const DivideValueModal());
+
                                                 cubit.changeStatus(
                                                     AppStatus.loaded);
                                               } else {
