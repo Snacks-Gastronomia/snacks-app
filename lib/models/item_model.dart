@@ -18,7 +18,7 @@ class Item {
   final String? measure;
   final String? image_url;
   final bool active;
-  final List<Ingredient> ingredients;
+  final List<String> ingredients;
   final List<dynamic> extras;
   final List<dynamic> options;
 
@@ -57,7 +57,7 @@ class Item {
     bool? active,
     List<dynamic>? extras,
     List<dynamic>? options,
-    List<Ingredient>? ingredients,
+    List<String>? ingredients,
   }) {
     return Item(
       id: id ?? this.id,
@@ -126,7 +126,7 @@ class Item {
       limit_extra_options: map['limit_extra_options'],
       measure: map['measure'],
       image_url: map['image_url'],
-      ingredients: List<Ingredient>.from(map['ingredients']),
+      ingredients: List<String>.from(map['ingredients']),
       extras: List<dynamic>.from(map['extras'] ?? []),
       options: List<dynamic>.from(map['options'] ?? []),
     );

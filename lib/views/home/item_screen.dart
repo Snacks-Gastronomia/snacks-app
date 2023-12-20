@@ -461,7 +461,7 @@ class _ItemScreenState extends State<ItemScreen> {
                                   builder: (context, state) {
                                 bool selected = context
                                     .read<ItemScreenCubit>()
-                                    .hasItemId(item["id"]);
+                                    .hasItemId(item['id']);
 
                                 return GestureDetector(
                                   onTap: () => context

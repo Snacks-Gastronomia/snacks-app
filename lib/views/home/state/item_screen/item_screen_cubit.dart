@@ -25,7 +25,7 @@ class ItemScreenCubit extends Cubit<ItemScreenState> {
     print(state.order!.amount);
   }
 
-  bool hasItemId(int id) {
+  bool hasItemId(String id) {
     List<dynamic> extras = List.from(state.order!.extras);
     bool found = false;
 
