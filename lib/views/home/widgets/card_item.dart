@@ -26,8 +26,11 @@ class CardItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var order = OrderModel(
-        item: item, observations: "", option_selected: item.options[0]);
+        item: item,
+        observations: "",
+        option_selected: item.options.isNotEmpty ? item.options[0] : null);
     var sizeHeight = MediaQuery.of(context).size.height;
+    var price = item.options.isNotEmpty ? item.options[0]["value"] : item.value;
 
     return Builder(builder: (context) {
       return Stack(
@@ -101,8 +104,7 @@ class CardItemWidget extends StatelessWidget {
                             softWrap: true),
                         Text(
                           NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                              .format(double.parse(
-                                  item.options[0]["value"].toString())),
+                              .format(double.parse(price.toString())),
                           style: AppTextStyles.regular(15,
                               color: Colors.grey.shade500),
                         ),

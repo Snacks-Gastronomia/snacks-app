@@ -27,7 +27,7 @@ class ItemsApiServices {
           .where("restaurant_id", isEqualTo: id)
           .where("active", isEqualTo: true);
 
-      return ref.snapshots().timeout(const Duration(seconds: 10));
+      return ref.snapshots();
     } catch (e) {
       rethrow;
     }
