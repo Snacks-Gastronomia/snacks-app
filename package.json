@@ -1,0 +1,15 @@
+{
+  "name": "snacks_app",
+  "version": "1.0.0",
+  "description": "Backend service for snacks apps",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jackson Aguiar",
+  "license": "ISC"
+}

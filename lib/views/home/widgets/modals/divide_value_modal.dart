@@ -11,7 +11,7 @@ class DivideValueModal extends StatelessWidget {
     var navigator = Navigator.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(30.0),
+      padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
       child: Column(children: [
         const SizedBox(
           height: 15,

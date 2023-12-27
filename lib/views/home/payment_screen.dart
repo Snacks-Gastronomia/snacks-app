@@ -305,8 +305,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           onTap: () async {
                             var cubit = context.read<CartCubit>();
                             // var navigator
+                            bool isSplitPayment = widget.dividevalue != null &&
+                                widget.dividevalue == true;
 
-                            final String? toPay = widget.dividevalue == true
+                            final String? toPay = isSplitPayment
                                 ? await modal.showModalBottomSheet(
                                     drag: false,
                                     dimisible: false,
@@ -314,7 +316,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     content: TopayModal(
                                       maxValue: state.total - state.paid,
                                     ))
-                                : null;
+                                : state.total.toString();
 
                             final card_code = toPay != null
                                 ? await Navigator.pushNamed(

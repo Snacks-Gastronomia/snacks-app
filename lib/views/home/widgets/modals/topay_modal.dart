@@ -33,17 +33,16 @@ class TopayModal extends StatelessWidget {
               width: 190,
               height: 100,
               child: TextFormField(
+                autofocus: true,
                 textAlign: TextAlign.center,
                 controller: controller,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "R\$ 7,00",
+                  hintStyle: AppTextStyles.bold(50, color: Colors.black26),
                 ),
-                style: const TextStyle(
-                  fontSize: 50,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppTextStyles.bold(50, color: Colors.black),
               ),
             ),
             ElevatedButton(
