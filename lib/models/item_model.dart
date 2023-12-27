@@ -114,7 +114,7 @@ class Item {
   factory Item.fromMap(Map<String, dynamic> map) {
     return Item(
       id: map['id'],
-      active: map['active'],
+      active: map['active'] ?? false,
       num_served: map['num_served'] ?? 1,
       title: map['title'] ?? '',
       time: map['time'] ?? 0,
