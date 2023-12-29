@@ -263,9 +263,17 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                                 int.tryParse(code.toString());
                                             if (table != null &&
                                                 (table >= 1 && table <= 100)) {
-                                              var user =
-                                                  await customAuth.signIn(
-                                                      table: code.toString());
+                                              UserCredential? user;
+                                              try {
+                                                user = await customAuth.signIn(
+                                                    table: code.toString());
+                                              } catch (e) {
+                                                toast.showToast(
+                                                    context: context,
+                                                    type: ToastType.error,
+                                                    content:
+                                                        "mesa: ${code.toString()}; Error: ${e.toString()}");
+                                              }
 
                                               if (user != null) {
                                                 // ignore: use_build_context_synchronously
@@ -277,15 +285,13 @@ class _MyCartScreenState extends State<MyCartScreen> {
                                                 cubit.changeStatus(
                                                     AppStatus.loaded);
                                               } else {
-                                                debugPrint(
-                                                    'Failed to scan Barcode');
                                                 cubit.changeStatus(
                                                     AppStatus.loaded);
                                                 // ignore: use_build_context_synchronously
                                                 toast.showToast(
                                                     context: context,
                                                     content:
-                                                        "Verifique sua conexão com a internet.",
+                                                        "Verifique sua conexão com a internet. mesa: $code ; auth: $user",
                                                     type: ToastType.error);
                                               }
                                             } else {

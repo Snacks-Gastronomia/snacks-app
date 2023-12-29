@@ -15,17 +15,17 @@ class FirebaseCustomTokenAuth {
 
   Future<UserCredential?> signIn({required String table}) async {
     print("try to generate token");
+    UserCredential? userCredential;
 
     try {
-      final userCredential = await auth.signInAnonymously();
+      userCredential = await auth.signInAnonymously();
 
-      final session = AppSession();
-
-      await session.create();
       await storage.write(key: "table", value: table);
 
+      final session = AppSession();
+      await session.create();
+
       print("Sign-in successful.");
-      return userCredential;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "invalid-custom-token":
@@ -40,6 +40,8 @@ class FirebaseCustomTokenAuth {
     } catch (e) {
       print(e);
     }
+
+    return userCredential;
   }
 
   String createToken() {
