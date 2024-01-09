@@ -322,8 +322,8 @@ class CartCubit extends Cubit<CartState> {
   }
 
   void valueTopay(double valueTopay) {
-    var paid = state.paid;
-    emit(state.copyWith(paid: paid + valueTopay));
+    var paid = state.paid + valueTopay;
+    emit(state.copyWith(paid: paid, status: AppStatus.loaded));
   }
 
   void cleanPaid() {

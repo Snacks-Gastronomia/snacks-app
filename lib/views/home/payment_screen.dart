@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:snacks_app/components/custom_submit_button.dart';
 import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
@@ -39,6 +40,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   final modal = AppModal();
   final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
 
+  double amountPaid = 0;
   @override
   void dispose() {
     // TODO: implement dispose
@@ -304,7 +306,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         GestureDetector(
                           onTap: () async {
                             var cubit = context.read<CartCubit>();
-                            // var navigator
+                            var navigator = Navigator.of(context);
+
                             bool isSplitPayment = widget.dividevalue != null &&
                                 widget.dividevalue == true;
 
@@ -319,8 +322,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 : state.total.toString();
 
                             final card_code = toPay != null
-                                ? await Navigator.pushNamed(
-                                    context, AppRoutes.scanCard)
+                                ? await navigator.pushNamed(AppRoutes.scanCard)
                                 : null;
 
                             cubit.changeStatus(AppStatus.loading);
@@ -345,10 +347,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   await beerpassService.payWithSnacksCard(
                                       card_code.toString(), orderValue);
 
-                                  // action(context, "Cartão snacks");
-                                  cubit.valueTopay(double.parse(toPay ?? "0"));
+                                  // ignore: use_build_context_synchronously
+                                  cubit.valueTopay(orderValue);
 
-                                  cubit.changeStatus(AppStatus.loaded);
+                                  setState(() {
+                                    amountPaid += orderValue;
+                                  });
+
                                   // ignore: use_build_context_synchronously
                                   modal.showModalBottomSheet(
                                       dimisible: false,
@@ -357,6 +362,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       content: Builder(builder: (context) {
                                         return WillPopScope(
                                           onWillPop: () async {
+                                            if (state.paid == state.total) {
+                                              action("Cartão snacks",
+                                                  card: card_code);
+                                            }
                                             return false;
                                           },
                                           child: PaymentSuccessContent(
@@ -371,7 +380,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                       symbol: r"R$ ")
                                                   .format(result),
                                               action: () =>
-                                                  orderValue == state.total
+                                                  amountPaid == state.total
                                                       ? action("Cartão snacks",
                                                           card: card_code)
                                                       : null),
@@ -458,7 +467,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 ),
                               ],
                             ),
-                          )
+                          ),
                       ],
                     )),
               ));
