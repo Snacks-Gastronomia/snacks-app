@@ -362,10 +362,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       content: Builder(builder: (context) {
                                         return WillPopScope(
                                           onWillPop: () async {
-                                            if (state.paid == state.total) {
-                                              action("Cartão snacks",
-                                                  card: card_code);
-                                            }
                                             return false;
                                           },
                                           child: PaymentSuccessContent(
