@@ -12,6 +12,7 @@ import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/widgets/modals/cancel_order.dart';
 import 'package:snacks_app/views/home/widgets/signal_ripple_animation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetailsContent extends StatelessWidget {
   const OrderDetailsContent({
@@ -117,6 +118,17 @@ class OrderDetailsContent extends StatelessWidget {
           const Divider(),
           const SizedBox(
             height: 10,
+          ),
+          TextButton(
+            onPressed: () async {
+              launchUrl(Uri.parse('tel://065999420195'));
+            },
+            style: ElevatedButton.styleFrom(
+                fixedSize: const Size(double.maxFinite, 59)),
+            child: Text(
+              'Algum probema? contate-nos',
+              style: AppTextStyles.regular(16, color: Colors.blue[400]),
+            ),
           ),
           if (allowCancel)
             TextButton(
