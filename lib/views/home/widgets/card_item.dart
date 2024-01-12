@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:snacks_app/core/app.colors.dart';
 import 'package:snacks_app/core/app.images.dart';
-import 'package:snacks_app/core/app.routes.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/models/order_model.dart';
@@ -14,8 +12,6 @@ import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
-
-import 'modals/modal_content_obs.dart';
 
 class CardItemWidget extends StatelessWidget {
   CardItemWidget({Key? key, required this.item}) : super(key: key);
@@ -50,40 +46,28 @@ class CardItemWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: sizeHeight * 0.11,
-                  width: double.maxFinite,
-                  child: item.image_url == null || item.image_url!.isEmpty
-                      ? Center(
-                          child: SvgPicture.asset(
+                    height: sizeHeight * 0.11,
+                    width: double.maxFinite,
+                    child: Center(
+                      child: Image.network(
+                        item.image_url ?? AppImages.snacks,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return SvgPicture.asset(
                             AppImages.snacks,
                             color: Colors.grey.shade400,
-                            // fit: BoxFit.,
                             width: 80,
-                          ),
-                        )
-                      : CachedNetworkImage(
-                          useOldImageOnUrlChange: true,
-                          maxHeightDiskCache: 300,
-                          imageUrl: item.image_url!,
-                          fit: BoxFit.cover,
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) => Center(
-                            child: SvgPicture.asset(
-                              AppImages.snacks,
-                              color: Colors.grey.shade400,
-                              width: 80,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Center(
-                            child: SvgPicture.asset(
-                              AppImages.snacks,
-                              color: Colors.grey.shade400,
-                              width: 80,
-                            ),
-                          ),
-                        ),
-                  //  Image.network(item.image_url!, fit: BoxFit.cover),
-                ),
+                          );
+                        },
+                        loadingBuilder: (context, child, progress) {
+                          return progress == null
+                              ? child
+                              : const Center(
+                                  child: Text("Carregando..."),
+                                );
+                        },
+                      ),
+                    )),
                 Container(
                   height: 2,
                   color: Colors.grey,
