@@ -153,8 +153,6 @@ class CartCubit extends Cubit<CartState> {
     if (auth.currentUser?.isAnonymous ?? false) {
       var stor = await storage.readAll();
       notification.sendNotificationToWaiters(table: stor["table"].toString());
-
-      // await cardRepository.doPayment(rfid, state.total);
     }
 
     clearCart();

@@ -88,7 +88,7 @@ class Item {
       'restaurant_id': restaurant_id,
       'limit_extra_options': limit_extra_options,
       'restaurant_name': restaurant_name,
-      'num_served ': num_served,
+      'num_served': num_served,
       'category': category,
       'measure': measure,
       'active': active,
@@ -115,7 +115,7 @@ class Item {
     return Item(
       id: map['id'],
       active: map['active'] ?? false,
-      num_served: map['num_served'] ?? 1,
+      num_served:map['num_served'] ?? map['num_served '] ?? 1,
       title: map['title'] ?? '',
       time: map['time'] ?? 0,
       description: map['description'] ?? '',

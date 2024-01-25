@@ -49,24 +49,30 @@ class CardItemWidget extends StatelessWidget {
                     height: sizeHeight * 0.11,
                     width: double.maxFinite,
                     child: Center(
-                      child: Image.network(
-                        item.image_url ?? AppImages.snacks,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return SvgPicture.asset(
-                            AppImages.snacks,
-                            color: Colors.grey.shade400,
-                            width: 80,
-                          );
-                        },
-                        loadingBuilder: (context, child, progress) {
-                          return progress == null
-                              ? child
-                              : const Center(
-                                  child: Text("Carregando..."),
+                      child: item.image_url == null
+                          ? SvgPicture.asset(
+                              AppImages.snacks,
+                              color: Colors.grey.shade400,
+                              width: 80,
+                            )
+                          : Image.network(
+                              item.image_url!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return SvgPicture.asset(
+                                  AppImages.snacks,
+                                  color: Colors.grey.shade400,
+                                  width: 80,
                                 );
-                        },
-                      ),
+                              },
+                              loadingBuilder: (context, child, progress) {
+                                return progress == null
+                                    ? child
+                                    : const Center(
+                                        child: Text("Carregando..."),
+                                      );
+                              },
+                            ),
                     )),
                 Container(
                   height: 2,
