@@ -1,16 +1,11 @@
-import 'dart:developer';
 import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl/intl.dart';
-import 'package:meta/meta.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:snacks_app/models/item_model.dart';
 
 import 'package:snacks_app/models/order_model.dart';
 import 'package:snacks_app/services/firebase/notifications.dart';
@@ -18,7 +13,6 @@ import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/storage.dart';
 import 'package:snacks_app/views/home/repository/card_repository.dart';
 import 'package:snacks_app/views/home/repository/orders_repository.dart';
-import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 
 part 'cart_state.dart';
 
@@ -122,15 +116,16 @@ class CartCubit extends Cubit<CartState> {
   void updateTotalValue() {
     double total = 0;
     for (var element in state.cart) {
-      double extras_value = element.extras.isNotEmpty
+      double extrasValue = element.extras.isNotEmpty
           ? element.extras
               .map((e) => double.parse(e["value"].toString()))
               .reduce((value, element) => value + element)
           : 0;
 
-      total += (double.parse(element.option_selected["value"].toString()) *
-              element.amount) +
-          extras_value;
+      total += ((double.parse(element.option_selected["value"].toString()) *
+                  element.amount) +
+              extrasValue) *
+          (1 - (element.discount / 100));
     }
     emit(state.copyWith(total: total));
   }
@@ -184,7 +179,7 @@ class CartCubit extends Cubit<CartState> {
     String version = packageInfo.version;
     DataOrder dataTotal = DataOrder(done: [], orders: []);
     // ignore: iterable_contains_unrelated_type
-    String order_code = generateOrderCode();
+    String orderCode = generateOrderCode();
 
     for (var e in state.cart) {
       if (dataTotal.done.contains(e.item.restaurant_id)) {
@@ -211,9 +206,9 @@ class CartCubit extends Cubit<CartState> {
           "restaurant_name": e.item.restaurant_name,
           "isDelivery": isDelivery,
           "delivery_value": (isDelivery ? state.delivery_value : 0).toDouble(),
-          "code": order_code,
+          "code": orderCode,
           "customer_name": auth.currentUser?.displayName,
-          "part_code": order_code.split("-")[0],
+          "part_code": orderCode.split("-")[0],
           "status": status,
           "receive_order": state.receive_order,
           "need_change": change.toString().isNotEmpty,
@@ -236,24 +231,22 @@ class CartCubit extends Cubit<CartState> {
 
   generateOrderCode() {
     var str = generateRandomString(3);
-    var str_code = generateRandomStringWNumbers(6);
+    var strCode = generateRandomStringWNumbers(6);
     var numb = generateRandomNumber(100, 999);
 
-    return '$str$numb-$str_code';
+    return '$str$numb-$strCode';
   }
 
   String generateRandomString(int len) {
     var r = Random();
-    const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
-        .join();
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
   }
 
   String generateRandomStringWNumbers(int len) {
     var r = Random();
-    const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890@#&';
-    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
-        .join();
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890@#&';
+    return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
   }
 
   int generateRandomNumber(int min, int max) {
