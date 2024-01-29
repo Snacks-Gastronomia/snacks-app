@@ -126,7 +126,7 @@ class OrderDetailsContent extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 fixedSize: const Size(double.maxFinite, 59)),
             child: Text(
-              'Algum probema? contate-nos',
+              'Algum problema? contate-nos',
               style: AppTextStyles.regular(16, color: Colors.blue[400]),
             ),
           ),
