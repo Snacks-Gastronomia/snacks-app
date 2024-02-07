@@ -66,13 +66,15 @@ class CardDetailsModal extends StatelessWidget {
                       await Navigator.pushNamed(context, AppRoutes.scanCard)
                           .then((code) async {
                         if (code != null) {
-                          await cubit.readCard(code, context).then((value) {
+                          await cubit
+                              .readCustomerCardFromFirebase(code, context)
+                              .then((value) {
                             nav.pop();
-                            if (value) {
+                            if (value != null) {
                               AppModal().showIOSModalBottomSheet(
                                 drag: false,
                                 context: context,
-                                content: const CustomerReportScreen(),
+                                content: CustomerReportScreen(items: value),
                               );
                             }
                           });

@@ -12,7 +12,37 @@ class CardCubit extends Cubit<CardState> {
   final toast = AppToast();
   CardCubit() : super(CardState.initial());
 
-  Future<bool> readCard(rfid, context) async {
+  Future readCustomerCardFromFirebase(rfid, context) async {
+    emit(state.copyWith(status: AppStatus.loading));
+    toast.init(context: context);
+    if (rfid == null || rfid == "") {
+      emit(state.copyWith(status: AppStatus.loaded));
+
+      toast.showToast(
+          context: context,
+          content: "Cartão Snacks inválido",
+          type: ToastType.error);
+    } else {
+      var res = await repository.fetchCardFromFirebase(rfid);
+      print(res);
+      if (res != null) {
+        emit(state.copyWith(
+          status: AppStatus.loaded,
+          hasData: true,
+        ));
+        return res;
+      } else {
+        emit(state.copyWith(status: AppStatus.loaded, hasData: false));
+
+        toast.showToast(
+            context: context,
+            content: "Cartão Snacks sem saldo",
+            type: ToastType.info);
+      }
+    }
+  }
+
+  Future readCard(rfid, context) async {
     emit(state.copyWith(status: AppStatus.loading));
     toast.init(context: context);
     if (rfid == null || rfid == "") {
@@ -24,6 +54,7 @@ class CardCubit extends Cubit<CardState> {
           type: ToastType.error);
     } else {
       var res = await repository.fetchCard(rfid);
+
       if (res != null) {
         emit(state.copyWith(
           status: AppStatus.loaded,
@@ -31,7 +62,7 @@ class CardCubit extends Cubit<CardState> {
           nome: res["nome"],
           value: double.parse(res["saldo"].toString()),
         ));
-        return true;
+        return res;
       } else {
         emit(state.copyWith(status: AppStatus.loaded, hasData: false));
 
@@ -41,7 +72,6 @@ class CardCubit extends Cubit<CardState> {
             type: ToastType.info);
       }
     }
-    return false;
   }
 
   changeStatus(AppStatus status) {

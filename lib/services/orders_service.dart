@@ -29,6 +29,14 @@ class OrdersApiServices {
         collection: "orders", subcolletion: "items", data: data, docID: doc_id);
   }
 
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchOrderFromCard(
+      String rfid) async {
+    return await firebase
+        .collection("orders")
+        .where("rfid", isEqualTo: rfid)
+        .get();
+  }
+
   Future<dynamic> updateStatus(List<String?> ids, OrderStatus status) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
