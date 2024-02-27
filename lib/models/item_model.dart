@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:snacks_app/models/ingredient_model.dart';
-
 class Item {
   final String? id;
   final String title;
@@ -18,7 +16,7 @@ class Item {
   final String? measure;
   final String? image_url;
   final bool active;
-  final List<String> ingredients;
+  final List<dynamic> ingredients;
   final List<dynamic> extras;
   final List<dynamic> options;
 
@@ -57,7 +55,7 @@ class Item {
     bool? active,
     List<dynamic>? extras,
     List<dynamic>? options,
-    List<String>? ingredients,
+    List<dynamic>? ingredients,
   }) {
     return Item(
       id: id ?? this.id,
@@ -115,7 +113,7 @@ class Item {
     return Item(
       id: map['id'],
       active: map['active'] ?? false,
-      num_served:map['num_served'] ?? map['num_served '] ?? 1,
+      num_served: map['num_served'] ?? map['num_served '] ?? 1,
       title: map['title'] ?? '',
       time: map['time'] ?? 0,
       description: map['description'] ?? '',
@@ -126,7 +124,7 @@ class Item {
       limit_extra_options: map['limit_extra_options'],
       measure: map['measure'],
       image_url: map['image_url'],
-      ingredients: List<String>.from(map['ingredients']),
+      ingredients: List<dynamic>.from(map['ingredients']),
       extras: List<dynamic>.from(map['extras'] ?? []),
       options: List<dynamic>.from(map['options'] ?? []),
     );

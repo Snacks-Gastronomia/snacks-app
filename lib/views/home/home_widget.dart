@@ -17,7 +17,6 @@ import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/views/home/item_screen.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 import 'package:snacks_app/views/home/state/home_state/home_cubit.dart';
-import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 import 'package:snacks_app/views/home/widgets/card_item.dart';
 import 'package:snacks_app/views/home/widgets/skeletons.dart';
 
@@ -29,6 +28,7 @@ class HomeScreenWidget extends StatefulWidget {
 }
 
 class _HomeScreenWidgetState extends State<HomeScreenWidget> {
+  int customLimit = 80;
   late ScrollController controller;
   // final key = GlobalKey();
   final auth = FirebaseAuth.instance;
@@ -36,10 +36,11 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   @override
   void initState() {
     controller = ScrollController();
-    context.read<HomeCubit>().fetchItems();
+    context.read<HomeCubit>().fetchItems(limit: customLimit);
     print(auth.currentUser);
     controller.addListener(
       () {
+        _onAllItemsScroll();
         var cart = context.read<CartCubit>().emptyCart();
 
         if (controller.offset > 60 && !cart) {
@@ -50,6 +51,13 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
       },
     );
     super.initState();
+  }
+
+  void _onAllItemsScroll() {
+    if (controller.position.pixels == controller.position.maxScrollExtent) {
+      customLimit += 80;
+      context.read<HomeCubit>().fetchItems(limit: customLimit);
+    }
   }
 
   @override

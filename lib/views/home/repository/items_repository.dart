@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/services/items_service.dart';
 
 class ItemsRepository {
@@ -8,9 +7,10 @@ class ItemsRepository {
     required this.services,
   });
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> fetchItems(last) {
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchItems(last,
+      {int limit = 20}) {
     try {
-      return services.getItems(last);
+      return services.getItems(last, limit: limit);
     } catch (e) {
       throw e.toString();
     }
