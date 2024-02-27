@@ -92,11 +92,11 @@ class ProfileModal extends StatelessWidget {
                               Navigator.pop(context);
 
                               await Navigator.pushNamed(
-                                  context, AppRoutes.address,
-                                  arguments: {
-                                    "address": snapshot.data,
-                                    // "uid": auth.currentUser?.uid
-                                  });
+                                  context, AppRoutes.address
+                                  // arguments: {
+                                  //   "address": snapshot.data,
+                                  //   // "uid": auth.currentUser?.uid
+                                  );
                             },
                             icon: const Icon(
                               Icons.edit,

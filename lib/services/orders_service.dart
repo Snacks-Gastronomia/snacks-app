@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:snacks_app/services/firebase/database.dart';
 import 'package:snacks_app/utils/enums.dart';
+import 'package:http/http.dart' as http;
 
 class OrdersApiServices {
   final db = FirebaseDataBase();
   final auth = FirebaseAuth.instance;
   final firebase = FirebaseFirestore.instance;
+  final http.Client httpClient = http.Client();
 
   Future<void> createOrder(List<Map<String, dynamic>> data) async {
     // return await db.createDocumentToCollection(
@@ -65,4 +67,13 @@ class OrdersApiServices {
   }
 
   Future<dynamic> getOrdersByRestaurantId(String id) async {}
+
+  Future<bool> isValidImage(String? image_url) async {
+    if (image_url != null) {
+      var response = await httpClient.get((Uri.parse(image_url)));
+
+      return response.statusCode == 200;
+    }
+    return true;
+  }
 }

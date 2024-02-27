@@ -20,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
 
+  final modal = AppModal();
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreenWidget(),
     OrdersScreen(),
@@ -73,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   GButton(
                     icon: Icons.credit_card_rounded,
                     text: 'Cartão',
-                    onPressed: () => AppModal().showModalBottomSheet(
+                    onPressed: () => modal.showModalBottomSheet(
                       withPadding: false,
                       context: context,
                       dimisible: false,
@@ -87,12 +88,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       text: 'Conta',
                       onPressed: () {
                         // auth.signOut();
-                        AppModal().showModalBottomSheet(
-                          withPadding: false,
-                          context: key.currentContext ?? context,
-                          content: ProfileModal(),
-                        );
-                      }),
+                        modal
+                            .showModalBottomSheet(
+                              withPadding: false,
+                              context: key.currentContext ?? context,
+                              content: ProfileModal(),
+                            )
+                            .closed
+                            .whenComplete(() {});
+                      })
               ],
               selectedIndex: _selectedIndex,
               onTabChange: (index) async {

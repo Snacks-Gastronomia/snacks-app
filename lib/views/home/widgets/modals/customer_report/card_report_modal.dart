@@ -38,25 +38,6 @@ class CardDetailsModal extends StatelessWidget {
             const SizedBox(
               height: 15,
             ),
-            // BlocBuilder<CardCubit, CardState>(
-            //   builder: (context, state) {
-            //     return CardWidget(
-            //         name: state.nome,
-            //         value: state.value,
-            //         hasData: state.hasData,
-            //         loading: state.status == AppStatus.loading,
-            //         onTap: () async {
-            //           var cubit = context.read<CardCubit>();
-            //           await Navigator.pushNamed(context, AppRoutes.scanCard)
-            //               .then((code) async =>
-            //                   await cubit.readCard(code, context));
-            //         });
-            //   },
-            // ),
-            const SizedBox(
-              height: 15,
-            ),
-
             BlocBuilder<CardCubit, CardState>(
               builder: (context, state) {
                 return CustomSubmitButton(
@@ -86,13 +67,16 @@ class CardDetailsModal extends StatelessWidget {
                     loading: state.status == AppStatus.loading);
               },
             ),
+            const SizedBox(
+              height: 10,
+            ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 context.read<CardCubit>().clear();
               },
               style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(double.maxFinite, 40)),
+                  fixedSize: const Size(double.maxFinite, 50)),
               child: Text(
                 'Fechar',
                 style: AppTextStyles.regular(16, color: Colors.black),

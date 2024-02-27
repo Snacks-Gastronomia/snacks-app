@@ -8,6 +8,7 @@ import 'package:snacks_app/core/app.images.dart';
 import 'package:snacks_app/core/app.text.dart';
 import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/models/order_model.dart';
+import 'package:snacks_app/services/orders_service.dart';
 import 'package:snacks_app/utils/modal.dart';
 import 'package:snacks_app/utils/toast.dart';
 import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
@@ -45,35 +46,43 @@ class CardItemWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(
-                    height: sizeHeight * 0.11,
-                    width: double.maxFinite,
-                    child: Center(
-                      child: item.image_url == null
-                          ? SvgPicture.asset(
-                              AppImages.snacks,
-                              color: Colors.grey.shade400,
-                              width: 80,
-                            )
-                          : Image.network(
-                              item.image_url!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return SvgPicture.asset(
-                                  AppImages.snacks,
-                                  color: Colors.grey.shade400,
-                                  width: 80,
-                                );
-                              },
-                              loadingBuilder: (context, child, progress) {
-                                return progress == null
-                                    ? child
-                                    : const Center(
-                                        child: Text("Carregando..."),
-                                      );
-                              },
-                            ),
-                    )),
+                FutureBuilder<bool>(
+                    future: OrdersApiServices().isValidImage(item.image_url),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var validImage = snapshot.data!;
+                        return SizedBox(
+                          height: sizeHeight * 0.11,
+                          width: double.maxFinite,
+                          // child: Center(
+                          //     child: item.image_url == null && validImage
+                          //         ? SvgPicture.asset(
+                          //             AppImages.snacks,
+                          //             color: Colors.grey.shade400,
+                          //             width: 80,
+                          //           )
+                          //         : FadeInImage(
+                          //             image: NetworkImage(item.image_url!),
+                          //             placeholder:
+                          //                 AssetImage(AppImages.launcher),
+                          //             imageErrorBuilder:
+                          //                 (context, error, stackTrace) {
+                          //               return SvgPicture.asset(
+                          //                 AppImages.snacks,
+                          //                 color: Colors.grey.shade400,
+                          //                 width: 80,
+                          //               );
+                          //             },
+                          //             fit: BoxFit.fitWidth,
+                          //           )
+
+                          //     )
+                        );
+                      }
+                      return SizedBox(
+                        height: sizeHeight * 0.11,
+                      );
+                    }),
                 Container(
                   height: 2,
                   color: Colors.grey,

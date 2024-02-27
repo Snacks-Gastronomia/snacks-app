@@ -19,112 +19,104 @@ class CustomerReportScreen extends StatelessWidget {
     final cubit = BlocProvider.of<CardCubit>(context);
     final state = cubit.state;
     return Scaffold(
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+        child: CustomSubmitButton(
+            onPressedAction: () => Navigator.pop(context),
+            label: "Fechar",
+            loading_label: "",
+            loading: false),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            // BlocBuilder<CardCubit, CardState>(
-            //   builder: (context, state) {
-
-            // Row(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: const [BackButton()],
-            // ),
             CardWidget(
                 name: state.nome,
                 value: state.value,
                 hasData: state.hasData,
                 loading: false,
                 onTap: () {}),
-            //   },
-            // ),
-
             const SizedBox(height: 20),
             Text(
               'Consumo',
               style: AppTextStyles.semiBold(18),
             ),
-
             const SizedBox(height: 10),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              itemCount: items.docs.length,
-              itemBuilder: (context, index) {
-                var order = OrderResponse.fromFirebase(items.docs[index]);
-                var orders = order.items;
+            Expanded(
+              child: ListView.builder(
+                // shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
+                itemCount: items.docs.length,
+                itemBuilder: (context, index) {
+                  var order = OrderResponse.fromFirebase(items.docs[index]);
+                  var orders = order.items;
 
-                return Card(
-                  elevation: 0,
-                  shape: const RoundedRectangleBorder(),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(8),
-                    title: Text(
-                      "${order.restaurantName} - ${order.partCode}",
-                      style: AppTextStyles.semiBold(16),
+                  return Card(
+                    elevation: 0,
+                    shape: const RoundedRectangleBorder(),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(8),
+                      title: Text(
+                        "${order.restaurantName} - ${order.partCode}",
+                        style: AppTextStyles.semiBold(16),
+                      ),
+                      isThreeLine: true,
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListView.builder(
+                              itemCount: orders.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                var order = orders[index];
+                                List extras = order.extras ?? [];
+
+                                var extraDescription = "";
+
+                                for (var i = 0; i < extras.length; i++) {
+                                  var element = extras[i];
+                                  extraDescription += element["title"] +
+                                      '(${NumberFormat.currency(locale: "pt", symbol: r"R$").format(double.parse(element["value"].toString()))})';
+                                }
+
+                                var text =
+                                    '${order.amount} ${order.item.title}';
+
+                                if (extraDescription.isNotEmpty) {
+                                  text += ' + $extraDescription';
+                                }
+
+                                return Text(
+                                  text,
+                                  style: AppTextStyles.light(14,
+                                      color: const Color(0xffB3B3B3)),
+                                );
+                              })
+                        ],
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            NumberFormat.currency(locale: "pt", symbol: r"R$ ")
+                                .format(order.value),
+                            style: AppTextStyles.semiBold(18,
+                                color: const Color(0xff00B907)),
+                          ),
+                          Text(
+                            DateFormat.yMMMd().format(order.createdAt),
+                            style: AppTextStyles.light(10),
+                          ),
+                        ],
+                      ),
                     ),
-                    isThreeLine: true,
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListView.builder(
-                            itemCount: orders.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              var order = orders[index];
-                              List extras = order.extras ?? [];
-
-                              var extraDescription = "";
-
-                              for (var i = 0; i < extras.length; i++) {
-                                var element = extras[i];
-                                extraDescription += element["title"] +
-                                    '(${NumberFormat.currency(locale: "pt", symbol: r"R$").format(double.parse(element["value"].toString()))})';
-                              }
-
-                              var text = '${order.amount} ${order.item.title}';
-
-                              if (extraDescription.isNotEmpty) {
-                                text += ' + $extraDescription';
-                              }
-
-                              return Text(
-                                text,
-                                style: AppTextStyles.light(14,
-                                    color: const Color(0xffB3B3B3)),
-                              );
-                            })
-                      ],
-                    ),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          NumberFormat.currency(locale: "pt", symbol: r"R$ ")
-                              .format(order.value),
-                          style: AppTextStyles.semiBold(18,
-                              color: const Color(0xff00B907)),
-                        ),
-                        Text(
-                          DateFormat.yMMMd().format(order.createdAt),
-                          style: AppTextStyles.light(10),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-
-            const Spacer(),
-
-            CustomSubmitButton(
-                onPressedAction: () => Navigator.pop(context),
-                label: "Fechar",
-                loading_label: "",
-                loading: false)
           ],
         ),
       ),
