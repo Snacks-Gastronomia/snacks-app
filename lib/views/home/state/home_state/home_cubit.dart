@@ -2,8 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:meta/meta.dart';
 import 'package:snacks_app/models/item_model.dart';
 import 'package:snacks_app/utils/enums.dart';
 import 'package:snacks_app/utils/storage.dart';
@@ -59,24 +57,25 @@ class HomeCubit extends Cubit<HomeState> {
           lastDocument: null,
         ));
       }
-      var _stream = itemsRepository
+      var stream = itemsRepository
           .fetchItemsByRestaurant(
               restaurant, !state.listIsLastPage ? null : state.lastDocument)
           .distinct();
 
-      emit(state.copyWith(menu: _stream));
+      emit(state.copyWith(menu: stream));
     }
   }
 
-  void fetchItems() {
-    var _stream = itemsRepository.fetchItems(state.lastDocument).distinct();
+  void fetchItems({int limit = 20}) {
+    var stream =
+        itemsRepository.fetchItems(state.lastDocument, limit: limit).distinct();
 
-    emit(state.copyWith(menu: _stream));
+    emit(state.copyWith(menu: stream));
   }
 
   Future<void> fetchQuery(String query) async {
-    var _stream = itemsRepository.searchQuery(query, state.category);
+    var stream = itemsRepository.searchQuery(query, state.category);
 
-    emit(state.copyWith(menu: _stream));
+    emit(state.copyWith(menu: stream));
   }
 }

@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
-import 'package:snacks_app/models/item_model.dart';
 
 class ItemsApiServices {
   final http.Client httpClient = http.Client();
@@ -42,9 +39,10 @@ class ItemsApiServices {
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getItems(
       DocumentSnapshot? document,
-      {int limit = 8}) {
+      {int limit = 20}) {
     try {
-      var ref = firebase.collection("menu").where("active", isEqualTo: true);
+      var ref = firebase.collection("menu").limit(limit);
+      // .where("active", isEqualTo: true);
       // if (document != null) {
       //   return ref.startAfterDocument(document).snapshots();
       // }
