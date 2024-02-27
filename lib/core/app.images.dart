@@ -7,4 +7,5 @@ class AppImages {
   static String get add_to_bag => 'assets/icons/add_bag_icon.svg';
   static String get shopping_bag => 'assets/icons/shopping-bag.svg';
   static String get utensils => 'assets/icons/utensils.svg';
+  static String get launcher => 'assets/launcher/foreground.png';
 }

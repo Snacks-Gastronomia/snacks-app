@@ -223,9 +223,9 @@ class AppWidget extends StatelessWidget {
               bool restaurant_available = data["restaurant_available"];
               bool in_review = data["in_review"];
 
-              String startAppRoute =
-                  // auth.currentUser != null ? AppRoutes.home :
-                  AppRoutes.start;
+              String startAppRoute = !(auth.currentUser?.isAnonymous ?? true)
+                  ? AppRoutes.home
+                  : AppRoutes.start;
 
               if (!in_review) {
                 if (!current_version) {

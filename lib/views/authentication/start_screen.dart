@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,7 +20,8 @@ import '../home/widgets/modals/content_payment_failed.dart';
 
 class StartScreen extends StatelessWidget {
   StartScreen({Key? key}) : super(key: key);
-  final auth = FirebaseCustomTokenAuth();
+  // final auth = FirebaseCustomTokenAuth();
+  final firebase = FirebaseAuth.instance;
   final toast = AppToast();
 
   @override
@@ -50,6 +52,8 @@ class StartScreen extends StatelessWidget {
                         // await auth.auth.signOut();
                         // await auth.signIn(table: '');
                         var navigator = Navigator.of(context);
+
+                        await firebase.signInAnonymously();
                         navigator.pushNamed(AppRoutes.home);
                       },
                       dark: true,

@@ -173,6 +173,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                             itemBuilder: (context, index) {
                               var item = snapshot.data?.docs[index];
                               bool isSelected = category == item?.id;
+
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
