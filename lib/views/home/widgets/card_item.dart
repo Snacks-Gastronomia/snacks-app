@@ -54,29 +54,29 @@ class CardItemWidget extends StatelessWidget {
                         return SizedBox(
                           height: sizeHeight * 0.11,
                           width: double.maxFinite,
-                          // child: Center(
-                          //     child: item.image_url == null && validImage
-                          //         ? SvgPicture.asset(
-                          //             AppImages.snacks,
-                          //             color: Colors.grey.shade400,
-                          //             width: 80,
-                          //           )
-                          //         : FadeInImage(
-                          //             image: NetworkImage(item.image_url!),
-                          //             placeholder:
-                          //                 AssetImage(AppImages.launcher),
-                          //             imageErrorBuilder:
-                          //                 (context, error, stackTrace) {
-                          //               return SvgPicture.asset(
-                          //                 AppImages.snacks,
-                          //                 color: Colors.grey.shade400,
-                          //                 width: 80,
-                          //               );
-                          //             },
-                          //             fit: BoxFit.fitWidth,
-                          //           )
+                          child: Center(
+                              child: item.image_url == null && validImage
+                                  ? SvgPicture.asset(
+                                      AppImages.snacks,
+                                      color: Colors.grey.shade400,
+                                      width: 80,
+                                    )
+                                  : FadeInImage(
+                                      image: NetworkImage(item.image_url!),
+                                      placeholder:
+                                          AssetImage(AppImages.launcher),
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) {
+                                        return SvgPicture.asset(
+                                          AppImages.snacks,
+                                          color: Colors.grey.shade400,
+                                          width: 80,
+                                        );
+                                      },
+                                      fit: BoxFit.fitWidth,
+                                    )
 
-                          //     )
+                              )
                         );
                       }
                       return SizedBox(
