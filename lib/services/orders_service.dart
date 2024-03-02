@@ -26,9 +26,9 @@ class OrdersApiServices {
   }
 
   Future<void> createItemstoOrder(
-      List<Map<String, dynamic>> data, String doc_id) async {
+      List<Map<String, dynamic>> data, String docId) async {
     return await db.addOrderDocumentToCollection(
-        collection: "orders", subcolletion: "items", data: data, docID: doc_id);
+        collection: "orders", subcolletion: "items", data: data, docID: docId);
   }
 
   Future<QuerySnapshot<Map<String, dynamic>>> fetchOrderFromCard(
@@ -68,12 +68,12 @@ class OrdersApiServices {
 
   Future<dynamic> getOrdersByRestaurantId(String id) async {}
 
-  Future<bool> isValidImage(String? image_url) async {
-    if (image_url != null) {
-      var response = await httpClient.get((Uri.parse(image_url)));
+  Future<bool> isValidImage(String? imageUrl) async {
+    // if (image_url != null) {
+    //   var response = await httpClient.get((Uri.parse(image_url)));
 
-      return response.statusCode == 200;
-    }
+    //   return response.statusCode == 200;
+    // }
     return true;
   }
 }
