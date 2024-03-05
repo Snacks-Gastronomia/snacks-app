@@ -47,10 +47,10 @@ class HomeCubit extends Cubit<HomeState> {
   void fetchItemsByRestaurants(String restaurant, bool onSelected) {
     emit(state.copyWith(status: AppStatus.loading));
     if (restaurant.isEmpty) {
-      // emit(state.copyWith(
-      //   category: null,
-      //   lastDocument: null,
-      // ));
+      emit(state.copyWith(
+        category: null,
+        lastDocument: null,
+      ));
       fetchItems();
     } else if (!state.listIsLastPage) {
       if (onSelected) {
@@ -70,6 +70,7 @@ class HomeCubit extends Cubit<HomeState> {
     var stream = itemsRepository.fetchItems(state.lastDocument, limit: limit);
 
     emit(state.copyWith(menu: stream));
+    emit(state.copyWith(status: AppStatus.loaded));
   }
 
   Future<void> fetchQuery(String query) async {
