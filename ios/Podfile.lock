@@ -1003,7 +1003,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_keyboard_visibility: 0339d06371254c3eb25eeb90ba8d17dca8f9c069
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
-  fluttertoast: 74526702fea2c060ea55dde75895b7e1bde1c86b
+  fluttertoast: d410097af3a920745c7bb589f26967c6d35f92c0
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   google_mlkit_barcode_scanning: 5c18504510a7b3a326c2ab19758457633248b7b6
@@ -1035,4 +1035,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 970a28f720395b0732e919220148e6cb5103f4bf
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2

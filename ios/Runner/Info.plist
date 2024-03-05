@@ -46,9 +46,9 @@
 	<key>NSAppleMusicUsageDescription</key>
 	<string>This permission is not needed by the app, but it is required by an underlying API. If you see this dialog, contact us.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Upload image from camera for screen background</string>
+	<string>Precisamos de acesso à sua câmera para escanear códigos QR. Isso permitirá que você interaja rapidamente e com segurança com conteúdos, como acessar links, realizar pagamentos e autenticar-se no aplicativo.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Esse app precisa de acesso a localização.</string>
+	<string>Esse app precisa de acesso a localização. Para localizar com precisão seu endereço.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>O aplicativo precisa acessar sua localização para melhor experiência.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
