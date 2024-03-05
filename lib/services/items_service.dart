@@ -6,17 +6,17 @@ class ItemsApiServices {
 
   final firebase = FirebaseFirestore.instance;
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> searchQuery(String query) {
+  Future<QuerySnapshot<Map<String, dynamic>>> searchQuery(String query) {
     return firebase
         .collection("menu")
         .orderBy("title")
         .where("active", isEqualTo: true)
         .where('title', isGreaterThanOrEqualTo: query)
         .where('title', isLessThan: '${query}z')
-        .snapshots();
+        .get();
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> getMenuByRestaurant(
+  Future<QuerySnapshot<Map<String, dynamic>>> getMenuByRestaurant(
       String id, document) {
     try {
       var ref = firebase
@@ -24,7 +24,7 @@ class ItemsApiServices {
           .where("restaurant_id", isEqualTo: id)
           .where("active", isEqualTo: true);
 
-      return ref.snapshots();
+      return ref.get();
     } catch (e) {
       rethrow;
     }
@@ -37,7 +37,7 @@ class ItemsApiServices {
         .get();
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> getItems(
+  Future<QuerySnapshot<Map<String, dynamic>>> getItems(
       DocumentSnapshot? document,
       {int limit = 20}) {
     try {
@@ -48,7 +48,7 @@ class ItemsApiServices {
       // if (document != null) {
       //   return ref.startAfterDocument(document).snapshots();
       // }
-      return ref.snapshots();
+      return ref.get();
     } catch (e) {
       rethrow;
     }

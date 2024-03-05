@@ -7,7 +7,7 @@ class ItemsRepository {
     required this.services,
   });
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> fetchItems(last,
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchItems(last,
       {int limit = 20}) {
     try {
       return services.getItems(last, limit: limit);
@@ -16,7 +16,7 @@ class ItemsRepository {
     }
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> fetchItemsByRestaurant(
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchItemsByRestaurant(
       String id, last) {
     try {
       return services.getMenuByRestaurant(id, last);
@@ -33,7 +33,7 @@ class ItemsRepository {
     }
   }
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> searchQuery(
+  Future<QuerySnapshot<Map<String, dynamic>>> searchQuery(
       String query, String? category) {
     try {
       return services.searchQuery(query);

@@ -45,6 +45,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void fetchItemsByRestaurants(String restaurant, bool onSelected) {
+    emit(state.copyWith(status: AppStatus.loading));
     if (restaurant.isEmpty) {
       emit(state.copyWith(
         category: null,
@@ -57,25 +58,30 @@ class HomeCubit extends Cubit<HomeState> {
           lastDocument: null,
         ));
       }
-      var stream = itemsRepository
-          .fetchItemsByRestaurant(
-              restaurant, !state.listIsLastPage ? null : state.lastDocument)
-          .distinct();
+      var stream = itemsRepository.fetchItemsByRestaurant(
+          restaurant, !state.listIsLastPage ? null : state.lastDocument);
 
       emit(state.copyWith(menu: stream));
+      emit(state.copyWith(status: AppStatus.loaded));
     }
   }
 
-  void fetchItems({int limit = 20}) {
-    var stream =
-        itemsRepository.fetchItems(state.lastDocument, limit: limit).distinct();
+  void fetchItems({int limit = 20}) async {
+    var stream = itemsRepository.fetchItems(state.lastDocument, limit: limit);
 
     emit(state.copyWith(menu: stream));
+    emit(state.copyWith(status: AppStatus.loaded));
   }
 
   Future<void> fetchQuery(String query) async {
-    var stream = itemsRepository.searchQuery(query, state.category);
+    if (query.isEmpty) {
+      fetchItems();
+    } else {
+      emit(state.copyWith(status: AppStatus.loading));
+      var stream = itemsRepository.searchQuery(query, state.category);
 
-    emit(state.copyWith(menu: stream));
+      emit(state.copyWith(menu: stream));
+      emit(state.copyWith(status: AppStatus.loaded));
+    }
   }
 }

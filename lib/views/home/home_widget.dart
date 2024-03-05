@@ -32,6 +32,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   late ScrollController controller;
   // final key = GlobalKey();
   final auth = FirebaseAuth.instance;
+  TextEditingController textEditingController = TextEditingController();
   String category = "";
   @override
   void initState() {
@@ -54,8 +55,10 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
   }
 
   void _onAllItemsScroll() {
-    if (controller.position.pixels == controller.position.maxScrollExtent) {
-      customLimit += 80;
+    if (controller.position.pixels == controller.position.maxScrollExtent &&
+        textEditingController.text.isEmpty &&
+        category.isEmpty) {
+      customLimit += 50;
       context.read<HomeCubit>().fetchItems(limit: customLimit);
     }
   }
@@ -138,6 +141,7 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
                 height: 45,
               ),
               TextFormField(
+                controller: textEditingController,
                 style: AppTextStyles.light(16, color: const Color(0xff8391A1)),
                 autofocus: false,
                 onChanged: context.read<HomeCubit>().fetchQuery,
@@ -274,14 +278,15 @@ class AllItemsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
-      if (state.status == AppStatus.loading) {
-        return const ListSkeletons(direction: Axis.vertical);
-      }
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        if (state.status == AppStatus.loading) {
+          return const ListSkeletons(direction: Axis.vertical);
+        }
 
-      bool isTablet = MediaQuery.of(context).size.width > 600;
-      return StreamBuilder<QuerySnapshot>(
-          stream: state.menu,
+        bool isTablet = MediaQuery.of(context).size.width > 600;
+        return FutureBuilder<QuerySnapshot>(
+          future: state.menu,
           builder: (context, snapshot) {
             if (snapshot.hasData ||
                 snapshot.connectionState == ConnectionState.done) {
@@ -293,43 +298,57 @@ class AllItemsWidget extends StatelessWidget {
               }
 
               return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: isTablet ? 3 : 2,
-                      crossAxisSpacing: 15,
-                      mainAxisSpacing: 15,
-                      mainAxisExtent: isTablet ? 230 : 160),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  // itemCount: data.length + (state.listIsLastPage ? 0 : 3),
-                  itemCount: data.length,
-                  itemBuilder: (BuildContext ctx, index) {
-                    if (data.length <= index && state.listIsLastPage) {
-                      return Transform.scale(
-                          scale: 0.9, child: const CardSkeleton());
-                    } else {
-                      var item = Item.fromJson(jsonEncode(data[index].data()));
-                      var id = data[index].id;
-                      item = item.copyWith(id: id);
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isTablet ? 3 : 2,
+                  crossAxisSpacing: 15,
+                  mainAxisSpacing: 15,
+                  mainAxisExtent: isTablet ? 230 : 160,
+                ),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: data.length + 2,
+                itemBuilder: (BuildContext ctx, index) {
+                  if (data.length <= index && state.listIsLastPage) {
+                    return Transform.scale(
+                      scale: 0.9,
+                      child: const CardSkeleton(),
+                    );
+                  } else if (index >= data.length) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    );
+                  } else {
+                    var item = Item.fromJson(jsonEncode(data[index].data()));
+                    var id = data[index].id;
+                    item = item.copyWith(id: id);
 
-                      return GestureDetector(
-                          onTap: () => modal.showIOSModalBottomSheet(
-                              context: context,
-                              content: ItemScreen(
-                                  order: OrderModel(
-                                      item: item,
-                                      observations: "",
-                                      option_selected: item.options[0]))),
-                          child: CardItemWidget(
-                            // ns: ns,
-                            item: item,
-                          ));
-                    }
-                  });
+                    return GestureDetector(
+                      onTap: () => modal.showIOSModalBottomSheet(
+                        context: context,
+                        content: ItemScreen(
+                          order: OrderModel(
+                              item: item,
+                              observations: "",
+                              option_selected: item.options[0]),
+                        ),
+                      ),
+                      child: CardItemWidget(
+                        // ns: ns,
+                        item: item,
+                      ),
+                    );
+                  }
+                },
+              );
             }
 
             return const ListSkeletons(direction: Axis.vertical);
-          });
-    });
+          },
+        );
+      },
+    );
   }
 }
 

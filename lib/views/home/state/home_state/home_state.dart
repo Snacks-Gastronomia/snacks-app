@@ -12,7 +12,7 @@ class HomeState {
   final AppStatus status;
   final bool search;
   final String? category;
-  final Stream<QuerySnapshot> menu;
+  final Future<QuerySnapshot> menu;
   final String? error;
   HomeState({
     required this.items,
@@ -36,7 +36,7 @@ class HomeState {
       popular: [],
       showButton: false,
       lastDocument: null,
-      menu: const Stream.empty(),
+      menu: ItemsApiServices().getItems(null),
       status: AppStatus.initial,
       listIsLastPage: false,
       listPageNumber: 1,
@@ -72,7 +72,7 @@ class HomeState {
       AppStatus? status,
       bool? search,
       bool? showButton,
-      Stream<QuerySnapshot>? menu,
+      Future<QuerySnapshot>? menu,
       String? category,
       String? error,
       DocumentSnapshot? lastDocument}) {
