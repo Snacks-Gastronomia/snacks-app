@@ -13,6 +13,7 @@ class CustomerReportScreen extends StatelessWidget {
   const CustomerReportScreen({Key? key, required this.items}) : super(key: key);
 
   final QuerySnapshot<Map<String, dynamic>> items;
+  // final dynamic restValue;
 
   @override
   Widget build(BuildContext context) {

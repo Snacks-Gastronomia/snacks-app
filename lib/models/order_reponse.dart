@@ -191,7 +191,7 @@ class OrderResponse {
       receiveOrder: map['receive_order'],
       address: map['address'],
       moneyChange: map['money_change'] ?? "",
-      deliveryValue: map['delivery_value'] ?? 0.0,
+      deliveryValue: double.tryParse(map['delivery_value'].toString()) ?? 0.0,
     );
   }
 

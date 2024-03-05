@@ -24,12 +24,15 @@ class CardCubit extends Cubit<CardState> {
           type: ToastType.error);
     } else {
       var res = await repository.fetchCardFromFirebase(rfid);
-      print(res);
-      if (res != null) {
+      var resBp = await repository.fetchCard(rfid);
+
+      if (res != null && resBp != null) {
         emit(state.copyWith(
-          status: AppStatus.loaded,
-          hasData: true,
-        ));
+            status: AppStatus.loaded,
+            hasData: true,
+            nome: resBp["nome"],
+            value: double.parse(resBp["saldo"].toString())));
+
         return res;
       } else {
         emit(state.copyWith(status: AppStatus.loaded, hasData: false));
