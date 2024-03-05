@@ -10,7 +10,7 @@ class ItemsApiServices {
     return firebase
         .collection("menu")
         .orderBy("title")
-        // .where("active", isEqualTo: true)
+        .where("active", isEqualTo: true)
         .where('title', isGreaterThanOrEqualTo: query)
         .where('title', isLessThan: '${query}z')
         .get();
@@ -19,9 +19,10 @@ class ItemsApiServices {
   Future<QuerySnapshot<Map<String, dynamic>>> getMenuByRestaurant(
       String id, document) {
     try {
-      var ref =
-          firebase.collection("menu").where("restaurant_id", isEqualTo: id);
-      // .where("active", isEqualTo: true);
+      var ref = firebase
+          .collection("menu")
+          .where("restaurant_id", isEqualTo: id)
+          .where("active", isEqualTo: true);
 
       return ref.get();
     } catch (e) {
@@ -40,8 +41,10 @@ class ItemsApiServices {
       DocumentSnapshot? document,
       {int limit = 20}) {
     try {
-      var ref = firebase.collection("menu").limit(limit);
-      // .where("active", isEqualTo: true);
+      var ref = firebase
+          .collection("menu")
+          .limit(limit)
+          .where("active", isEqualTo: true);
       // if (document != null) {
       //   return ref.startAfterDocument(document).snapshots();
       // }

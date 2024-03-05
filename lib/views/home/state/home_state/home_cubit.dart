@@ -74,8 +74,14 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> fetchQuery(String query) async {
-    var stream = itemsRepository.searchQuery(query, state.category);
+    if (query.isEmpty) {
+      fetchItems();
+    } else {
+      emit(state.copyWith(status: AppStatus.loading));
+      var stream = itemsRepository.searchQuery(query, state.category);
 
-    emit(state.copyWith(menu: stream));
+      emit(state.copyWith(menu: stream));
+      emit(state.copyWith(status: AppStatus.loaded));
+    }
   }
 }
