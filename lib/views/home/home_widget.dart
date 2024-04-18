@@ -58,7 +58,9 @@ class _HomeScreenWidgetState extends State<HomeScreenWidget> {
     if (controller.position.pixels == controller.position.maxScrollExtent &&
         textEditingController.text.isEmpty &&
         category.isEmpty) {
-      customLimit += 50;
+      if (customLimit < 200) {
+        customLimit += 50;
+      }
       context.read<HomeCubit>().fetchItems(limit: customLimit);
     }
   }

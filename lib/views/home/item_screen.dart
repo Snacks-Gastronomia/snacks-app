@@ -16,7 +16,6 @@ import 'package:snacks_app/views/home/state/cart_state/cart_cubit.dart';
 
 import 'package:snacks_app/views/home/state/item_screen/item_screen_cubit.dart';
 import 'package:snacks_app/views/home/widgets/coupom_widget.dart';
-import 'package:snacks_app/views/home/widgets/modals/coupom_code.dart';
 import 'package:snacks_app/views/home/widgets/modals/modal_content_obs.dart';
 
 class ItemScreen extends StatefulWidget {
